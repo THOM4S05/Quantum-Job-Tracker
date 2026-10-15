@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { Job } from './App';
+import { request } from './api';
+import { isDemo, jobHref } from './environment';
 
 export type RecordedEvent = {
   id: string; job_id: string; sequence: number; occurred_at: string;
@@ -49,7 +51,7 @@ export function JobDetails({ jobId, backHref }: { jobId: string; backHref: strin
       controller = new AbortController();
       const timeout = setTimeout(() => controller.abort(), 8000);
       try {
-        const response = await fetch(`/api/jobs/${encodeURIComponent(jobId)}`, { signal: controller.signal, cache: 'no-store' });
+        const response = await request(`/api/jobs/${encodeURIComponent(jobId)}`, { signal: controller.signal, cache: 'no-store' });
         if (response.status === 404 || response.status === 422) {
           permanent = true;
           if (!stopped) setState({ jobId, data: null, loading: false, problem: response.status === 404 ? 'not-found' : 'invalid', checked: null });
@@ -78,7 +80,7 @@ export function JobDetails({ jobId, backHref }: { jobId: string; backHref: strin
   const evidence = current.data;
   const job = evidence?.job;
   const failure = evidence?.events.slice().reverse().find((event) => event.to_status === 'failed' && event.from_status !== 'failed');
-  const lineageHref = (id: string) => `/jobs/${encodeURIComponent(id)}${backHref.slice(1)}`;
+  const lineageHref = (id: string) => jobHref(id, backHref.split('?')[1] ?? '');
 
   return (
     <div className="app-shell">
@@ -87,7 +89,7 @@ export function JobDetails({ jobId, backHref }: { jobId: string; backHref: strin
         <p className="workspace-label">WORKSPACE</p>
         <a className="nav-item active" href={backHref}><span aria-hidden="true">▦</span> Jobs</a>
         <div className="sidebar-note"><span className="sidebar-note-icon" aria-hidden="true">◇</span><strong>Synthetic environment</strong><p>Investigate recorded evidence from fictional runs.</p></div>
-        <div className="sidebar-bottom"><span className="brand-footer">Quantum Job Tracker</span><span>Local workspace</span></div>
+        <div className="sidebar-bottom"><span className="brand-footer">Quantum Job Tracker</span><span>{isDemo ? 'Browser playground' : 'Local workspace'}</span></div>
       </aside>
       <div className="workspace">
         <div className="topbar"><span>Workspace <span className="breadcrumb-divider">/</span><a href={backHref}>Jobs</a><span className="breadcrumb-divider">/</span><strong>Details</strong></span><span className="environment-badge">Synthetic environment</span></div>

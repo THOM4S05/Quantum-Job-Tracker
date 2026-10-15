@@ -2,6 +2,28 @@
 
 Quantum Job Tracker is a portfolio application for investigating and managing **synthetic quantum jobs**. All providers, execution results, durations, and failures are simulated. Quantum Job Tracker has no connection to Horizon Quantum systems or any real quantum service.
 
+## Interactive browser demo
+
+The GitHub Pages build runs entirely in your browser: explore 200 synthetic jobs, filter and inspect their evidence, or create a personal experiment with a chosen simulated outcome. Personal runs persist in browser storage (up to 100); **Reset playground** removes them and restores the sample workspace. Outcomes are generated immediately, with fictional lifecycle timestamps; no quantum hardware or background worker runs. Visitors have independent playgrounds.
+
+### Publish on GitHub Pages
+
+The included [deployment workflow](.github/workflows/pages.yml) tests and builds the demo on pushes to `main`, then publishes it to GitHub Pages. In the repository's **Settings → Pages → Build and deployment**, select **GitHub Actions** as the source. Push these changes, or run **Deploy interactive demo** from the Actions tab. After a successful deployment, the site will be available at:
+
+**https://THOM4S05.github.io/Quantum-Job-Tracker/**
+
+This is the intended deployment address; a successful Actions deployment confirms it is live. Pull requests run tests and build without publishing. Relative asset paths and query-based job links support the repository subdirectory, direct links, reloads, and browser Back/Forward without server routing rules.
+
+To try the playground locally:
+
+```sh
+cd frontend
+npm ci
+npm run dev:demo
+```
+
+Open http://127.0.0.1:5174. To produce the static site, run `npm run build:demo`; upload the contents of `frontend/dist` to any static host. The normal `npm run build`, Docker setup, and API-backed app continue to use FastAPI/PostgreSQL. Demo behavior is enabled only by `VITE_DEMO_MODE=true`; no database connection or credentials are included in the static deployment.
+
 ## See it in action
 
 Screenshots from the running React/FastAPI application backed by PostgreSQL, using the included synthetic demonstration data.

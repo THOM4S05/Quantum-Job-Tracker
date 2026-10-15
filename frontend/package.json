@@ -5,6 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host 127.0.0.1 --port 5173 --strictPort",
+    "dev:demo": "VITE_DEMO_MODE=true vite --host 127.0.0.1 --port 5174 --strictPort",
+    "build:demo": "VITE_DEMO_MODE=true npm run build -- --base=./",
     "build": "tsc --noEmit && vite build",
     "test": "vitest run",
     "test:e2e": "playwright test"

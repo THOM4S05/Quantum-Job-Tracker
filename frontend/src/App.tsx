@@ -1,5 +1,9 @@
 import { FormEvent, useEffect, useState } from 'react';
 import { JobDetails } from './JobDetails';
+import { request } from './api';
+import { homeHref, isDemo, jobHref } from './environment';
+import { lazy, Suspense } from 'react';
+const Playground = lazy(() => import('./Playground').then((module) => ({ default: module.Playground })));
 
 const statuses = ['queued', 'running', 'cancel_requested', 'succeeded', 'failed', 'cancelled'] as const;
 type Status = typeof statuses[number];
@@ -54,7 +58,7 @@ function useJobs(query: string, refresh: number) {
       controller = new AbortController();
       const timeout = setTimeout(() => controller.abort(), 8000);
       try {
-        const response = await fetch(`/api/jobs${query ? `?${query}` : ''}`, { signal: controller.signal, cache: 'no-store' });
+        const response = await request(`/api/jobs${query ? `?${query}` : ''}`, { signal: controller.signal, cache: 'no-store' });
         if (response.status === 422) throw new Error('Some filters are invalid. Check your filters or clear them to start again.');
         if (!response.ok) throw new Error('Jobs could not be loaded. Please try again.');
         const body = await response.json() as JobPage;
@@ -117,14 +121,15 @@ function JobsList() {
       <aside className="sidebar" aria-label="Workspace navigation">
         <header><span className="mark" aria-hidden="true">Q</span><span className="brand-name">Quantum Job Tracker</span></header>
         <p className="workspace-label">WORKSPACE</p>
-        <a className="nav-item active" href="/" aria-current="page"><span aria-hidden="true">▦</span> Jobs</a>
+        <a className="nav-item active" href={homeHref} aria-current="page"><span aria-hidden="true">▦</span> Jobs</a>
         <div className="sidebar-note"><span className="sidebar-note-icon" aria-hidden="true">◇</span><strong>Synthetic environment</strong><p>Investigate fictional jobs and their outcomes.</p></div>
-        <div className="sidebar-bottom"><span className="brand-footer">Quantum Job Tracker</span><span>Local workspace</span></div>
+        <div className="sidebar-bottom"><span className="brand-footer">Quantum Job Tracker</span><span>{isDemo ? 'Browser playground' : 'Local workspace'}</span></div>
       </aside>
       <div className="workspace">
         <div className="topbar"><span>Workspace <span className="breadcrumb-divider">/</span> <strong>Jobs</strong></span><span className="environment-badge">Synthetic environment</span></div>
         <main>
-          <div className="page-heading"><div><h1>Jobs</h1><p>Search and inspect your synthetic quantum runs.</p></div><span className="version-badge">Read-only workspace</span></div>
+          <div className="page-heading"><div><h1>Jobs</h1><p>Search and inspect your synthetic quantum runs.</p></div><span className="version-badge">{isDemo ? 'Interactive playground' : 'Read-only workspace'}</span></div>
+          {isDemo && <Suspense fallback={<p>Loading playground…</p>}><Playground onReset={clear} /></Suspense>}
           <form className="job-filters" onSubmit={apply} aria-label="Job filters">
             <label className="search-field">Job ID or external reference<input type="search" value={draft.q} onChange={(e) => field('q', e.target.value)} maxLength={160} placeholder="e.g. SYN-0005" aria-describedby="search-help" /></label>
             <label>Status<select value={draft.status} onChange={(e) => field('status', e.target.value)}><option value="">All statuses</option>{statuses.map((status) => <option key={status} value={status}>{statusLabel(status)}</option>)}{draft.status && !statuses.includes(draft.status as Status) && <option value={draft.status}>{draft.status} (invalid)</option>}</select></label>
@@ -137,7 +142,7 @@ function JobsList() {
           </form>
 
           <section className="jobs-panel" aria-label="Job results" aria-busy={result.loading}>
-            <div className="results-heading"><h2>{data ? `${data.total.toLocaleString()} ${data.total === 1 ? 'job' : 'jobs'}` : 'Job results'}</h2><span>{result.checked ? `Updated ${new Date(result.checked).toLocaleTimeString([], { timeZoneName: 'short' })} · Refreshes every 5s` : 'Live PostgreSQL data'}</span></div>
+            <div className="results-heading"><h2>{data ? `${data.total.toLocaleString()} ${data.total === 1 ? 'job' : 'jobs'}` : 'Job results'}</h2><span>{result.checked ? `Updated ${new Date(result.checked).toLocaleTimeString([], { timeZoneName: 'short' })} · Refreshes every 5s` : isDemo ? 'Browser demo data' : 'Live PostgreSQL data'}</span></div>
             {result.loading && <div className="result-state" role="status"><span className="spinner" aria-hidden="true" />Loading jobs…</div>}
             {result.error && <div className="error-state" role="alert"><div><strong>{data ? 'Showing previously loaded results' : 'Unable to show jobs'}</strong><p>{result.error}</p></div><button type="button" onClick={() => setRefresh((value) => value + 1)}>Try again</button></div>}
             {data && data.items.length === 0 && <div className="result-state"><h3>{data.total > 0 ? 'This page has no jobs' : 'No jobs found'}</h3><p>{data.total > 0 ? 'The requested page is beyond the available results.' : 'Try a different reference or a wider set of filters.'}</p>{data.total > 0 ? <button onClick={() => navigate({ ...current, page: '1' })}>Go to first page</button> : <button onClick={clear}>Clear filters</button>}</div>}
@@ -145,7 +150,7 @@ function JobsList() {
               <caption className="sr-only">Synthetic jobs, newest submissions first. All submission times are UTC.</caption>
               <thead><tr><th scope="col">Job</th><th scope="col">Provider / target</th><th scope="col">Status</th><th scope="col">Submitted (UTC)</th><th scope="col">Requested by</th></tr></thead>
               <tbody>{data.items.map((job) => <tr key={job.id}>
-                <td><strong><a className="job-link" href={`/jobs/${job.id}${query ? `?${query}` : ''}`}>{job.name}</a></strong><span className="external-ref">{job.external_reference ?? 'No external reference'}</span><code>{job.id}</code>{job.retry_of && <span className="external-ref">Retry of {job.retry_of}</span>}</td>
+                <td><strong><a className="job-link" href={jobHref(job.id, query)}>{job.name}</a></strong><span className="external-ref">{job.external_reference ?? 'No external reference'}</span><code>{job.id}</code>{job.retry_of && <span className="external-ref">Retry of {job.retry_of}</span>}</td>
                 <td>{job.provider}<span className="cell-secondary">{job.target}</span></td>
                 <td><span className={`status-badge status-${job.status}`}>{statusLabel(job.status)}</span></td>
                 <td className="nowrap"><time dateTime={job.created_at}>{utcTime(job.created_at)}</time></td>
@@ -162,6 +167,12 @@ function JobsList() {
 }
 
 export function App() {
+  if (isDemo) {
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get('job');
+    params.delete('job');
+    return id ? <JobDetails jobId={id} backHref={`${homeHref}?${params}`} /> : <JobsList />;
+  }
   const detail = window.location.pathname.match(/^\/jobs\/([^/]+)\/?$/);
   return detail ? <JobDetails jobId={detail[1]} backHref={`/${window.location.search}`} /> : <JobsList />;
 }
