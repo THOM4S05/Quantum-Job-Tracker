@@ -1,6 +1,6 @@
-# QTrace
+# Quantum Job Tracker
 
-QTrace is a portfolio application for investigating and managing **synthetic quantum jobs**. All providers, execution results, durations, and failures are simulated. QTrace has no connection to Horizon Quantum systems or any real quantum service.
+Quantum Job Tracker is a portfolio application for investigating and managing **synthetic quantum jobs**. All providers, execution results, durations, and failures are simulated. Quantum Job Tracker has no connection to Horizon Quantum systems or any real quantum service.
 
 ## See it in action
 
@@ -10,7 +10,7 @@ Screenshots from the running React/FastAPI application backed by PostgreSQL, usi
 
 Search by job ID or external reference, combine status/provider/date filters, and page through 200 seeded jobs. Status badges make the different outcomes easy to scan.
 
-![QTrace jobs workspace showing search filters, provider and status selectors, and a paginated table of synthetic jobs](docs/images/jobs-overview.png)
+![Quantum Job Tracker jobs workspace showing search filters, provider and status selectors, and a paginated table of synthetic jobs](docs/images/jobs-overview.png)
 
 ### Investigate a failure
 
@@ -37,6 +37,8 @@ The React/TypeScript jobs page now searches and paginates real PostgreSQL data t
 
 ## Startup
 
+The app is named **Quantum Job Tracker**. Existing local database/user names, the Compose project name, and historical seed identifiers retain their original internal values to preserve stored jobs, volumes, and deterministic fixture IDs.
+
 Prerequisite: Docker with Compose v2 and a running Docker engine. From this folder:
 
 ```sh
@@ -45,7 +47,7 @@ test -f .env || cp .env.example .env
 docker compose up --build -d
 ```
 
-Open [QTrace](http://localhost:5173) and [API documentation](http://localhost:8000/docs). Allow the initial image builds and health checks to finish; inspect status with `docker compose ps -a` and logs with `docker compose logs api migrate db frontend`.
+Open [Quantum Job Tracker](http://localhost:5173) and [API documentation](http://localhost:8000/docs). Allow the initial image builds and health checks to finish; inspect status with `docker compose ps -a` and logs with `docker compose logs api migrate db frontend`.
 
 Compose starts PostgreSQL, runs `alembic upgrade head` as a one-shot migration service, then starts the API and frontend. PostgreSQL data persists in a named volume. The frontend serves a compiled build through Nginx and proxies `/api/` to the API; the browser never receives database credentials. All published ports bind to the local machine only.
 
@@ -136,10 +138,10 @@ If Google Chrome is already installed, use it without downloading another browse
 
 ```sh
 cd frontend
-QTRACE_E2E_CHANNEL=chrome npm run test:e2e
+QUANTUM_JOB_TRACKER_E2E_CHANNEL=chrome npm run test:e2e
 ```
 
-The default base URL is `http://127.0.0.1:5173`; override it with `QTRACE_E2E_BASE_URL` if needed. The test filters failed jobs, opens a job, checks error metadata/correlation/JSON diagnostics and event ordering against the real API, reloads details, and returns to the same filtered list. It does not mock network responses or modify jobs. Failure traces/screenshots are written to ignored `frontend/test-results/`.
+The default base URL is `http://127.0.0.1:5173`; override it with `QUANTUM_JOB_TRACKER_E2E_BASE_URL` if needed. The test filters failed jobs, opens a job, checks error metadata/correlation/JSON diagnostics and event ordering against the real API, reloads details, and returns to the same filtered list. It does not mock network responses or modify jobs. Failure traces/screenshots are written to ignored `frontend/test-results/`.
 
 On the implementation machine the packaged Chromium download ran out of disk space and was stopped. The test then **passed using installed Chrome** with the command above; no existing browser caches were removed.
 
@@ -155,7 +157,7 @@ This verifies frontend HTML, direct and frontend-proxied API liveness, and direc
 
 | Endpoint | Healthy response | Failure behavior |
 | --- | --- | --- |
-| `GET /health/live` | 200, `{"status":"ok","service":"qtrace-api"}` | Independent of database connectivity |
+| `GET /health/live` | 200, `{"status":"ok","service":"quantum-job-tracker-api"}` | Independent of database connectivity |
 | `GET /health/ready` | 200, `{"status":"ready","database":"reachable"}` | 503, `{"status":"not_ready","database":"unavailable"}` |
 
 Readiness uses a two-second connection timeout and two-second SQL statement timeout. It checks connectivity, not migration currency. The jobs page reads the actual database through `/jobs`; the later health dashboard will add separate operational status and worker health.
@@ -194,11 +196,11 @@ The Vite development server proxies `/api/` to `127.0.0.1:8000`, keeping browser
 (cd frontend && npm test)
 ```
 
-The health tests mock database probes. PostgreSQL tests are separate and **skip** unless `QTRACE_TEST_DATABASE_URL` is set; a passing health-only run is not database verification. With the default local demonstration credentials, run:
+The health tests mock database probes. PostgreSQL tests are separate and **skip** unless `QUANTUM_JOB_TRACKER_TEST_DATABASE_URL` is set; a passing health-only run is not database verification. With the default local demonstration credentials, run:
 
 ```sh
 cd backend
-QTRACE_TEST_DATABASE_URL=postgresql+psycopg://qtrace:local-demo-only@127.0.0.1:5432/qtrace .venv/bin/python -m pytest -q
+QUANTUM_JOB_TRACKER_TEST_DATABASE_URL=postgresql+psycopg://qtrace:local-demo-only@127.0.0.1:5432/qtrace .venv/bin/python -m pytest -q
 ```
 
 Use a PostgreSQL database account permitted to create/drop schemas. If credentials differ, supply a correctly URL-encoded `postgresql+psycopg://…` URL; do not commit it. Every PostgreSQL test migrates its own uniquely named disposable schema and drops that schema afterward. Tests never truncate application tables. Unreachable/misconfigured PostgreSQL causes a failure, not a skip, when the variable is provided.

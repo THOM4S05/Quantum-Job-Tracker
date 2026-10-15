@@ -8,8 +8,8 @@ export default defineConfig({
   retries: 0,
   reporter: 'list',
   use: {
-    baseURL: process.env.QTRACE_E2E_BASE_URL ?? 'http://127.0.0.1:5173',
-    channel: process.env.QTRACE_E2E_CHANNEL,
+    baseURL: process.env.QUANTUM_JOB_TRACKER_E2E_BASE_URL ?? 'http://127.0.0.1:5173',
+    channel: process.env.QUANTUM_JOB_TRACKER_E2E_CHANNEL,
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
   },

@@ -1,4 +1,4 @@
-# QTrace architecture
+# Quantum Job Tracker architecture
 
 ## Components
 

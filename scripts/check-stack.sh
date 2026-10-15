@@ -11,9 +11,9 @@ def get(url):
         assert response.status == 200, url
         return response.read().decode()
 
-assert 'QTrace' in get('http://127.0.0.1:5173/')
+assert 'Quantum Job Tracker' in get('http://127.0.0.1:5173/')
 for base in ('http://127.0.0.1:8000', 'http://127.0.0.1:5173/api'):
-    assert json.loads(get(base + '/health/live')) == {'status': 'ok', 'service': 'qtrace-api'}
+    assert json.loads(get(base + '/health/live')) == {'status': 'ok', 'service': 'quantum-job-tracker-api'}
     assert json.loads(get(base + '/health/ready')) == {'status': 'ready', 'database': 'reachable'}
 print('PASS: frontend served; direct and frontend-proxied API liveness and PostgreSQL readiness.')
 PY

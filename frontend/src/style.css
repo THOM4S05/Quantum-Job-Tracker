@@ -130,3 +130,8 @@ section.detail-panel { padding: 26px; overflow: visible; }
 .diagnostics pre { padding: 16px; margin: 14px 0 0; overflow-x: auto; background: #faf9fc; border: 1px solid #e3e4e8; border-radius: 6px; font-size: 12px; line-height: 1.7; white-space: pre-wrap; overflow-wrap: anywhere; }
 @media (max-width: 950px) { .metadata-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .event-heading, .timeline-heading { align-items: flex-start; flex-direction: column; gap: 8px; } .timeline-heading { margin-bottom: 20px; } .timeline-heading h2 { margin-bottom: 0; } }
 @media (max-width: 650px) { .metadata-grid { grid-template-columns: 1fr; } section.detail-panel { padding: 20px; } .event-metadata { flex-direction: column; gap: 12px; } }
+
+.brand-name { font-size: 16px; line-height: 1.25; letter-spacing: -.3px; }
+.mark { flex-shrink: 0; }
+.sidebar-bottom { gap: 8px; align-items: center; flex-wrap: wrap; }
+.sidebar-bottom .brand-footer { color: #62596f; font-size: 12px; }

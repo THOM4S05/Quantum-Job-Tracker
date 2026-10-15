@@ -19,13 +19,13 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         finally:
             application.state.engine.dispose()
 
-    application = FastAPI(title="QTrace API", lifespan=lifespan)
+    application = FastAPI(title="Quantum Job Tracker API", lifespan=lifespan)
     application.include_router(job_list_router)
     application.include_router(job_details_router)
 
     @application.get("/health/live")
     def live() -> dict[str, str]:
-        return {"status": "ok", "service": "qtrace-api"}
+        return {"status": "ok", "service": "quantum-job-tracker-api"}
 
     @application.get("/health/ready")
     def ready(request: Request) -> JSONResponse:

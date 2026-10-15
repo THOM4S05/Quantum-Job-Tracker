@@ -21,7 +21,7 @@ def test_liveness_does_not_probe_database():
         with TestClient(create_app(settings())) as client:
             response = client.get("/health/live")
         assert response.status_code == 200
-        assert response.json() == {"status": "ok", "service": "qtrace-api"}
+        assert response.json() == {"status": "ok", "service": "quantum-job-tracker-api"}
         probe.assert_not_called()
 
 

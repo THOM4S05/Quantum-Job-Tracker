@@ -1,5 +1,5 @@
 {
-  "name": "qtrace-frontend",
+  "name": "quantum-job-tracker-frontend",
   "private": true,
   "version": "0.1.0",
   "type": "module",

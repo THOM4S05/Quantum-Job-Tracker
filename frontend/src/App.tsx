@@ -115,11 +115,11 @@ function JobsList() {
   return (
     <div className="app-shell">
       <aside className="sidebar" aria-label="Workspace navigation">
-        <header><span className="mark" aria-hidden="true">Q</span> QTrace</header>
+        <header><span className="mark" aria-hidden="true">Q</span><span className="brand-name">Quantum Job Tracker</span></header>
         <p className="workspace-label">WORKSPACE</p>
         <a className="nav-item active" href="/" aria-current="page"><span aria-hidden="true">▦</span> Jobs</a>
         <div className="sidebar-note"><span className="sidebar-note-icon" aria-hidden="true">◇</span><strong>Synthetic environment</strong><p>Investigate fictional jobs and their outcomes.</p></div>
-        <div className="sidebar-bottom">QTrace <span>Local workspace</span></div>
+        <div className="sidebar-bottom"><span className="brand-footer">Quantum Job Tracker</span><span>Local workspace</span></div>
       </aside>
       <div className="workspace">
         <div className="topbar"><span>Workspace <span className="breadcrumb-divider">/</span> <strong>Jobs</strong></span><span className="environment-badge">Synthetic environment</span></div>

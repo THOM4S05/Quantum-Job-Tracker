@@ -13,13 +13,13 @@ from sqlalchemy.pool import NullPool
 
 @pytest.fixture
 def postgres_engine():
-    url = os.environ.get("QTRACE_TEST_DATABASE_URL")
+    url = os.environ.get("QUANTUM_JOB_TRACKER_TEST_DATABASE_URL")
     if not url:
-        pytest.skip("Set QTRACE_TEST_DATABASE_URL to run real PostgreSQL tests")
+        pytest.skip("Set QUANTUM_JOB_TRACKER_TEST_DATABASE_URL to run real PostgreSQL tests")
     if not url.startswith("postgresql+psycopg://"):
         pytest.fail("Integration tests require a postgresql+psycopg URL, never SQLite")
     admin = create_engine(url, poolclass=NullPool)
-    schema = "qtrace_test_" + uuid4().hex
+    schema = "quantum_job_tracker_test_" + uuid4().hex
     with admin.begin() as connection:
         connection.execute(text(f'CREATE SCHEMA "{schema}"'))
     engine = create_engine(url, poolclass=NullPool, connect_args={
