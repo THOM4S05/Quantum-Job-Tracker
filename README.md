@@ -10,20 +10,20 @@ Screenshots from the running React/FastAPI application backed by PostgreSQL, usi
 
 Search by job ID or external reference, combine status/provider/date filters, and page through 200 seeded jobs. Status badges make the different outcomes easy to scan.
 
-![Quantum Job Tracker jobs workspace showing search filters, provider and status selectors, and a paginated table of synthetic jobs](docs/images/jobs-overview.png)
+![Quantum Job Tracker jobs workspace showing search filters, provider and status selectors, and a paginated table of synthetic jobs](docs/images/quantum-job-tracker-jobs-overview.png)
 
 ### Investigate a failure
 
 Open a job to inspect its submission details, timestamps, recorded failure stage, error code, and correlation ID. This example shows the synthetic compilation failure for `SYN-0005`.
 
-![Job details for SYN-0005 showing the job overview and recorded compilation failure evidence](docs/images/job-investigation.png)
+![Job details for SYN-0005 showing the job overview and recorded compilation failure evidence](docs/images/quantum-job-tracker-job-investigation.png)
 
 <details>
 <summary><strong>Explore the lifecycle timeline and structured diagnostics</strong></summary>
 
 Follow ordered state transitions from submission to failure, with event actors, timestamps, correlation IDs, and expandable JSON diagnostics.
 
-![Ordered lifecycle timeline showing submission, compilation, failure, and expanded structured JSON diagnostics](docs/images/lifecycle-diagnostics.png)
+![Ordered lifecycle timeline showing submission, compilation, failure, and expanded structured JSON diagnostics](docs/images/quantum-job-tracker-lifecycle-diagnostics.png)
 
 </details>
 
