@@ -2,19 +2,22 @@
 
 Quantum Job Tracker is a portfolio application for investigating and managing **synthetic quantum jobs**. All providers, execution results, durations, and failures are simulated. Quantum Job Tracker has no connection to Horizon Quantum systems or any real quantum service.
 
-## Interactive browser demo
+## Try the live site
 
-The GitHub Pages build runs entirely in your browser: explore 200 synthetic jobs, filter and inspect their evidence, or create a personal experiment with a chosen simulated outcome. Personal runs persist in browser storage (up to 100); **Reset playground** removes them and restores the sample workspace. Outcomes are generated immediately, with fictional lifecycle timestamps; no quantum hardware or background worker runs. Visitors have independent playgrounds.
+**[Open the interactive Quantum Job Tracker demo →](https://thom4s05.github.io/Quantum-Job-Tracker/)**
 
-### Publish on GitHub Pages
+No installation or account needed. The site is hosted on GitHub Pages and runs entirely in your browser.
 
-The included [deployment workflow](.github/workflows/pages.yml) tests and builds the demo on pushes to `main`, then publishes it to GitHub Pages. In the repository's **Settings → Pages → Build and deployment**, select **GitHub Actions** as the source. Push these changes, or run **Deploy interactive demo** from the Actions tab. After a successful deployment, the site will be available at:
+- Browse 200 sample jobs and filter by status, provider, submission date, or exact ID/reference.
+- Search for `syn-0005` and open the job to investigate a compilation failure and its lifecycle timeline.
+- Enter an experiment name, choose a simulated outcome, and select **Create simulated run** to inspect your own run.
+- Select **Reset playground** to remove your personal runs and return to the sample workspace.
 
-**https://THOM4S05.github.io/Quantum-Job-Tracker/**
+Outcomes include success, compilation/queueing/execution failure, queued, running, and cancelled. Outcomes are generated immediately with fictional lifecycle timestamps; queued and running jobs remain in those states. No quantum hardware or background worker runs.
 
-This is the intended deployment address; a successful Actions deployment confirms it is live. Pull requests run tests and build without publishing. Relative asset paths and query-based job links support the repository subdirectory, direct links, reloads, and browser Back/Forward without server routing rules.
+Each visitor has an independent playground. Up to 100 personal runs are saved in that browser's local storage when available; clearing browser data removes them. Sample-job links can be shared, but personal runs are available only in the browser where they were created. Browser-demo job IDs are separate from the local database fixtures.
 
-To try the playground locally:
+### Run the playground locally
 
 ```sh
 cd frontend
@@ -22,7 +25,13 @@ npm ci
 npm run dev:demo
 ```
 
-Open http://127.0.0.1:5174. To produce the static site, run `npm run build:demo`; upload the contents of `frontend/dist` to any static host. The normal `npm run build`, Docker setup, and API-backed app continue to use FastAPI/PostgreSQL. Demo behavior is enabled only by `VITE_DEMO_MODE=true`; no database connection or credentials are included in the static deployment.
+Open [the local playground](http://127.0.0.1:5174). To produce the static site, run `npm run build:demo`; the output is `frontend/dist` when viewed from the repository root. Demo behavior is enabled by `VITE_DEMO_MODE=true`; the static deployment contains no database connection or credentials.
+
+### GitHub Pages deployment
+
+GitHub Pages is enabled for this repository. The [deployment workflow](.github/workflows/pages.yml) tests and builds the demo on pushes to `main`, then publishes it automatically. Pull requests run tests and build without publishing. You can also run **Deploy interactive demo** from the [Actions tab](https://github.com/THOM4S05/Quantum-Job-Tracker/actions/workflows/pages.yml).
+
+For a fork, select **GitHub Actions** under **Settings → Pages → Build and deployment** before running the workflow. Relative asset paths and query-based job links support repository subdirectories, direct links, reloads, and browser Back/Forward without server routing rules.
 
 ## See it in action
 
@@ -51,13 +60,15 @@ Follow ordered state transitions from submission to failure, with event actors, 
 
 ## Current status
 
-The React/TypeScript jobs page now searches and paginates real PostgreSQL data through FastAPI. Filters persist in the URL, and the page polls every five seconds while visible. The database contains jobs, ordered events, lifecycle protection, immutable external references, and deterministic fixtures. Job details now show recorded failure evidence and the ordered event history. Worker execution, operator actions, and authentication remain future stages.
+The public GitHub Pages demo supports browsing, evidence inspection, and creating browser-local simulated runs. The full local application uses the same React/TypeScript interface to search and paginate PostgreSQL data through FastAPI. Filters persist in the URL, and the page polls every five seconds while visible. The database contains jobs, ordered events, lifecycle protection, immutable external references, and deterministic fixtures. Job details now show recorded failure evidence and the ordered event history. Backend worker execution, operator actions such as retry/cancel, and authentication remain future stages. Creating a simulated run in the public playground does not submit a job to the backend.
 
 - [Requirements and acceptance criteria](docs/requirements.md)
 - [Architecture and lifecycle](docs/architecture.md)
 - [Progress, checks, and staged delivery plan](docs/progress.md)
 
-## Startup
+## Run the full application locally
+
+The following sections describe the FastAPI/PostgreSQL application. The public browser demo above works independently of this setup.
 
 The app is named **Quantum Job Tracker**. Existing local database/user names, the Compose project name, and historical seed identifiers retain their original internal values to preserve stored jobs, volumes, and deterministic fixture IDs.
 
@@ -229,6 +240,6 @@ Use a PostgreSQL database account permitted to create/drop schemas. If credentia
 
 Tests cover all 36 state pairs, database terminal protection, real transaction rollback, event insert failure, sequence uniqueness, immutable history, stale versions, retry foreign keys, migrations up/down and model agreement, seed determinism/idempotency, and both completion/cancellation commit orders. Offline migration SQL generation alone does not apply a migration to a database. Python dependency constraints and the npm lockfile record resolved versions; container base images are pinned to release lines rather than immutable digests.
 
-The details stage passed 85 backend tests (including real PostgreSQL evidence/history checks), 19 React tests, and the Playwright failure-investigation workflow against the live stack. React tests mock HTTP responses only inside the test suite; the running UI always calls FastAPI/PostgreSQL. Production build and dependency audit passed. Exact live-stack/browser check results and remaining limitations are recorded in [progress](docs/progress.md).
+The details stage passed 85 backend tests (including real PostgreSQL evidence/history checks), 19 React tests, and the Playwright failure-investigation workflow against the live stack. The API-backed React tests mock HTTP responses inside the test suite; the normal local application calls FastAPI/PostgreSQL. The public playground uses browser-generated data, covered by additional tests for filtering, pagination, histories, personal runs, and reset. The playground release passed all 24 frontend tests and both production builds, with browser checks for creating a run, inspecting its failure, resetting, and searching. Production build and dependency audit passed. Exact live-stack/browser check results and remaining limitations are recorded in [progress](docs/progress.md).
 
 The initial application will use polling. Redis, Kubernetes, additional services, and real quantum SDKs are outside the plan.
