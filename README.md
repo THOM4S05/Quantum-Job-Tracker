@@ -1,23 +1,23 @@
 # Quantum Job Tracker
 
-Quantum Job Tracker is a portfolio application for investigating and managing **synthetic quantum jobs**. All providers, execution results, durations, and failures are simulated. Quantum Job Tracker has no connection to Horizon Quantum systems or any real quantum service.
+Quantum Job Tracker displays **synthetic quantum jobs**, their recorded outcomes, and lifecycle events. All providers, execution results, durations, and failures are simulated. Quantum Job Tracker has no connection to Horizon Quantum systems or any real quantum service.
 
-## Try the live site
+## Browser demo
 
-**[Open the interactive Quantum Job Tracker demo →](https://thom4s05.github.io/Quantum-Job-Tracker/)**
+[Open the browser demo](https://thom4s05.github.io/Quantum-Job-Tracker/)
 
-No installation or account needed. The site is hosted on GitHub Pages and runs entirely in your browser.
+The demo is hosted on GitHub Pages and runs in the browser. It requires no installation or sign-in.
 
 - Browse 200 sample jobs and filter by status, provider, submission date, or exact ID/reference.
 - Search for `syn-0005` and open the job to investigate a compilation failure and its lifecycle timeline.
 - Enter an experiment name, choose a simulated outcome, and select **Create simulated run** to inspect your own run.
-- Select **Reset playground** to remove your personal runs and return to the sample workspace.
+- Select **Reset demo** to remove your personal runs and return to the sample workspace.
 
 Outcomes include success, compilation/queueing/execution failure, queued, running, and cancelled. Outcomes are generated immediately with fictional lifecycle timestamps; queued and running jobs remain in those states. No quantum hardware or background worker runs.
 
-Each visitor has an independent playground. Up to 100 personal runs are saved in that browser's local storage when available; clearing browser data removes them. Sample-job links can be shared, but personal runs are available only in the browser where they were created. Browser-demo job IDs are separate from the local database fixtures.
+Personal runs are stored separately for each browser. Up to 100 personal runs are saved in that browser's local storage when available; clearing browser data removes them. Sample-job links can be shared, but personal runs are available only in the browser where they were created. Browser-demo job IDs are separate from the local database fixtures.
 
-### Run the playground locally
+### Run the browser demo locally
 
 ```sh
 cd frontend
@@ -25,7 +25,7 @@ npm ci
 npm run dev:demo
 ```
 
-Open [the local playground](http://127.0.0.1:5174). To produce the static site, run `npm run build:demo`; the output is `frontend/dist` when viewed from the repository root. Demo behavior is enabled by `VITE_DEMO_MODE=true`; the static deployment contains no database connection or credentials.
+Open [the local browser demo](http://127.0.0.1:5174). To produce the static site, run `npm run build:demo`; the output is `frontend/dist` when viewed from the repository root. Demo behavior is enabled by `VITE_DEMO_MODE=true`; the static deployment contains no database connection or credentials.
 
 ### GitHub Pages deployment
 
@@ -33,13 +33,13 @@ GitHub Pages is enabled for this repository. The [deployment workflow](.github/w
 
 For a fork, select **GitHub Actions** under **Settings → Pages → Build and deployment** before running the workflow. Relative asset paths and query-based job links support repository subdirectories, direct links, reloads, and browser Back/Forward without server routing rules.
 
-## See it in action
+## Screenshots
 
 Screenshots from the running React/FastAPI application backed by PostgreSQL, using the included synthetic demonstration data.
 
 ### Browse and filter jobs
 
-Search by job ID or external reference, combine status/provider/date filters, and page through 200 seeded jobs. Status badges make the different outcomes easy to scan.
+Search by job ID or external reference, combine status/provider/date filters, and page through 200 seeded jobs. Status badges show each job's current state.
 
 ![Quantum Job Tracker jobs workspace showing search filters, provider and status selectors, and a paginated table of synthetic jobs](docs/images/quantum-job-tracker-jobs-overview.png)
 
@@ -50,7 +50,7 @@ Open a job to inspect its submission details, timestamps, recorded failure stage
 ![Job details for SYN-0005 showing the job overview and recorded compilation failure evidence](docs/images/quantum-job-tracker-job-investigation.png)
 
 <details>
-<summary><strong>Explore the lifecycle timeline and structured diagnostics</strong></summary>
+<summary><strong>Lifecycle timeline and structured diagnostics</strong></summary>
 
 Follow ordered state transitions from submission to failure, with event actors, timestamps, correlation IDs, and expandable JSON diagnostics.
 
@@ -60,7 +60,7 @@ Follow ordered state transitions from submission to failure, with event actors, 
 
 ## Current status
 
-The public GitHub Pages demo supports browsing, evidence inspection, and creating browser-local simulated runs. The full local application uses the same React/TypeScript interface to search and paginate PostgreSQL data through FastAPI. Filters persist in the URL, and the page polls every five seconds while visible. The database contains jobs, ordered events, lifecycle protection, immutable external references, and deterministic fixtures. Job details now show recorded failure evidence and the ordered event history. Backend worker execution, operator actions such as retry/cancel, and authentication remain future stages. Creating a simulated run in the public playground does not submit a job to the backend.
+The public GitHub Pages demo supports browsing, evidence inspection, and creating browser-local simulated runs. The full local application uses the same React/TypeScript interface to search and paginate PostgreSQL data through FastAPI. Filters persist in the URL, and the page polls every five seconds while visible. The database contains jobs, ordered events, lifecycle protection, immutable external references, and deterministic fixtures. Job details now show recorded failure evidence and the ordered event history. Backend worker execution, operator actions such as retry/cancel, and authentication remain future stages. Creating a simulated run in the public browser demo does not submit a job to the backend.
 
 - [Requirements and acceptance criteria](docs/requirements.md)
 - [Architecture and lifecycle](docs/architecture.md)
@@ -116,7 +116,7 @@ The frontend now lists the seeded jobs. Existing demo fixtures receive reference
 
 ## Browse and search jobs
 
-Open [Jobs](http://localhost:5173). Apply any combination of status, provider, UTC submission dates, and an exact ID/reference. Try `syn-0005` to find a seeded compilation failure. Clear filters to return to the full list. Applying filters or a new page size starts at page 1; Previous/Next retain applied filters. Copy the URL to share or reopen the same view; browser Back/Forward restores the filters.
+Open [Jobs](http://localhost:5173). Apply any combination of status, provider, UTC submission dates, and an exact ID/reference. Search for `syn-0005` to find a seeded compilation failure. Clear filters to return to the full list. Applying filters or a new page size starts at page 1; Previous/Next retain applied filters. Copy the URL to share or reopen the same view; browser Back/Forward restores the filters.
 
 The page polls every five seconds after each response, pauses recurring requests in hidden tabs, cancels obsolete requests, and retains the last successful results with an explicit warning if refresh fails. Loading, empty, out-of-range page, validation error, and service error states are distinct. All submission times and date bounds use UTC. Select a job name to open its details; the details URL retains the applied list filters.
 
@@ -140,7 +140,7 @@ The endpoint is currently read-only local demo access; role enforcement will be 
 
 ## Investigate a job
 
-Filter the [jobs list for failed jobs](http://localhost:5173/?status=failed), then select a job name. Try `SYN-0005` for a seeded compilation failure. The details page shows current status, provider/target, UTC timestamps, recorded error stage/code/explanation, and an ordered lifecycle timeline. Expand an event's structured diagnostics to inspect the stored JSON. Correlation IDs are displayed per event; the failure panel uses the recorded failure event's ID rather than assuming one global job correlation ID.
+Filter the [jobs list for failed jobs](http://localhost:5173/?status=failed), then select a job name. Search for `SYN-0005` for a seeded compilation failure. The details page shows current status, provider/target, UTC timestamps, recorded error stage/code/explanation, and an ordered lifecycle timeline. Expand an event's structured diagnostics to inspect the stored JSON. Correlation IDs are displayed per event; the failure panel uses the recorded failure event's ID rather than assuming one global job correlation ID.
 
 The explanation is the stored error message, not an AI root-cause conclusion. Missing fields are labeled **Not recorded**; empty diagnostics and absent events have explicit messages. An inconsistent or incomplete event history is flagged rather than reconstructed. Unknown jobs show a missing-job state; malformed IDs and service failures have distinct feedback. If refresh fails, previously loaded evidence is marked as stale.
 
@@ -240,6 +240,6 @@ Use a PostgreSQL database account permitted to create/drop schemas. If credentia
 
 Tests cover all 36 state pairs, database terminal protection, real transaction rollback, event insert failure, sequence uniqueness, immutable history, stale versions, retry foreign keys, migrations up/down and model agreement, seed determinism/idempotency, and both completion/cancellation commit orders. Offline migration SQL generation alone does not apply a migration to a database. Python dependency constraints and the npm lockfile record resolved versions; container base images are pinned to release lines rather than immutable digests.
 
-The details stage passed 85 backend tests (including real PostgreSQL evidence/history checks), 19 React tests, and the Playwright failure-investigation workflow against the live stack. The API-backed React tests mock HTTP responses inside the test suite; the normal local application calls FastAPI/PostgreSQL. The public playground uses browser-generated data, covered by additional tests for filtering, pagination, histories, personal runs, and reset. The playground release passed all 24 frontend tests and both production builds, with browser checks for creating a run, inspecting its failure, resetting, and searching. Production build and dependency audit passed. Exact live-stack/browser check results and remaining limitations are recorded in [progress](docs/progress.md).
+The details stage passed 85 backend tests (including real PostgreSQL evidence/history checks), 19 React tests, and the Playwright failure-investigation workflow against the live stack. The API-backed React tests mock HTTP responses inside the test suite; the normal local application calls FastAPI/PostgreSQL. The public browser demo uses browser-generated data, covered by additional tests for filtering, pagination, histories, personal runs, and reset. The browser demo release passed all 24 frontend tests and both production builds, with browser checks for creating a run, inspecting its failure, resetting, and searching. Production build and dependency audit passed. Exact live-stack/browser check results and remaining limitations are recorded in [progress](docs/progress.md).
 
 The initial application will use polling. Redis, Kubernetes, additional services, and real quantum SDKs are outside the plan.

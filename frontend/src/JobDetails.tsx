@@ -89,7 +89,7 @@ export function JobDetails({ jobId, backHref }: { jobId: string; backHref: strin
         <p className="workspace-label">WORKSPACE</p>
         <a className="nav-item active" href={backHref}><span aria-hidden="true">▦</span> Jobs</a>
         <div className="sidebar-note"><span className="sidebar-note-icon" aria-hidden="true">◇</span><strong>Synthetic environment</strong><p>Investigate recorded evidence from fictional runs.</p></div>
-        <div className="sidebar-bottom"><span className="brand-footer">Quantum Job Tracker</span><span>{isDemo ? 'Browser playground' : 'Local workspace'}</span></div>
+        <div className="sidebar-bottom"><span className="brand-footer">Quantum Job Tracker</span><span>{isDemo ? 'Browser demo' : 'Local workspace'}</span></div>
       </aside>
       <div className="workspace">
         <div className="topbar"><span>Workspace <span className="breadcrumb-divider">/</span><a href={backHref}>Jobs</a><span className="breadcrumb-divider">/</span><strong>Details</strong></span><span className="environment-badge">Synthetic environment</span></div>

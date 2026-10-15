@@ -2,7 +2,7 @@
 
 ## Purpose and scope
 
-Quantum Job Tracker is a portfolio application for investigating and managing synthetic quantum jobs. Its MVP provides job search, details and history, deterministic simulation, safe cancellation and retry, viewer/operator permissions, and basic operational health.
+Quantum Job Tracker is an application for investigating and managing synthetic quantum jobs. Its MVP provides job search, details and history, deterministic simulation, safe cancellation and retry, viewer/operator permissions, and basic operational health.
 
 Every provider and quantum job is synthetic. The UI, seed data, and README must clearly label this; they must not imply access to Horizon Quantum systems. No real quantum SDKs, credentials, devices, or provider integrations are required.
 
@@ -104,4 +104,4 @@ As a viewer or operator, I can distinguish an idle system from a stalled one.
 
 ## Later stages and exclusions
 
-GitHub issue linking follows the MVP and requires a separate integration design. Delivery polish follows that: usability, accessibility, error presentation, deployment documentation, and a concise portfolio demonstration. Neither stage authorizes real quantum integration. Advanced scheduling, provider billing, multi-tenancy, live hardware, production SSO, and distributed worker fleets are outside the current scope.
+GitHub issue linking follows the MVP and requires a separate integration design. Delivery polish follows that: usability, accessibility, error presentation, deployment documentation, and documented example workflows. Neither stage authorizes real quantum integration. Advanced scheduling, provider billing, multi-tenancy, live hardware, production SSO, and distributed worker fleets are outside the current scope.

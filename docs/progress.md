@@ -57,7 +57,7 @@ The project is named Quantum Job Tracker. All seeded and future quantum jobs and
 - [ ] **Stage 6 — GitHub issue linking (later)**
   - Separately scope issue associations, credentials, permissions, failure behavior, and integration checks.
 - [ ] **Stage 7 — Delivery polish (later)**
-  - Responsive presentation, accessibility, error messages, portfolio demonstration, and verified delivery documentation.
+  - Responsive presentation, accessibility, error messages, example workflows, and verified delivery documentation.
 
 ## What works now
 

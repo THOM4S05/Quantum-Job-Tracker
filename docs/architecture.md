@@ -108,7 +108,7 @@ Retries are modeled by nullable references only; no retry action is implemented 
 
 Use 401 for missing/invalid identity, 403 for insufficient role, 404 for unknown jobs, 409 for state or idempotency conflict, and 422 for invalid inputs. Creation returns 201; an idempotent replay returns 200 with the existing job. Cancellation returns 200 with the authoritative state, which may still be `cancel_requested`. Return structured errors suitable for UI feedback without internal stack traces.
 
-Demo authentication uses server-side password verification and signed tokens with validated expiry and role. Keep the signing secret in environment configuration. Restrict local CORS origins explicitly. This design is for local portfolio use; public deployment and production identity design belong to a later reviewed scope.
+Demo authentication uses server-side password verification and signed tokens with validated expiry and role. Keep the signing secret in environment configuration. Restrict local CORS origins explicitly. This design is for local demonstration use; public deployment and production identity design belong to a later reviewed scope.
 
 ## Checks to implement
 
