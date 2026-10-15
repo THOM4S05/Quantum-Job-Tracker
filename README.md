@@ -2,6 +2,31 @@
 
 QTrace is a portfolio application for investigating and managing **synthetic quantum jobs**. All providers, execution results, durations, and failures are simulated. QTrace has no connection to Horizon Quantum systems or any real quantum service.
 
+## See it in action
+
+Screenshots from the running React/FastAPI application backed by PostgreSQL, using the included synthetic demonstration data.
+
+### Browse and filter jobs
+
+Search by job ID or external reference, combine status/provider/date filters, and page through 200 seeded jobs. Status badges make the different outcomes easy to scan.
+
+![QTrace jobs workspace showing search filters, provider and status selectors, and a paginated table of synthetic jobs](docs/images/jobs-overview.png)
+
+### Investigate a failure
+
+Open a job to inspect its submission details, timestamps, recorded failure stage, error code, and correlation ID. This example shows the synthetic compilation failure for `SYN-0005`.
+
+![Job details for SYN-0005 showing the job overview and recorded compilation failure evidence](docs/images/job-investigation.png)
+
+<details>
+<summary><strong>Explore the lifecycle timeline and structured diagnostics</strong></summary>
+
+Follow ordered state transitions from submission to failure, with event actors, timestamps, correlation IDs, and expandable JSON diagnostics.
+
+![Ordered lifecycle timeline showing submission, compilation, failure, and expanded structured JSON diagnostics](docs/images/lifecycle-diagnostics.png)
+
+</details>
+
 ## Current status
 
 The React/TypeScript jobs page now searches and paginates real PostgreSQL data through FastAPI. Filters persist in the URL, and the page polls every five seconds while visible. The database contains jobs, ordered events, lifecycle protection, immutable external references, and deterministic fixtures. Job details now show recorded failure evidence and the ordered event history. Worker execution, operator actions, and authentication remain future stages.
