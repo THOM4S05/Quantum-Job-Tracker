@@ -11,6 +11,7 @@ from app.database import metadata
 STATUSES = ("queued", "running", "cancel_requested", "succeeded", "failed", "cancelled")
 TERMINAL = frozenset({"succeeded", "failed", "cancelled"})
 STAGES = ("submission", "compilation", "queueing", "execution", "cancellation")
+# Finished jobs have no next status
 TRANSITIONS = {
     "queued": frozenset({"running", "cancelled"}),
     "running": frozenset({"succeeded", "failed", "cancel_requested"}),
@@ -45,6 +46,7 @@ jobs = Table(
     Column("error_stage", String(24)),
     Column("retry_of", UUID(as_uuid=True), ForeignKey("jobs.id", ondelete="RESTRICT")),
     Column("original_job_id", UUID(as_uuid=True), ForeignKey("jobs.id", ondelete="RESTRICT")),
+    # Check job data here too in case a write skips the app checks
     CheckConstraint(f"status IN {STATUSES}", name="ck_jobs_status"),
     CheckConstraint("version >= 1", name="ck_jobs_version"),
     CheckConstraint("external_reference IS NULL OR length(trim(external_reference)) > 0",

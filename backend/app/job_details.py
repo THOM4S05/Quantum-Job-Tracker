@@ -55,6 +55,7 @@ router = APIRouter()
 @router.get("/jobs/{job_id}", response_model=JobEvidence)
 def get_job(job_id: UUID, request: Request) -> dict:
     try:
+        # Read the job and events together so new writes cannot mix old and new data
         with request.app.state.engine.connect().execution_options(isolation_level="REPEATABLE READ") as connection:
             with connection.begin():
                 job = connection.execute(select(jobs).where(jobs.c.id == job_id)).mappings().one_or_none()
@@ -65,6 +66,7 @@ def get_job(job_id: UUID, request: Request) -> dict:
     except SQLAlchemyError:
         raise HTTPException(status_code=503, detail="Job evidence is temporarily unavailable. Please try again.") from None
     # This checks the recorded history, not whether diagnostics explain a cause.
+    # Check for missing events and make sure the history matches the job
     complete = (
         len(events) == job["version"]
         and all(event["sequence"] == index for index, event in enumerate(events, start=1))

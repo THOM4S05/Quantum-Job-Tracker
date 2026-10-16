@@ -53,6 +53,7 @@ export function JobDetails({ jobId, backHref }: { jobId: string; backHref: strin
       try {
         const response = await request(`/api/jobs/${encodeURIComponent(jobId)}`, { signal: controller.signal, cache: 'no-store' });
         if (response.status === 404 || response.status === 422) {
+          // Stop checking missing or bad IDs until the page loads again
           permanent = true;
           if (!stopped) setState({ jobId, data: null, loading: false, problem: response.status === 404 ? 'not-found' : 'invalid', checked: null });
           return;
@@ -66,6 +67,7 @@ export function JobDetails({ jobId, backHref }: { jobId: string; backHref: strin
           setState({ jobId, data, loading: false, problem: null, checked });
         }
       } catch {
+        // Keep the last good job data on screen if an update fails
         if (!stopped) setState({ jobId, data, loading: false, problem: 'unavailable', checked });
       } finally {
         clearTimeout(timeout);
@@ -76,9 +78,11 @@ export function JobDetails({ jobId, backHref }: { jobId: string; backHref: strin
     return () => { stopped = true; clearTimeout(timer); controller?.abort(); };
   }, [jobId, refresh]);
 
+  // Hide the old job while the new one loads
   const current = state.jobId === jobId ? state : { jobId, data: null, loading: true, problem: null, checked: null };
   const evidence = current.data;
   const job = evidence?.job;
+  // Find the last failure event and keep the timeline in order
   const failure = evidence?.events.slice().reverse().find((event) => event.to_status === 'failed' && event.from_status !== 'failed');
   const lineageHref = (id: string) => jobHref(id, backHref.split('?')[1] ?? '');
 

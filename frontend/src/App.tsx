@@ -32,6 +32,7 @@ function readFilters(query: string): Filters {
     page_size: params.get('page_size') ?? '25' };
 }
 
+// Leave defaults out so shared links stay short
 function encodeFilters(filters: Filters): string {
   const params = new URLSearchParams();
   for (const [key, value] of Object.entries(filters)) {
@@ -51,6 +52,7 @@ function useJobs(query: string, refresh: number) {
     let checked: string | null = null;
     setResult({ query, data, loading: true, error: null, checked });
     async function load(initial = false) {
+      // Pause updates while the tab is hidden
       if (document.visibilityState === 'hidden' && !initial) {
         timer = setTimeout(() => void load(), 5000);
         return;
@@ -69,16 +71,20 @@ function useJobs(query: string, refresh: number) {
           setResult({ query, data, loading: false, error: null, checked });
         }
       } catch (error) {
+        // Keep the last good results on screen if an update fails
         if (!stopped) setResult({ query, data, loading: false,
           error: error instanceof Error && error.message.startsWith('Some filters') ? error.message : 'Jobs could not be loaded. Please try again.', checked });
       } finally {
         clearTimeout(timeout);
+        // Wait for this request to finish before starting the next timer
         if (!stopped) timer = setTimeout(() => void load(), 5000);
       }
     }
     void load(true);
+    // Ignore late replies when filters change or the page closes
     return () => { stopped = true; clearTimeout(timer); controller?.abort(); };
   }, [query, refresh]);
+  // Hide old results as soon as the search changes
   return result.query === query ? result : { query, data: null, loading: true, error: null, checked: null };
 }
 
@@ -88,6 +94,7 @@ function utcTime(value: string) {
 
 function JobsList() {
   const [query, setQuery] = useState(() => window.location.search.slice(1));
+  // Keep form edits here until Apply updates the link and results
   const [draft, setDraft] = useState(() => readFilters(query));
   const [refresh, setRefresh] = useState(0);
   const result = useJobs(query, refresh);
@@ -112,6 +119,7 @@ function JobsList() {
   function clear() { navigate({ q: '', status: '', provider: '', submitted_from: '', submitted_to: '', page: '1', page_size: '25' }); }
   function field(key: keyof Filters, value: string) { setDraft((previous) => ({ ...previous, [key]: value })); }
 
+  // Keep the chosen provider in the list while results load
   const providers = [...new Set([...(data?.providers ?? []), ...(draft.provider ? [draft.provider] : [])])].sort();
   const first = data && data.items.length ? (data.page - 1) * data.page_size + 1 : 0;
   const last = data && data.items.length ? first + data.items.length - 1 : 0;

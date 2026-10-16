@@ -20,6 +20,7 @@ export function makeDemoJob(index: number, scenario: Scenario, created: string, 
     seed: 10000 + index, simulation_version: 'browser-v1', result: null,
     error_code: null, error_message: null, error_stage: null,
   };
+  // Update the job and its history together so they always agree
   function record(status: Job['status'], stage: string, seconds: number, message: string) {
     events.push({ id: `${id}-${events.length + 1}`, job_id: id, sequence: events.length + 1,
       occurred_at: at(seconds), stage, from_status: events.length ? job.status : null, to_status: status,
@@ -55,6 +56,7 @@ export function makeDemoJob(index: number, scenario: Scenario, created: string, 
   return { job, events, history_complete: true };
 }
 
+// Use the same dates and outcomes each time the sample jobs are made
 const fixtures = Array.from({ length: 200 }, (_, index) => {
   const bucket = index % 10;
   return makeDemoJob(index, bucket < 4 ? 'success' : scenarios[bucket - 3],
@@ -93,6 +95,7 @@ export async function demoRequest(path: string): Promise<Response> {
   const to = params.get('submitted_to');
   const page = Number(params.get('page') ?? 1);
   const pageSize = Number(params.get('page_size') ?? 25);
+  // Check the date stays the same after parsing to catch days like 30 February
   const validDate = (value: string | null) => !value || (/^\d{4}-\d{2}-\d{2}$/.test(value) && !Number.isNaN(Date.parse(value)) && new Date(value).toISOString().slice(0, 10) === value);
   if ((status && !['queued', 'running', 'cancel_requested', 'succeeded', 'failed', 'cancelled'].includes(status)) ||
       !validDate(from) || !validDate(to) || (from && to && from > to) ||

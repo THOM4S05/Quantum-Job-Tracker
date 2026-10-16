@@ -36,6 +36,7 @@ def seed_jobs(connection: Connection) -> dict[str, int]:
             skipped += 1
             continue
         created = BASE_TIME + timedelta(minutes=index * 7)
+        # Every ten jobs have four successes and one of each other outcome
         bucket = index % 10
         scenario = (
             "success" if bucket < 4 else
@@ -78,6 +79,7 @@ def seed_jobs(connection: Connection) -> dict[str, int]:
                             message=f"Synthetic {stage} checkpoint", details={"step": step, "synthetic": True},
                             at=at, **common)
         else:
+            # Only run this if no stage failed and stopped the loop
             if scenario == "success":
                 transition_job(connection, job_id, "succeeded", stage="execution",
                                message="Synthetic execution completed",

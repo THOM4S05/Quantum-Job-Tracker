@@ -40,6 +40,7 @@ def _event(connection: Connection, job: dict, *, previous: str | None,
         raise ValueError("Unknown event stage")
     if not isinstance(details, dict):
         raise ValueError("Event details must be an object")
+    # Use the job version to set the event ID and its place in the history
     connection.execute(insert(job_events).values(
         id=uuid5(job["id"], f"event:{job['version']}"), job_id=job["id"],
         sequence=job["version"], occurred_at=job["updated_at"], stage=stage,
@@ -72,9 +73,11 @@ def create_job(connection: Connection, *, name: str, provider: str, target: str,
 
 
 def _locked_job(connection: Connection, job_id: UUID, expected_version: int | None) -> dict:
+    # Lock the row so two writes cannot change the job at once
     row = connection.execute(select(jobs).where(jobs.c.id == job_id).with_for_update()).mappings().one_or_none()
     if row is None:
         raise LookupError(f"Unknown job {job_id}")
+    # Block changes if the job has changed since it was last read
     if expected_version is not None and row["version"] != expected_version:
         raise VersionConflict("Job version changed")
     return dict(row)
@@ -88,6 +91,7 @@ def _change(connection: Connection, job_id: UUID, *, to_status: str | None,
     _require_transaction(connection)
     with connection.begin_nested():
         old = _locked_job(connection, job_id, expected_version)
+        # Add a progress event without changing the job status
         progress = to_status is None
         target = old["status"] if progress else to_status
         if progress:
@@ -104,6 +108,7 @@ def _change(connection: Connection, job_id: UUID, *, to_status: str | None,
                 raise InvalidTransition("Failure requires an execution stage, code, and message")
         elif error_code is not None or error_message is not None:
             raise InvalidTransition("Only failed jobs may have error information")
+        # Only successful jobs should have a result
         if (target == "succeeded") != (result is not None):
             raise InvalidTransition("A result is required exactly when succeeding")
         now = _timestamp(connection, at)

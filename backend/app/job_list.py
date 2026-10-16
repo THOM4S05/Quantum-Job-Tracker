@@ -81,9 +81,11 @@ def list_jobs(request: Request, filters: Annotated[JobFilters, Query()]) -> dict
         conditions.append(jobs.c.provider == filters.provider)
     if filters.submitted_from:
         conditions.append(jobs.c.created_at >= datetime.combine(filters.submitted_from, time.min, timezone.utc))
+    # Stop at the next midnight to include the whole end date in UTC
     if filters.submitted_to:
         conditions.append(jobs.c.created_at < datetime.combine(filters.submitted_to + timedelta(days=1), time.min, timezone.utc))
     if filters.q:
+        # Ignore letter case for references and check job IDs when the format fits
         matches = [func.lower(jobs.c.external_reference) == filters.q.lower()]
         try:
             matches.append(jobs.c.id == UUID(filters.q))
@@ -95,6 +97,7 @@ def list_jobs(request: Request, filters: Annotated[JobFilters, Query()]) -> dict
         with request.app.state.engine.connect().execution_options(isolation_level="REPEATABLE READ") as connection:
             with connection.begin():
                 total = connection.scalar(select(func.count()).select_from(jobs).where(*conditions))
+                # Use the ID to sort jobs with the same time so their order stays the same
                 items = connection.execute(select(
                     jobs.c.id, jobs.c.name, jobs.c.provider, jobs.c.target,
                     jobs.c.external_reference, jobs.c.status, jobs.c.created_at,
