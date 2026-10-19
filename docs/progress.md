@@ -1,12 +1,109 @@
 # Quantum Job Tracker progress
 
+## Publication and implementation notes — 19 October 2026
+
+The release includes the compiler/resource metadata, experiment fixtures, operational overview, and an optional **How it works** page linked from jobs, details and overview. The implementation guide maps Python, React, PostgreSQL/SQL, FastAPI/HTTP, async behaviour, message brokers and Git/CI/CD to code references and discussion questions. NATS/MQTT and a job worker remain unimplemented; the public site uses browser data, while the local API uses synchronous PostgreSQL access. The 56-job compiler comparison dataset remains a local backend seed profile, not a browser fixture.
+
+CI now runs the full Python suite against a temporary PostgreSQL 17 service, alongside frontend tests and the static build. Deployment requires both jobs to pass. It publishes only the static site; backend deployment and production database migrations are outside this workflow.
+
+Pre-push verification: **127 backend tests passed** against disposable PostgreSQL schemas, **34 frontend tests passed**, both normal and browser-demo production builds passed, and **2 Playwright workflows passed** using Chrome against the running local API/database stack. The existing Starlette/AnyIO deprecation warning remains. No new worker, broker, login or operator action is claimed.
+
 ## Current status
 
-Job details and the failure-investigation workflow are complete on top of the searchable jobs list. The details stage passed 85 backend tests, 19 frontend tests, production/container builds, and a Playwright workflow against the live PostgreSQL stack using installed Chrome. Worker execution, authentication, and operator actions remain deferred.
+The operational overview stage is complete on top of the compiler/resource metadata and deterministic experiment dataset. It reads actual PostgreSQL job snapshots, applies shared submission-date/target/compiler/experiment filters, and shows four metric cards plus clickable failure-stage and target breakdowns. Missing observations remain unavailable and all data is labelled synthetic. Definitions are in `docs/metrics.md`; no worker, schema migration, authentication or operator action was added.
 
 The project is named Quantum Job Tracker. All seeded and future quantum jobs and providers are synthetic; nothing connects to Horizon Quantum systems.
 
+## Overview readability follow-up — 19 October 2026
+
+Changed **Metric definitions and exclusions** into six spaced bullet points, retaining the same definitions. The focused overview suite passed **6 tests**. No known limitation or blocker was introduced; the next planned stage remains permission foundation.
+
+## Operational overview — 19 October 2026
+
+- [x] Reinspected project instructions, README, architecture, job list/details, metadata, seeds/experiment profile, static demo and tests. No `AGENTS.md` is present. Preserved existing uncommitted work from the earlier stages.
+- [x] Defined success denominators, schema adaptation, cancellation/pending/unknown exclusions, timing samples, units and submission-cohort semantics before implementing calculations in `docs/metrics.md`.
+- [x] Added read-only `GET /overview` using actual job data in one repeatable-read PostgreSQL snapshot. Calculations cover the complete cohort, not a page. Explicit failure stage distinguishes compilation failures from later failures.
+- [x] Shared submission-time/date, target, compiler-version and experiment validation/predicates/options between overview and jobs endpoints. Added explicit failure-stage job filtering for drill-downs.
+- [x] Added URL-persisted React overview with four cards, denominator/sample counts, exclusion details, null-state messages, shared filters, five-second visible-tab polling, loading/error/retry/stale behavior, and two simple linked bar charts.
+- [x] Preserved the job list and failure-investigation workflow, including cohort filters through list pagination, details and return navigation. Added matching browser-demo calculations using its own recorded jobs with explicit browser source labelling.
+- [x] Updated README startup/browser-check instructions, architecture, metric definitions, limitations and next stage. No hosted deployment was performed.
+
+Checks actually run for this stage:
+
+- Initial database checks failed to connect because Docker Desktop was stopped (**53 passed, 73 setup errors**); this was an environment failure. Started Docker Desktop and rebuilt/started the existing Compose stack, then reran the full backend suite against PostgreSQL: **126 passed**. Subsequently added a midnight submission-cohort boundary test and ran the full overview test file: **15 passed**. The pre-existing Starlette/AnyIO deprecation warning remains.
+- Backend checks cover independently known success/failure denominators, pending/cancelled/cancelling/unknown/not-started exclusions, compilation/queue/execution failures, missing or invalid timestamps, valid zero intervals, negative intervals, even medians, empty data, whole-cohort aggregation, combined exact filters, invalid query values, matching drill-down counts, global options, sanitized outages, and inclusion of execution after the selected submission day.
+- Frontend regression suite: **34 passed**, including overview cards/counts/definitions, loading/empty/error/retry states, cohort filter application and URL restoration, preserved breakdown queries, browser-adapter calculations, missing evidence, cancellations and matching demo drill-down counts.
+- `docker compose up --build -d`: passed, including TypeScript/Vite production frontend build and migration/startup ordering. No database migration was needed. The static demo production build also passed with `VITE_DEMO_MODE=true` and relative base path.
+- Playwright using installed Chrome and the real Nginx/FastAPI/PostgreSQL stack: **2 passed**. The original failure investigation still works; the new workflow selects every cohort filter, verifies 75% compilation success (21/28), drills into target and failure-stage jobs, opens recorded failure evidence, and restores the filtered list. The first overview attempt exposed a selector accessible-name mismatch; explicit accessible names were added to the shared selectors and both workflows then passed.
+- Final stack communication check, local TypeScript checking (including browser tests), Python compilation, source whitespace checks, and documentation local links/fences passed.
+- Inspected `/tmp/quantum-overview.png`: the selected synthetic experiment cohort rendered readable cards, sample counts, shared filters and linked bar charts with no clipped content at the tested desktop size. No mobile-device or screen-reader audit is claimed.
+
+What works: the running local overview uses actual PostgreSQL data and the existing investigation routes. Compilation failures are counted only from their explicit stage; unavailable execution observations stay null. Candidate experiment cohort: 28 jobs, compilation 21/28 (75%), execution 21/21 (100%), median queue 2 s (n=21), median execution 11 s (n=21), seven compilation failures. Global filter options remain selectable for empty cohorts.
+
+Limitations: metrics are synthetic fixture observations, not actual compiler/hardware measurements or operational guarantees. Both success-rate denominators conservatively exclude all cancelled/cancelling jobs, even if an earlier phase completed; this adaptation is documented. Missing evidence is counted separately rather than reconstructed from generic events. The API currently aggregates selected job snapshots in memory, suitable for this small synthetic dataset; large-scale SQL/precomputed aggregation remains future work. This is a read-only operational overview, not authenticated infrastructure/worker monitoring. At completion of this stage, the hosted demo had not yet been republished; see the publication entry above. No blocker remains for this stage.
+
+The stage is complete. The next planned implementation remains the separately scoped permission foundation; worker execution, actions, and external integrations remain deferred.
+
+## Synthetic experiment dataset — 17 October 2026
+
+- [x] Reinspected workspace instructions, README, architecture, existing seed/model/metadata/transition/API code, demo mode and tests. No `AGENTS.md` is present. Preserved the existing uncommitted metadata-stage work.
+- [x] Reused the existing seed entry point, immutable job specification, validated metadata, and atomic job/event writes; no service, schema migration or worker added.
+- [x] Modeled a named experiment, program/input workload identity, compiler arm, repetition and pair identity. Recorded intended configuration/outcome differences explicitly.
+- [x] Added 56 synthetic runs: resource improvement, candidate compilation regression, execution slowdown and unchanged control, with seven repetitions per arm and fixed seed `20261017`.
+- [x] Kept comparison inputs/settings fixed; generated consistent histories, timestamps, failure stages and metadata from one recipe. Failed compilation has no resource estimates, queue/execution boundaries, execution duration or result.
+- [x] Added nonduplicating seed, scoped transactional reset/reseed, and stored-data reports with medians, sample counts and a full job/event snapshot digest.
+- [x] Documented definitions/units, scenarios, controls, CLI usage, reset locking/privileges, UI/API inspection, and the unchanged independent static demo.
+
+Checks actually run for this stage:
+
+- Full backend regression suite against PostgreSQL: **111 passed**, including the first six experiment tests. After adding the additional suspended-trigger rollback test, reran the complete experiment file: **7 passed**. The pre-existing Starlette/AnyIO deprecation warning remains. Tests use migrated disposable PostgreSQL schemas and cover expected medians/counts, controlled identities/settings, all 56 API histories, missing execution evidence, exact repeated/reset job/event snapshots, preservation of the original demo, active guards, collision/dependency refusal, and rollback during deletion and reinsertion.
+- Frontend regression suite: **28 passed**. No frontend source changes were needed for this stage.
+- `docker compose up --build -d`: passed; the API contains the new seed profile and the frontend build remains unchanged/cached.
+- Live initial seed: **56 inserted**, **49 succeeded**, **7 compilation failures**, **315 events**, **256 total jobs**. Live repeat/reset/repeat reported 0/56 skipped, 56 removed/inserted, then 0/56 skipped; total stayed 256. All comparison groups and full persisted snapshots matched, digest `dc86d7aff5e8870b9e784fd1db33c05d7cdad819858254271cd049946c840169`.
+- Live median outcomes matched the recipe: resource estimates 32/240/1600 → 24/168/1120; compilation regression candidate had zero execution samples and null execution median; slowdown execution 10 s → 18 s; unchanged control 10 s → 10 s. Compilation medians were 4 s and successful queue medians 2 s.
+- `QUANTUM_JOB_TRACKER_E2E_CHANNEL=chrome npm run test:e2e`: **1 passed** against the real stack after adding the experiment. The existing failure investigation now opens a new candidate compilation failure and checks its metadata, evidence, diagnostics, timeline and return filters.
+- `sh scripts/check-stack.sh`: passed frontend/direct/proxied API liveness and PostgreSQL readiness. Python compilation, seed CLI help and `git diff --check` passed.
+
+What works: the requested experiment is seeded in the running local PostgreSQL application, visible in the existing job list/detail workflow, and repeatable through the documented CLI. Original demo jobs remain intact. Full evidence reset is scoped to this fixture profile and refuses outside retry/root dependants; ordinary writes retain terminal/history guards.
+
+Limitations: these are constructed historical fixtures, not an executing simulator, actual compiler measurements or statistical evidence about real compilers. Experiment/workload membership is stored in the immutable specification and inspected through existing details, not separate CRUD tables or a comparison UI. The static browser demo does not include this optional PostgreSQL profile. Reset briefly takes exclusive table locks and requires the table owner. No blocker remains for this stage.
+
+The stage is complete. The next planned implementation remains the separately scoped permission foundation; worker execution, operator actions and external integrations remain deferred.
+
+## Compiler/resource stage — 17 October 2026
+
+- [x] Inspected existing instructions, README, model/API/seed code, details/list UI, static demo/storage, and prior tests. No `AGENTS.md` is present. Existing project identity, internal fixture IDs, frontend shell, routes, and deployment workflow are preserved.
+- [x] Added a typed nullable compiler/resource JSONB snapshot with additive migrations; canonical provider/target fields and result/event data remain separate.
+- [x] Added strict count/JSON/label/timestamp validation and derived compilation/queue/execution durations. Unknown endpoints stay null; no live elapsed-time or zero substitution.
+- [x] Enriched identified synthetic fixtures and updated new seed generation, preserving status/version/old timestamps/events and repeatable seed behavior.
+- [x] Updated list/detail API responses and static demo metadata/duration shapes. Older personal browser runs retain unknown metadata and prior results/history.
+- [x] Grouped job details into Program and compiler; Target and configuration; Estimated resources; Timings; Lifecycle and failure evidence.
+- [x] Documented definitions, units, synthetic provenance, validation, migration behavior, and inspection examples in `docs/metadata.md` and README.
+
+Checks actually run for this stage:
+
+- PostgreSQL-backed full suite: **105 passed**, with the pre-existing Starlette/AnyIO deprecation warning. Includes metadata round-tripping through storage/list/details, missing values, valid zero estimates, invalid counts/labels/options, timezone-aware chronological timestamps, microsecond duration arithmetic, direct database count validation, and migration preservation of existing job/event evidence.
+- Frontend suite: **28 passed**. Covers the existing list/investigation/demo behavior plus metadata section rendering, unknown versus zero, shared duration cases, all synthetic scenarios, backend-compatible demo fields, and loading older saved runs without fabricated values.
+- `npm run build`, `npm run build:demo`, and the Docker frontend build passed. No hosted demo deployment was performed.
+- `docker compose up --build -d`: passed with migrations through `0005_metadata_counts (head)` on the existing PostgreSQL database.
+- Repeated `docker compose exec -T api python -m app.seed`: `inserted=0, skipped=200, total_jobs=200`.
+- `sh scripts/check-stack.sh`: passed against the live frontend/API/PostgreSQL stack.
+- `QUANTUM_JOB_TRACKER_E2E_CHANNEL=chrome npm run test:e2e`: **1 passed**. The original filtering/failure/timeline/return workflow now also checks the compiler, estimated-resource, and timings sections using real API/PostgreSQL data.
+- In-app browser inspection confirmed the five groups on a successful fixture, clearly labelled synthetic compiler data, separate estimates/recorded outputs, and 1 s / 1 s / 2 s compile/queue/execution durations. Saved a preview to `/tmp/quantum-job-metadata.jpg`.
+- Live HTTP checks confirmed matching list/detail metadata, expected success/failure phase durations, intentionally unavailable values, and complete unchanged event histories.
+- Final Python compilation, dependency consistency, offline migration SQL generation, source whitespace, Markdown links/fences, and `git diff --check` passed.
+
+What works: compiler metadata is persisted and visible in the local application; static demo samples/new runs carry the same fields, while legacy personal runs display unavailable metadata. Existing investigation evidence and job-list behavior remain working.
+
+Limitations: metadata and timings are fictional fixture snapshots, not results from an actual compiler or hardware. Unrelated legacy jobs remain unknown. Timestamp/label/options validation is enforced by the shared application model; PostgreSQL additionally enforces JSON-object/count constraints. At completion of this stage, the GitHub Pages build had not yet been republished; see the publication entry above. Screenshots in README predate this extension. No implementation blocker remains for this stage.
+
+This stage is complete. The next planned implementation remains the separately scoped permission foundation; no worker, operator action, authentication, or external integration was added.
+
 ## Staged checklist
+
+- [x] **Operational overview extension** — documented metrics, submission-cohort filters, counts/exclusions/units, linked breakdowns and API/React/PostgreSQL/browser checks.
+
+- [x] **Synthetic experiment dataset extension** — fixed-seed paired compiler comparisons, seven repetitions per arm, scoped reset/reseed, documented outcomes and PostgreSQL/API verification.
 
 - [x] **Stage 0 — Inspect and plan**
   - Requirements, acceptance criteria, component diagram, lifecycle, cancellation races, retry lineage, and staged delivery plan.
@@ -51,7 +148,7 @@ The project is named Quantum Job Tracker. All seeded and future quantum jobs and
   - Cancel/retry APIs and UI with authoritative state feedback.
   - Check transitions, both race orders, duplicate requests, retry lineage, terminal immutability, and viewer rejection of every mutation.
 - [ ] **Stage 5 — Health and MVP verification (R7)**
-  - Authenticated health dashboard, aggregate counts, worker freshness, degraded and stale states.
+  - Operational job metrics and linked breakdowns are implemented by the overview extension. Authenticated infrastructure health, worker freshness, degraded states and full MVP verification remain deferred.
   - Check outages/recovery, browser journeys, accessibility, and all MVP criteria.
   - Verify README startup from a clean local setup.
 - [ ] **Stage 6 — GitHub issue linking (later)**
@@ -140,7 +237,7 @@ Earlier planning checks verified Markdown links, fenced blocks, requirement/stat
 ## Known limitations and blockers
 
 - No implementation blocker remains for the details stage. The packaged Chromium download could not complete due to low disk space; the required browser test passed with installed Chrome instead. Dedicated mobile/screen-reader testing, database stop/restart recovery, and persistence across restarts have not been checked in this stage.
-- The jobs list and details are read-only local demo access. Separate paginated events APIs, worker execution, accounts, role enforcement, retry/cancel endpoints, and operational dashboard remain unimplemented. Full-history detail responses are intended for the current small fixture histories. Public health endpoints expose only minimal infrastructure status.
+- The jobs list and details are read-only local demo access. Separate paginated events APIs, worker execution, accounts, role enforcement, retry/cancel endpoints, and authenticated infrastructure/worker monitoring remain unimplemented. Full-history detail responses are intended for the current small fixture histories. Public health endpoints expose only minimal infrastructure status.
 - Offset pagination is deterministic for an unchanged dataset; new jobs between page requests may shift page positions. Exact external-reference search is case-insensitive, not substring or job-name search.
 - `requested_by` and event actors are demonstration identifiers until accounts are implemented. Retry/root references are modeled; retry behavior/idempotency remains a later stage.
 - Shared writes maintain job/event consistency. Arbitrary direct SQL can bypass the service-level event pairing; triggers still enforce legal job states, terminal immutability, and append-only history.

@@ -1,0 +1,37 @@
+import { expect, test } from '@playwright/test';
+
+test('overview cohort metrics drill down to matching jobs and preserve investigation filters', async ({ page, request }) => {
+  const response = await request.get('/api/overview');
+  expect(response.ok()).toBeTruthy();
+  const options = await response.json();
+  const experiment = options.experiments.find((item: { name: string }) => item.name === 'Synthetic compiler comparison v1');
+  expect(experiment, 'Seed compiler-comparison-v1 before this browser test').toBeTruthy();
+  await page.goto('/?view=overview');
+  await page.getByRole('article', { name: 'Compilation success rate' }).waitFor();
+  await page.getByLabel('Target', { exact: true }).selectOption('synthetic-comparison-simulator');
+  await page.getByLabel('Compiler version').selectOption('synthetic-1.1.0');
+  await page.getByLabel('Experiment', { exact: true }).selectOption(experiment.id);
+  await page.getByLabel('Submitted from (UTC)').fill('2026-10-12');
+  await page.getByLabel('Submitted through (UTC)').fill('2026-10-12');
+  await page.getByRole('button', { name: 'Apply filters', exact: true }).click();
+  await expect(page.getByRole('article', { name: 'Compilation success rate' })).toContainText('75%');
+  await expect(page.getByRole('article', { name: 'Compilation success rate' })).toContainText('21 successful / 28 completed');
+  await expect(page.getByRole('article', { name: 'Median queue time' })).toContainText('n=21');
+  await page.screenshot({ path: '/tmp/quantum-overview.png', fullPage: true });
+  await page.getByRole('region', { name: 'Jobs by target' }).getByRole('link').click();
+  await expect(page.getByRole('heading', { name: '28 jobs', exact: true })).toBeVisible();
+  await expect(page.getByLabel('Experiment', { exact: true })).toHaveValue(experiment.id);
+  await page.getByRole('link', { name: '◷ Overview' }).click();
+  await expect(page.getByRole('article', { name: 'Compilation success rate' })).toContainText('75%');
+  await page.getByRole('region', { name: 'Failures by stage' }).getByRole('link', { name: 'Compilation 7 jobs' }).click();
+  const filteredURL = page.url();
+  await expect(page.getByRole('heading', { name: '7 jobs', exact: true })).toBeVisible();
+  await expect(page.getByLabel('Failure stage')).toHaveValue('compilation');
+  await expect(page.getByLabel('Compiler version')).toHaveValue('synthetic-1.1.0');
+  await page.getByRole('table').getByRole('link').first().click();
+  await expect(page.getByRole('region', { name: 'Recorded failure evidence' })).toContainText('SYNTHETIC_CANDIDATE_COMPILE_FAILED');
+  await expect(page.getByRole('region', { name: 'Timings' })).toContainText('Not available');
+  await page.getByRole('link', { name: '← Back to filtered jobs', exact: true }).click();
+  await expect(page).toHaveURL(filteredURL);
+  await expect(page.getByLabel('Target', { exact: true })).toHaveValue('synthetic-comparison-simulator');
+});

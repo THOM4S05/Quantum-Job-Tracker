@@ -1,5 +1,6 @@
 """Repeatable historical fixtures; this is not a quantum execution worker."""
 
+import argparse
 import json
 from datetime import datetime, timedelta, timezone
 from uuid import UUID, uuid5
@@ -10,6 +11,7 @@ from app.config import Settings
 from app.database import make_engine
 from app.models import jobs
 from app.transitions import create_job, record_progress, transition_job
+from app.workload_metadata import synthetic_metadata
 
 DATASET = "qtrace-demo-v1"
 NAMESPACE = UUID("7bc311ed-855e-4a70-8f14-080e07f0bbd0")
@@ -52,6 +54,7 @@ def seed_jobs(connection: Connection) -> dict[str, int]:
                    requested_by=("demo.operator.alex", "demo.operator.sam")[index % 2],
                    scenario=scenario, seed=10000 + index, simulation_version="v1",
                    external_reference=f"SYN-{index + 1:04d}",
+                   metadata=synthetic_metadata(index, f"Synthetic experiment {index + 1:03d}", scenario, created),
                    specification={"seed_dataset": DATASET, "qubits": 8 + (index % 4) * 8,
                                   "shots": 1024, "synthetic": True},
                    correlation_id=correlation, at=created)
@@ -91,10 +94,21 @@ def seed_jobs(connection: Connection) -> dict[str, int]:
 
 
 def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--dataset", choices=(DATASET, "compiler-comparison-v1"), default=DATASET)
+    parser.add_argument("--reset", action="store_true", help="Replace only the compiler comparison fixtures")
+    args = parser.parse_args()
+    if args.reset and args.dataset != "compiler-comparison-v1":
+        parser.error("--reset requires --dataset compiler-comparison-v1; historical demo jobs are preserved")
     engine = make_engine(Settings())
     try:
         with engine.begin() as connection:
-            summary = seed_jobs(connection)
+            if args.dataset == "compiler-comparison-v1":
+                from app.experiment_seed import comparison_report, seed_experiment
+                summary = seed_experiment(connection, reset=args.reset)
+                summary["comparison"] = comparison_report(connection)
+            else:
+                summary = seed_jobs(connection)
             summary["total_jobs"] = connection.scalar(select(func.count()).select_from(jobs))
         print(json.dumps(summary, sort_keys=True))
     finally:

@@ -37,6 +37,7 @@ jobs = Table(
     Column("requested_by", String(120), nullable=False),
     Column("version", Integer, nullable=False),
     Column("specification", JSONB, nullable=False, server_default=text("'{}'::jsonb")),
+    Column("metadata", JSONB, nullable=False, server_default=text("'{}'::jsonb")),
     Column("scenario", String(80), nullable=False),
     Column("seed", BigInteger, nullable=False),
     Column("simulation_version", String(40), nullable=False),
@@ -49,6 +50,7 @@ jobs = Table(
     # Check job data here too in case a write skips the app checks
     CheckConstraint(f"status IN {STATUSES}", name="ck_jobs_status"),
     CheckConstraint("version >= 1", name="ck_jobs_version"),
+    CheckConstraint("jsonb_typeof(metadata) = 'object'", name="ck_jobs_metadata"),
     CheckConstraint("external_reference IS NULL OR length(trim(external_reference)) > 0",
                     name="ck_jobs_external_reference"),
     CheckConstraint("length(trim(name)) > 0 AND length(trim(provider)) > 0 AND "
@@ -73,6 +75,14 @@ jobs = Table(
                     "retry_of IS DISTINCT FROM id AND original_job_id IS DISTINCT FROM id",
                     name="ck_jobs_lineage"),
 )
+
+for count_field, minimum in (("requested_shots", 1), ("estimated_logical_qubits", 0),
+                             ("estimated_circuit_depth", 0), ("estimated_gate_count", 0)):
+    jobs.append_constraint(CheckConstraint(
+        f"CASE jsonb_typeof(metadata->'{count_field}') WHEN 'null' THEN true "
+        f"WHEN 'number' THEN ((metadata->>'{count_field}')::numeric BETWEEN {minimum} AND 9007199254740991 "
+        f"AND trunc((metadata->>'{count_field}')::numeric) = (metadata->>'{count_field}')::numeric) "
+        f"ELSE metadata->'{count_field}' IS NULL END", name=f"ck_jobs_metadata_{count_field}"))
 
 job_events = Table(
     "job_events", metadata,

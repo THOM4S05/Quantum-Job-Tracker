@@ -11,6 +11,7 @@ from uuid import UUID, uuid4, uuid5
 from sqlalchemy import Connection, func, insert, select, update
 
 from app.models import STAGES, TERMINAL, TRANSITIONS, job_events, jobs
+from app.workload_metadata import WorkloadMetadata
 
 
 class InvalidTransition(ValueError):
@@ -53,10 +54,12 @@ def create_job(connection: Connection, *, name: str, provider: str, target: str,
                requested_by: str, scenario: str, seed: int,
                simulation_version: str = "v1", specification: dict | None = None,
                external_reference: str | None = None,
+               metadata: WorkloadMetadata | dict | None = None,
                job_id: UUID | None = None, correlation_id: UUID | None = None,
                at: datetime | None = None) -> dict:
     """Create an initial queued job and its first event, without committing."""
     _require_transaction(connection)
+    validated_metadata = WorkloadMetadata.model_validate({} if metadata is None else metadata).model_dump(mode="json")
     with connection.begin_nested():
         now = _timestamp(connection, at)
         job = dict(connection.execute(insert(jobs).values(
@@ -65,6 +68,7 @@ def create_job(connection: Connection, *, name: str, provider: str, target: str,
             status="queued", requested_by=requested_by, version=1,
             created_at=now, updated_at=now, scenario=scenario, seed=seed,
             simulation_version=simulation_version, specification=specification or {},
+            metadata=validated_metadata,
         ).returning(jobs)).mappings().one())
         _event(connection, job, previous=None, stage="submission",
                message="Synthetic job submitted", details={"synthetic": True},

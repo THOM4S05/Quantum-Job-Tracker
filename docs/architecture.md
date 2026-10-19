@@ -133,3 +133,23 @@ Failure metadata is copied directly from the job. The failure panel's correlatio
 The full-history response is suitable for the current small demonstration histories. Separate event pagination remains deferred; long histories will need bounded batches before larger workloads. Authentication, worker execution, and operator actions remain separate stages.
 
 A saved Playwright test filters failed jobs, follows a real job link, verifies failure evidence/timeline against the API, expands diagnostics, reloads, and returns to the filtered list. PostgreSQL tests verify tied event timestamps, job isolation, incomplete audit history, missing jobs, and sanitized failures. React tests cover rendering, missing diagnostics, missing/invalid jobs, retry, and stale polling.
+
+## Compiler/resource extension
+
+The existing `jobs` row now has a validated JSONB `metadata` snapshot. Provider and target remain existing canonical columns. `JobSummary` adds typed metadata and computed duration fields, inherited by the details response; lifecycle/events/results are unchanged. The static demo mirrors the same nullable fields and derives durations with the same timestamp rules. The details view groups the fields into the five requested sections while retaining filters, history, evidence, and diagnostics.
+
+See [metadata model and units](metadata.md) for the exact contract, validation, additive migrations, fixture provenance, legacy-data handling, and duration definitions. No worker, real compiler SDK, hardware integration, authentication, or new operator actions are introduced.
+
+
+## Synthetic experiment fixtures (implemented)
+
+The optional `compiler-comparison-v1` seed profile models a named experiment, program/input workload identities, and paired run membership as structured records in the existing immutable `jobs.specification` JSONB. Compiler/settings/estimates/phase boundaries use existing validated `jobs.metadata`; provider/target remain canonical columns. No schema or service is added. Existing list/detail endpoints and metadata/evidence UI expose the jobs and their specification. See [experiments.md](experiments.md) for identities, units, controls and intended outcomes.
+
+The existing seed entry point dispatches profiles; both use the shared atomic transition/progress functions and advisory lock. The experiment has fixed IDs, seed, timestamps, phase-aligned events and synthetic results. A stored-data report computes medians and a complete job/event digest. An explicit administrative reset locks both tables and temporarily suspends only their delete guards to replace identified experiment fixtures inside a savepoint/transaction. Foreign keys remain enforced, unrelated references/collisions cause refusal, and ordinary lifecycle writes retain terminal/history protection. This is historical fixture generation; the planned worker and operator actions remain separate stages.
+
+
+## Operational overview (implemented)
+
+`app/cohorts.py` owns submission-cohort validation, SQL predicates and global target/compiler/experiment options shared by `/jobs` and `/overview`. `/jobs` also supports explicit failure-stage drill-downs. The read-only overview reads the full cohort's status, explicit error stage, target and metadata in one repeatable-read PostgreSQL snapshot. Pure calculation functions implement the definitions in [metrics.md](metrics.md), including separate excluded-attempt counts and null values for absent samples. No schema, worker, polling service or new infrastructure is introduced. The initial implementation aggregates selected rows in API memory and is intended for portfolio-sized datasets.
+
+React's `Overview` view uses query-based navigation (`?view=overview`), URL-persisted shared cohort fields, bounded requests and five-second visible-tab polling. Four metric cards expose rates/timing medians with sample counts, and two simple linked bar charts lead to the existing jobs/details workflow with the same cohort. Stale data is explicitly marked on refresh failure. The browser demo adapter computes the same metric contract from browser records and identifies that source separately from PostgreSQL; no backend data is mocked in the full application.

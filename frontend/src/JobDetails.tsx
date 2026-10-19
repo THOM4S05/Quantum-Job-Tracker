@@ -1,7 +1,8 @@
+import { emptyMetadata } from './metadata';
 import { useEffect, useState } from 'react';
 import type { Job } from './App';
 import { request } from './api';
-import { isDemo, jobHref } from './environment';
+import { homeHref, isDemo, jobHref } from './environment';
 
 export type RecordedEvent = {
   id: string; job_id: string; sequence: number; occurred_at: string;
@@ -21,11 +22,11 @@ export type JobEvidence = {
   history_complete: boolean;
 };
 
-const recorded = (value: string | null | undefined) => value?.trim() ? value : 'Not recorded';
-const label = (value: string | null) => value ? value.replaceAll('_', ' ').replace(/^./, (letter) => letter.toUpperCase()) : 'Not recorded';
+const recorded = (value: string | null | undefined) => value?.trim() ? value : 'Not available';
+const label = (value: string | null) => value ? value.replaceAll('_', ' ').replace(/^./, (letter) => letter.toUpperCase()) : 'Not available';
 const timestamp = (value: string | null) => value ? `${new Intl.DateTimeFormat('en-GB', {
   dateStyle: 'medium', timeStyle: 'medium', timeZone: 'UTC',
-}).format(new Date(value))} UTC` : 'Not recorded';
+}).format(new Date(value))} UTC` : 'Not available';
 
 type EvidenceState = {
   jobId: string; data: JobEvidence | null; loading: boolean;
@@ -82,6 +83,10 @@ export function JobDetails({ jobId, backHref }: { jobId: string; backHref: strin
   const current = state.jobId === jobId ? state : { jobId, data: null, loading: true, problem: null, checked: null };
   const evidence = current.data;
   const job = evidence?.job;
+  const metadata = { ...emptyMetadata(), ...job?.metadata };
+  const available = (value: string | number | null | undefined) => value == null || value === '' ? 'Not available' : typeof value === 'number' ? value.toLocaleString('en-GB', { maximumFractionDigits: 6 }) : value;
+  const phaseTime = (value: string | null) => value ? timestamp(value) : 'Not available';
+  const seconds = (value: number | null | undefined) => value == null ? 'Not available' : `${available(value)} s`;
   // Find the last failure event and keep the timeline in order
   const failure = evidence?.events.slice().reverse().find((event) => event.to_status === 'failed' && event.from_status !== 'failed');
   const lineageHref = (id: string) => jobHref(id, backHref.split('?')[1] ?? '');
@@ -106,26 +111,63 @@ export function JobDetails({ jobId, backHref }: { jobId: string; backHref: strin
           {current.problem === 'unavailable' && <div className="error-state" role="alert"><div><strong>{job ? 'Showing previously loaded evidence' : 'Unable to load job evidence'}</strong><p>The API could not return the recorded data. Please try again.</p></div><button onClick={() => setRefresh((value) => value + 1)}>Try again</button></div>}
           {job && evidence && <>
             <p className="detail-refresh">Last successful refresh: {timestamp(current.checked)} · Refreshes every 5s</p>
-            <section className="detail-panel" aria-labelledby="job-overview">
-              <h2 id="job-overview">Job overview</h2>
+            <section className="detail-panel" aria-labelledby="program-compiler">
+              <h2 id="program-compiler">Program and compiler</h2>
+              <dl className="metadata-grid">
+                <div><dt>Program / workload</dt><dd>{available(metadata.program_name)}</dd></div>
+                <div><dt>Program revision / hash</dt><dd>{available(metadata.program_revision)}</dd></div>
+                <div><dt>Source language</dt><dd>{available(metadata.source_language)}</dd></div>
+                <div><dt>Compiler name</dt><dd>{available(metadata.compiler_name)}</dd></div>
+                <div><dt>Compiler version</dt><dd>{available(metadata.compiler_version)}</dd></div>
+                <div><dt>Simulation version / seed</dt><dd>{job.simulation_version} / {job.seed}</dd></div>
+              </dl>
+            </section>
+            <section className="detail-panel" aria-labelledby="target-configuration">
+              <h2 id="target-configuration">Target and configuration</h2>
               <dl className="metadata-grid">
                 <div><dt>Current status</dt><dd>{label(job.status)}</dd></div>
                 <div><dt>Provider</dt><dd>{job.provider}</dd></div>
                 <div><dt>Target</dt><dd>{job.target}</dd></div>
-                <div><dt>External reference</dt><dd>{recorded(job.external_reference)}</dd></div>
+                <div><dt>External reference</dt><dd>{available(job.external_reference)}</dd></div>
                 <div><dt>Requested by</dt><dd>{job.requested_by}</dd></div>
-                <div><dt>Submitted</dt><dd>{timestamp(job.created_at)}</dd></div>
-                <div><dt>Updated</dt><dd>{timestamp(job.updated_at)}</dd></div>
-                <div><dt>Started</dt><dd>{timestamp(job.started_at)}</dd></div>
-                <div><dt>Finished</dt><dd>{timestamp(job.finished_at)}</dd></div>
-                <div><dt>Simulation version / seed</dt><dd>{job.simulation_version} / {job.seed}</dd></div>
+                <div><dt>Requested shots (count)</dt><dd>{available(metadata.requested_shots)}</dd></div>
                 {job.retry_of && <div><dt>Retry of</dt><dd><a href={lineageHref(job.retry_of)}>{job.retry_of}</a></dd></div>}
                 {job.original_job_id && <div><dt>Original job</dt><dd><a href={lineageHref(job.original_job_id)}>{job.original_job_id}</a></dd></div>}
               </dl>
+              <details className="diagnostics"><summary>Optimisation settings</summary>{metadata.optimisation_settings === null ? <p>Not available</p> : <pre>{JSON.stringify(metadata.optimisation_settings, null, 2)}</pre>}</details>
               <details className="diagnostics"><summary>Submission specification</summary><pre>{JSON.stringify(job.specification, null, 2)}</pre></details>
-              {job.status === 'succeeded' && <details className="diagnostics"><summary>Recorded result</summary>{job.result ? <pre>{JSON.stringify(job.result, null, 2)}</pre> : <p>No result was recorded.</p>}</details>}
             </section>
-
+            <section className="detail-panel" aria-labelledby="estimated-resources">
+              <h2 id="estimated-resources">Estimated resources</h2>
+              <p>Compiler estimates for a synthetic workload. These are not observed results or measurements from quantum hardware.</p>
+              <dl className="metadata-grid">
+                <div><dt>Estimated logical qubits (count)</dt><dd>{available(metadata.estimated_logical_qubits)}</dd></div>
+                <div><dt>Estimated circuit depth (layers)</dt><dd>{available(metadata.estimated_circuit_depth)}</dd></div>
+                <div><dt>Estimated gate count (gates)</dt><dd>{available(metadata.estimated_gate_count)}</dd></div>
+              </dl>
+            </section>
+            <section className="detail-panel" aria-labelledby="job-timings">
+              <h2 id="job-timings">Timings</h2>
+              <p>Recorded UTC timestamps. Durations require both phase endpoints; an unfinished or unknown phase has no duration.</p>
+              <dl className="metadata-grid">
+                <div><dt>Submitted</dt><dd>{phaseTime(job.created_at)}</dd></div>
+                <div><dt>Updated</dt><dd>{phaseTime(job.updated_at)}</dd></div>
+                <div><dt>Job started</dt><dd>{phaseTime(job.started_at)}</dd></div>
+                <div><dt>Job finished</dt><dd>{phaseTime(job.finished_at)}</dd></div>
+                <div><dt>Compilation started</dt><dd>{phaseTime(metadata.compilation_started_at)}</dd></div>
+                <div><dt>Compilation finished</dt><dd>{phaseTime(metadata.compilation_finished_at)}</dd></div>
+                <div><dt>Compile duration (seconds)</dt><dd>{seconds(job.durations?.compilation_seconds)}</dd></div>
+                <div><dt>Queue entered</dt><dd>{phaseTime(metadata.queue_entered_at)}</dd></div>
+                <div><dt>Queue left</dt><dd>{phaseTime(metadata.queue_left_at)}</dd></div>
+                <div><dt>Queue duration (seconds)</dt><dd>{seconds(job.durations?.queue_seconds)}</dd></div>
+                <div><dt>Execution started</dt><dd>{phaseTime(metadata.execution_started_at)}</dd></div>
+                <div><dt>Execution finished</dt><dd>{phaseTime(metadata.execution_finished_at)}</dd></div>
+                <div><dt>Execution duration (seconds)</dt><dd>{seconds(job.durations?.execution_seconds)}</dd></div>
+              </dl>
+            </section>
+            <div role="region" aria-labelledby="lifecycle-evidence">
+            <h2 id="lifecycle-evidence" className="investigation-heading">Lifecycle and failure evidence</h2>
+            {job.status === 'succeeded' && <details className="diagnostics observed-result"><summary>Recorded result (synthetic observed output)</summary>{job.result ? <pre>{JSON.stringify(job.result, null, 2)}</pre> : <p>No result was recorded.</p>}</details>}
             {job.status === 'failed' && <section className="detail-panel failure-panel" aria-labelledby="failure-title">
               <p className="eyebrow">FAILURE INVESTIGATION</p><h2 id="failure-title">Recorded failure evidence</h2>
               <dl className="metadata-grid">
@@ -153,8 +195,9 @@ export function JobDetails({ jobId, backHref }: { jobId: string; backHref: strin
                 </li>)}
               </ol>}
             </section>
+            </div>
           </>}
-          <footer>All jobs and providers are simulated. No connection to Horizon Quantum systems or real quantum hardware.</footer>
+          <footer><a href={`${homeHref}?view=implementation`}>How it works</a> · All jobs and providers are simulated. No connection to Horizon Quantum systems or real quantum hardware.</footer>
         </main>
       </div>
     </div>

@@ -1,5 +1,9 @@
 import { FormEvent, useEffect, useState } from 'react';
+import type { WorkloadMetadata, JobDurations } from './metadata';
 import { JobDetails } from './JobDetails';
+import { Overview } from './Overview';
+import { Implementation } from './Implementation';
+import { CohortFields, Cohort, CohortOptions, cohortQuery, readCohort } from './CohortFields';
 import { request } from './api';
 import { homeHref, isDemo, jobHref } from './environment';
 import { lazy, Suspense } from 'react';
@@ -10,23 +14,24 @@ type Status = typeof statuses[number];
 const statusLabel = (status: string) => status.replaceAll('_', ' ').replace(/^./, (letter) => letter.toUpperCase());
 
 export type Job = {
+  metadata?: WorkloadMetadata; durations?: JobDurations;
   id: string; name: string; provider: string; target: string;
   external_reference: string | null; status: Status; created_at: string;
   requested_by: string; retry_of: string | null;
 };
-export type JobPage = {
+export type JobPage = CohortOptions & {
   items: Job[]; total: number; page: number; page_size: number;
   total_pages: number; providers: string[];
 };
-type Filters = {
+type Filters = Cohort & {
   q: string; status: string; provider: string; submitted_from: string;
-  submitted_to: string; page: string; page_size: string;
+  submitted_to: string; failure_stage: string; page: string; page_size: string;
 };
 type Result = { query: string; data: JobPage | null; loading: boolean; error: string | null; checked: string | null };
 
 function readFilters(query: string): Filters {
   const params = new URLSearchParams(query);
-  return { q: params.get('q') ?? '', status: params.get('status') ?? '',
+  return { ...readCohort(params), failure_stage: params.get('failure_stage') ?? '', q: params.get('q') ?? '', status: params.get('status') ?? '',
     provider: params.get('provider') ?? '', submitted_from: params.get('submitted_from') ?? '',
     submitted_to: params.get('submitted_to') ?? '', page: params.get('page') ?? '1',
     page_size: params.get('page_size') ?? '25' };
@@ -116,7 +121,7 @@ function JobsList() {
     setDraft(readFilters(next));
   }
   function apply(event: FormEvent) { event.preventDefault(); navigate({ ...draft, page: '1' }); }
-  function clear() { navigate({ q: '', status: '', provider: '', submitted_from: '', submitted_to: '', page: '1', page_size: '25' }); }
+  function clear() { navigate({ q: '', status: '', provider: '', submitted_from: '', submitted_to: '', target: '', compiler_version: '', experiment: '', failure_stage: '', page: '1', page_size: '25' }); }
   function field(key: keyof Filters, value: string) { setDraft((previous) => ({ ...previous, [key]: value })); }
 
   // Keep the chosen provider in the list while results load
@@ -130,6 +135,7 @@ function JobsList() {
         <header><span className="mark" aria-hidden="true">Q</span><span className="brand-name">Quantum Job Tracker</span></header>
         <p className="workspace-label">WORKSPACE</p>
         <a className="nav-item active" href={homeHref} aria-current="page"><span aria-hidden="true">▦</span> Jobs</a>
+        <a className="nav-item" href={`${homeHref}?view=overview&${cohortQuery(readCohort(new URLSearchParams(query)))}`}>◷ Overview</a>
         <div className="sidebar-note"><span className="sidebar-note-icon" aria-hidden="true">◇</span><strong>Synthetic environment</strong><p>Investigate fictional jobs and their outcomes.</p></div>
         <div className="sidebar-bottom"><span className="brand-footer">Quantum Job Tracker</span><span>{isDemo ? 'Browser demo' : 'Local workspace'}</span></div>
       </aside>
@@ -142,8 +148,8 @@ function JobsList() {
             <label className="search-field">Job ID or external reference<input type="search" value={draft.q} onChange={(e) => field('q', e.target.value)} maxLength={160} placeholder="e.g. SYN-0005" aria-describedby="search-help" /></label>
             <label>Status<select value={draft.status} onChange={(e) => field('status', e.target.value)}><option value="">All statuses</option>{statuses.map((status) => <option key={status} value={status}>{statusLabel(status)}</option>)}{draft.status && !statuses.includes(draft.status as Status) && <option value={draft.status}>{draft.status} (invalid)</option>}</select></label>
             <label>Provider<select value={draft.provider} onChange={(e) => field('provider', e.target.value)}><option value="">All providers</option>{providers.map((provider) => <option key={provider}>{provider}</option>)}</select></label>
-            <label>Submitted from (UTC)<input type="date" value={draft.submitted_from} onChange={(e) => field('submitted_from', e.target.value)} max={draft.submitted_to || '9999-12-30'} /></label>
-            <label>Submitted through (UTC)<input type="date" value={draft.submitted_to} onChange={(e) => field('submitted_to', e.target.value)} min={draft.submitted_from} max="9999-12-30" /></label>
+            <CohortFields value={draft} options={data} onChange={field} />
+            {draft.failure_stage && <label>Failure stage<select value={draft.failure_stage} onChange={(e) => field('failure_stage', e.target.value)}><option value="">All stages</option>{['compilation', 'queueing', 'execution', 'unknown'].map((stage) => <option key={stage}>{stage}</option>)}</select></label>}
             <label>Rows per page<select value={draft.page_size} onChange={(e) => field('page_size', e.target.value)}>{[...new Set(['10', '25', '50', '100', draft.page_size])].map((size) => <option key={size} value={size}>{size}</option>)}</select></label>
             <div className="filter-actions"><button type="submit" className="primary">Apply filters</button><button type="button" onClick={clear}>Clear filters</button></div>
             <p id="search-help" className="filter-help">Exact ID or reference · References ignore case · Dates include the whole UTC day</p>
@@ -167,7 +173,7 @@ function JobsList() {
             </table></div>}
             {data && <nav className="pagination" aria-label="Job pages"><span>{first}–{last} of {data.total} jobs</span><div><button disabled={data.page <= 1} onClick={() => navigate({ ...current, page: String(data.page - 1) })}>Previous</button><span>Page {data.page} of {Math.max(1, data.total_pages)}</span><button disabled={data.page >= data.total_pages} onClick={() => navigate({ ...current, page: String(data.page + 1) })}>Next</button></div></nav>}
           </section>
-          <footer>All jobs and providers are simulated. No connection to Horizon Quantum systems or real quantum hardware.</footer>
+          <footer><a href={`${homeHref}?view=implementation`}>How it works</a> · All jobs and providers are simulated. No connection to Horizon Quantum systems or real quantum hardware.</footer>
         </main>
       </div>
     </div>
@@ -175,6 +181,8 @@ function JobsList() {
 }
 
 export function App() {
+  if (new URLSearchParams(window.location.search).get('view') === 'implementation') return <Implementation />;
+  if (new URLSearchParams(window.location.search).get('view') === 'overview') return <Overview />;
   if (isDemo) {
     const params = new URLSearchParams(window.location.search);
     const id = params.get('job');

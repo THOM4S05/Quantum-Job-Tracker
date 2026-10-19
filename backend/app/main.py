@@ -8,6 +8,7 @@ from app.config import Settings
 from app.database import check_database, make_engine
 from app.job_list import router as job_list_router
 from app.job_details import router as job_details_router
+from app.overview import router as overview_router
 
 
 def create_app(settings: Settings | None = None) -> FastAPI:
@@ -22,6 +23,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     application = FastAPI(title="Quantum Job Tracker API", lifespan=lifespan)
     application.include_router(job_list_router)
     application.include_router(job_details_router)
+    application.include_router(overview_router)
 
     @application.get("/health/live")
     def live() -> dict[str, str]:

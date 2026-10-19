@@ -25,6 +25,9 @@ test('filter failed jobs, open recorded failure evidence, and return to the filt
 
   await firstJob.click();
   await expect(page.getByRole('heading', { name: evidence.job.name, exact: true })).toBeVisible();
+  await expect(page.getByRole('region', { name: 'Program and compiler' })).toContainText(evidence.job.metadata!.compiler_name!);
+  await expect(page.getByRole('region', { name: 'Estimated resources' })).toBeVisible();
+  await expect(page.getByRole('region', { name: 'Timings' })).toBeVisible();
   const panel = page.getByRole('region', { name: 'Recorded failure evidence' });
   await expect(panel).toContainText(evidence.job.error_code!);
   await expect(panel).toContainText(evidence.job.error_message!);

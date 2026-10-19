@@ -1,27 +1,26 @@
 """Read-only job search; no job specifications or event payloads are returned."""
 
-from datetime import date, datetime, time, timedelta, timezone
-import re
+from datetime import datetime
 from typing import Annotated, Literal
 from uuid import UUID
 
 from fastapi import APIRouter, HTTPException, Query, Request
-from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+from pydantic import BaseModel, Field, computed_field, field_validator
 from sqlalchemy import func, or_, select
 from sqlalchemy.exc import SQLAlchemyError
 
 from app.models import jobs
+from app.cohorts import CohortFilters, cohort_conditions, cohort_options
+from app.workload_metadata import WorkloadMetadata, JobDurations
 
 Status = Literal["queued", "running", "cancel_requested", "succeeded", "failed", "cancelled"]
 
 
-class JobFilters(BaseModel):
-    model_config = ConfigDict(extra="forbid")
+class JobFilters(CohortFilters):
 
     status: Status | None = None
     provider: str | None = Field(default=None, min_length=1, max_length=80)
-    submitted_from: date | None = None
-    submitted_to: date | None = None
+    failure_stage: Literal["compilation", "queueing", "execution", "unknown"] | None = None
     q: str | None = Field(default=None, min_length=1, max_length=160)
     page: int = Field(default=1, ge=1, le=1_000_000)
     page_size: int = Field(default=25, ge=1, le=100)
@@ -31,21 +30,6 @@ class JobFilters(BaseModel):
     def strip_text(cls, value):
         return value.strip() if isinstance(value, str) else value
 
-    @field_validator("submitted_from", "submitted_to", mode="before")
-    @classmethod
-    def iso_date(cls, value):
-        if isinstance(value, str) and not re.fullmatch(r"\d{4}-\d{2}-\d{2}", value):
-            raise ValueError("Use a date in YYYY-MM-DD format")
-        return value
-
-    @model_validator(mode="after")
-    def date_order(self):
-        if self.submitted_from and self.submitted_to and self.submitted_from > self.submitted_to:
-            raise ValueError("Submission start date must be on or before the end date")
-        # Keep the exclusive next-day bound representable.
-        if self.submitted_to == date.max:
-            raise ValueError("Submission end date must be before 9999-12-31")
-        return self
 
 
 class JobSummary(BaseModel):
@@ -58,6 +42,17 @@ class JobSummary(BaseModel):
     created_at: datetime
     requested_by: str
     retry_of: UUID | None
+    metadata: WorkloadMetadata = Field(default_factory=WorkloadMetadata)
+
+    @computed_field
+    @property
+    def durations(self) -> JobDurations:
+        return self.metadata.durations()
+
+
+class ExperimentOption(BaseModel):
+    id: str
+    name: str
 
 
 class JobPage(BaseModel):
@@ -67,6 +62,9 @@ class JobPage(BaseModel):
     page_size: int
     total_pages: int
     providers: list[str]
+    targets: list[str] = Field(default_factory=list)
+    compiler_versions: list[str] = Field(default_factory=list)
+    experiments: list[ExperimentOption] = Field(default_factory=list)
 
 
 router = APIRouter()
@@ -74,16 +72,15 @@ router = APIRouter()
 
 @router.get("/jobs", response_model=JobPage)
 def list_jobs(request: Request, filters: Annotated[JobFilters, Query()]) -> dict:
-    conditions = []
+    conditions = cohort_conditions(filters)
     if filters.status:
         conditions.append(jobs.c.status == filters.status)
     if filters.provider:
         conditions.append(jobs.c.provider == filters.provider)
-    if filters.submitted_from:
-        conditions.append(jobs.c.created_at >= datetime.combine(filters.submitted_from, time.min, timezone.utc))
-    # Stop at the next midnight to include the whole end date in UTC
-    if filters.submitted_to:
-        conditions.append(jobs.c.created_at < datetime.combine(filters.submitted_to + timedelta(days=1), time.min, timezone.utc))
+    if filters.failure_stage:
+        conditions.append(jobs.c.status == "failed")
+        conditions.append(jobs.c.error_stage.is_(None) if filters.failure_stage == "unknown"
+                          else jobs.c.error_stage == filters.failure_stage)
     if filters.q:
         # Ignore letter case for references and check job IDs when the format fits
         matches = [func.lower(jobs.c.external_reference) == filters.q.lower()]
@@ -102,12 +99,14 @@ def list_jobs(request: Request, filters: Annotated[JobFilters, Query()]) -> dict
                     jobs.c.id, jobs.c.name, jobs.c.provider, jobs.c.target,
                     jobs.c.external_reference, jobs.c.status, jobs.c.created_at,
                     jobs.c.requested_by, jobs.c.retry_of,
+                    jobs.c.metadata,
                 ).where(*conditions).order_by(jobs.c.created_at.desc(), jobs.c.id.desc())
                     .offset((filters.page - 1) * filters.page_size).limit(filters.page_size)).mappings().all()
+                options = cohort_options(connection)
                 providers = list(connection.scalars(select(jobs.c.provider).distinct().order_by(jobs.c.provider)))
     except SQLAlchemyError:
         raise HTTPException(status_code=503, detail="Jobs are temporarily unavailable. Please try again.") from None
     return {"items": items, "total": total, "page": filters.page,
             "page_size": filters.page_size,
             "total_pages": (total + filters.page_size - 1) // filters.page_size,
-            "providers": providers}
+            "providers": providers, **options}
