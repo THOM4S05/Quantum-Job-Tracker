@@ -2,7 +2,7 @@ import { emptyMetadata } from './metadata';
 import { useEffect, useState } from 'react';
 import type { Job } from './App';
 import { request } from './api';
-import { homeHref, isDemo, jobHref } from './environment';
+import { guideHref, homeHref, isDemo, jobHref } from './environment';
 
 export type RecordedEvent = {
   id: string; job_id: string; sequence: number; occurred_at: string;
@@ -98,7 +98,8 @@ export function JobDetails({ jobId, backHref, backLabel = "← Back to filtered 
         <header><span className="mark" aria-hidden="true">Q</span><span className="brand-name">Quantum Job Tracker</span></header>
         <p className="workspace-label">WORKSPACE</p>
         <a className="nav-item active" href={backHref}><span aria-hidden="true">▦</span> {returnContext}</a>
-        <div className="sidebar-note"><span className="sidebar-note-icon" aria-hidden="true">◇</span><strong>Synthetic environment</strong><p>Investigate recorded evidence from fictional runs.</p></div>
+        <a className="nav-item" href={guideHref}>Demo &amp; Guide</a>
+      <div className="sidebar-note"><span className="sidebar-note-icon" aria-hidden="true">◇</span><strong>Synthetic environment</strong><p>Investigate recorded evidence from fictional runs.</p></div>
         <div className="sidebar-bottom"><span className="brand-footer">Quantum Job Tracker</span><span>{isDemo ? 'Browser demo' : 'Local workspace'}</span></div>
       </aside>
       <div className="workspace">

@@ -1,7 +1,7 @@
 import { FormEvent, useEffect, useState } from 'react';
 import { ProductIntro } from './ProductIntro';
 import { request } from './api';
-import { homeHref, isDemo } from './environment';
+import { guideHref, homeHref, isDemo } from './environment';
 import { CohortFields, cohortQuery, readCohort } from './CohortFields';
 import type { Attempts, OverviewData, Timing } from './overviewMetrics';
 
@@ -78,6 +78,7 @@ export function Overview() {
     <aside className="sidebar" aria-label="Workspace navigation"><header><span className="mark" aria-hidden="true">Q</span><span className="brand-name">Quantum Job Tracker</span></header>
       <p className="workspace-label">WORKSPACE</p><a className="nav-item" href={drillDown()}>▦ Jobs</a><a className="nav-item active" aria-current="page" href={`${homeHref}?view=overview&${query}`}>◷ Overview</a>
       <a className="nav-item" href={`${homeHref}?view=comparison`}>⇄ Experiment comparison</a>
+      <a className="nav-item" href={guideHref}>Demo &amp; Guide</a>
       <div className="sidebar-note"><strong>Synthetic environment</strong><p>Recorded job evidence, never real hardware telemetry.</p></div>
     </aside>
     <div className="workspace"><div className="topbar"><span>Workspace / <strong>Overview</strong></span><span className="environment-badge">Synthetic data</span></div><main>

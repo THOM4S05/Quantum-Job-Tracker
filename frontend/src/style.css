@@ -166,7 +166,7 @@ section.detail-panel { padding: 26px; overflow: visible; }
 section.breakdown-panel { padding: 24px; overflow: visible; }
 .breakdown-panel::before { display: none; }
 .breakdown-panel h2 { font-size: 17px; margin: 0; }
-.breakdown-panel ul { list-style: none; padding: 0; margin-bottom: 0; }
+.breakdown-panel ul { list-style: disc; padding-left: 20px; margin-bottom: 0; }
 .breakdown-panel li + li { margin-top: 18px; }
 .breakdown-panel a { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 9px; font-size: 12px; overflow-wrap: anywhere; }
 .chart-track { grid-column: 1 / -1; height: 7px; background: #f0e9fc; border-radius: 3px; overflow: hidden; }
@@ -176,9 +176,9 @@ section.breakdown-panel { padding: 24px; overflow: visible; }
 
 .implementation-notes { max-width: 1080px; }
 .implementation-list { margin: 0; }
-.implementation-list > div + div { margin-top: 24px; padding-top: 20px; border-top: 1px solid #e3e4e8; }
-.implementation-list dt { font-size: 14px; font-weight: 600; margin-bottom: 8px; }
-.implementation-list dd { margin: 0; font-size: 13px; line-height: 1.8; overflow-wrap: anywhere; }
+
+.implementation-list h3 { font-size: 14px; font-weight: 600; margin-bottom: 8px; }
+.implementation-list p { margin: 0; font-size: 13px; line-height: 1.8; overflow-wrap: anywhere; }
 footer a { color: #6930d4; }
 
 .comparison-filters { grid-template-columns: repeat(3, minmax(0, 1fr)); }
@@ -202,7 +202,7 @@ section.comparison-changes { margin: 22px 0; padding: 18px; background: #faf9fc;
 .comparison-changes h3 { margin: 0 0 10px; font-size: 15px; }
 .comparison-changes .highlight-context { color: #656875; font-size: 12px; overflow-wrap: anywhere; }
 .comparison-changes p, .timing-contributors p { font-size: 12px; line-height: 1.8; }
-.change-list { list-style: none; padding: 0 !important; margin: 16px 0 0; }
+.change-list { list-style: disc; padding-left: 20px !important; margin: 16px 0 0; }
 .observed-change { padding: 14px 16px; background: white; border-left: 3px solid #b598df; }
 .observed-change + .observed-change { margin-top: 12px; }
 .observed-insufficient { border-left-color: #b7b5bf; }
@@ -227,7 +227,73 @@ section.product-intro { display: grid; grid-template-columns: 1.2fr 1fr; gap: 22
 .playground-disclosure > summary { cursor: pointer; font-size: 13px; color: #6930d4; }
 section.example-guide { padding: 20px 24px; margin: 24px 0; background: #faf9fc; overflow: visible; }
 .example-guide h2 { font-size: 17px; margin: 0 0 14px; }
-.example-guide ol { padding-left: 20px; margin: 0; }
+.example-guide ul { padding-left: 20px; margin: 0; }
 .example-guide li + li { margin-top: 12px; }
 .example-inline-link { color: #6930d4; }
 @media (max-width: 850px) { section.product-intro { grid-template-columns: 1fr; } }
+
+.demo-guide { max-width: 1120px; }
+.guide-contents { display: flex; flex-wrap: wrap; gap: 12px 20px; padding: 0 0 24px; font-size: 13px; }
+.demo-guide a { color: #6930d4; }
+.demo-guide h2 { font-size: 21px; letter-spacing: -.3px; }
+.demo-guide h3 { font-size: 15px; margin: 0 0 10px; }
+.demo-guide p, .guide-card p, .guide-interpretation li, .guide-glossary p { font-size: 13px; line-height: 1.8; }
+.demo-guide [id] { scroll-margin-top: 24px; }
+.demo-guide .synthetic-label { margin-bottom: 18px; }
+.guide-steps { margin: 20px 0 0; padding-left: 26px; }
+.guide-steps > li { padding: 0 0 22px 8px; }
+.guide-steps > li:last-child { padding-bottom: 0; }
+.guide-steps > li::marker { color: #6930d4; font-weight: 700; }
+.guide-action { display: inline-block; padding: 9px 12px; border: 1px solid #dcd0ed; border-radius: 5px; background: #fff; font-size: 12px; font-weight: 600; text-decoration: none; }
+.demo-guide .guide-action-primary { color: white; background: #6930d4; border-color: #6930d4; }
+.guide-action:hover { text-decoration: underline; }
+.guide-example-status { padding: 0 0 12px; }
+section.guide-page-sections { padding: 0; border: 0; background: transparent; box-shadow: none; overflow: visible; margin: 28px 0; }
+.guide-page-sections::before { display: none; }
+.guide-card-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+.guide-card { padding: 22px; background: white; border: 1px solid #e3e4e8; border-radius: 7px; }
+.guide-card p { color: #625b6e; }
+.guide-card > a { display: inline-block; font-size: 13px; margin-top: 5px; }
+.guide-glossary { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px 26px; margin: 0; }
+.guide-glossary strong { font-size: 13px; font-weight: 600; margin-bottom: 7px; }
+.guide-glossary p { margin: 0; color: #625b6e; }
+.guide-interpretation { padding-left: 20px; margin: 0; }
+.guide-interpretation li + li { margin-top: 16px; }
+@media (max-width: 850px) { .guide-card-grid, .guide-glossary { grid-template-columns: 1fr; } }
+
+@media (max-width: 560px) {
+  .sidebar { flex-wrap: wrap; gap: 4px; }
+  .sidebar > header { flex-basis: 100%; margin-bottom: 6px; }
+  .sidebar .nav-item { max-width: 100%; }
+}
+
+/* Bulleted content stays compact on wide screens and follows reading order on mobile. */
+.guide-steps, .guide-interpretation, .implementation-list,
+.metric-definitions > ul, .example-guide > ul {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+  gap: 22px 32px;
+  list-style: disc;
+  padding-left: 22px;
+}
+.guide-steps > li, .guide-steps > li:last-child { padding: 0 0 0 4px; }
+.guide-interpretation li + li, .example-guide li + li { margin-top: 0; }
+.guide-card-points, .guide-glossary { list-style: disc; padding-left: 20px; }
+.guide-card-points { margin: 0 0 16px; font-size: 13px; line-height: 1.8; color: #625b6e; }
+.guide-card-points li + li { margin-top: 12px; }
+.guide-glossary strong { display: block; }
+.guide-glossary li, .implementation-list li, .guide-steps li { min-width: 0; overflow-wrap: anywhere; }
+.guide-card-points li::marker, .guide-glossary li::marker,
+.guide-interpretation li::marker, .implementation-list li::marker,
+.change-list > li::marker, .breakdown-panel li::marker { color: #6930d4; }
+.comparison-outcomes ul, .highlight-support ul, .timing-contributors ul { columns: 2 180px; column-gap: 28px; }
+.comparison-outcomes li, .highlight-support li, .timing-contributors li { break-inside: avoid; margin-bottom: 8px; }
+
+.change-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+  gap: 16px 28px;
+}
+.change-list > li { min-width: 0; overflow-wrap: anywhere; }
+.observed-change + .observed-change { margin-top: 0; }
+.metric-definitions > ul > li + li { margin-top: 0; }

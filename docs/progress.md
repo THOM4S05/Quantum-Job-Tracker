@@ -1,5 +1,42 @@
 # Quantum Job Tracker progress
 
+## Guide and layout publication — 20 October 2026
+
+Prepared Demo & Guide, its verified example links, and the bulleted responsive layouts for publication. The README now links to the public guide. Validation passed: **66 frontend tests**, the browser-demo production build, **5 API-backed Chrome workflows**, and **4 static-hosting Chrome workflows**, including mobile layout and keyboard navigation. Documentation file links and whitespace checks passed. Backend source is unchanged; PostgreSQL tests remain required by the deployment workflow. Earlier stage notes below describe the state before this publication.
+
+## Bulleted lists and compact layouts — 20 October 2026
+
+- Continued the existing list-formatting work without replacing the guide or other features. Guide walkthrough, page explanations, glossary, interpretation notes, implementation components, overview breakdowns and comparison explanations use visible bullets.
+- Longer explanatory lists and change cards use responsive columns; supporting-job lists also flow into columns when space permits. Narrow screens retain a single readable column. The chronological event timeline retains its existing event markers and sequence.
+- Checks actually run: **66 frontend tests passed**, TypeScript check passed, static-demo production build passed, and **4 Chrome browser tests passed** under `/Quantum-Job-Tracker/`. The added browser check verified bullet styles, desktop columns, mobile stacking and no horizontal page overflow; existing example links, return navigation and keyboard checks also passed. `git diff --check` passed.
+- No backend changes or backend tests were needed for this presentation update. Nothing published or deployed. No remaining blocker found; the next implementation stage remains separately scoped.
+
+## Demo & Guide page — 20 October 2026
+
+- [x] Read project instructions, README and current frontend/data/navigation code, then inspected the actual Jobs, Overview, comparison, job details/timeline and How it works pages before writing copy. No `AGENTS.md` is present in the workspace or inspected parent folders. Preserved existing work and design.
+- [x] Added a directly loadable `?view=guide` page with a plain-language purpose, the concrete compiler-version example, explicit synthetic/independent-portfolio labels, five numbered steps, readable section cards, glossary and interpretation guidance. Main explanations remain visible without expanding sections.
+- [x] Covered actual controls and navigation labels for Overview, Jobs, Job details, Experiment comparison, Changes to investigate, the browser-only playground and How it works. Explained submission-cohort filters, exact reference search, baseline/candidate choices, counts/units, configuration matching and return navigation without describing planned services as available.
+- [x] Reused the existing example identifier and comparison query. Resolved a supporting candidate job from the current comparison data and verified its recorded compilation failure, experiment and compiler version before exposing the direct link. Missing data, failed checks and unavailable/wrong-stage jobs produce honest messages and retry/general navigation; no records or conclusions are invented.
+- [x] Added **Demo & Guide** to main-page sidebars and a small entry in the Jobs/Overview introduction. Links use the existing base-path-aware helpers and retain the comparison return query for direct job/timeline links.
+- [x] Used semantic headings, a guide contents navigation, numbered steps, definition lists and descriptive links. Added responsive cards and wrapped mobile navigation to accommodate the extra item; existing keyboard focus styling remains visible.
+- [x] Updated README with the guide location and usage. No backend service, data-model/calculation change, dashboard, onboarding overlay, dependency, publication or deployment was added.
+
+Checks actually run for this stage:
+
+- Frontend regression suite: **66 passed**. Seven added checks cover direct guide rendering and visible content, verified example/supporting-job links, preserved selections, loading, missing experiment, retry after failed checks, and refusal to link to missing or wrongly staged supporting records. Existing features remain passing.
+- TypeScript checking passed, including guide code and both browser-test configurations. Normal API-mode and static-demo Vite production builds passed. The static build used release-style relative assets and was served locally under `/Quantum-Job-Tracker/`.
+- API-backed Playwright/Chrome suite against the existing separate local frontend/API preview and actual PostgreSQL: **5 passed**. The new guide workflow opens navigation, reloads the guide directly, follows the main example link and verified supporting record, inspects the three-event failure timeline, and returns to the same comparison selections. The existing four workflows passed too.
+- Static-hosting Playwright/Chrome suite: **3 passed**. Includes the guide and example journey under `/Quantum-Job-Tracker/`, direct reload, deep supporting links and comparison return, with **zero API requests**. A narrow-screen check at 390×844 verified no horizontal page overflow, tab navigation to the main example action, visible focus outline and Enter activation without losing the base path.
+- Inspected `/tmp/quantum-demo-guide.png`, `/tmp/quantum-guide-cards.png` and `/tmp/quantum-guide-mobile.png` for desktop/mobile layout. Confirmed the guide has no collapsed explanatory sections. This is not a full screen-reader or accessibility certification.
+- `git diff --check` and documentation local-link/fence checks passed. Backend code/data were unchanged, so the Python suite was not rerun for this explanatory frontend stage; the guide’s API interactions were exercised in the browser checks above.
+
+What works: first-time visitors can learn the app’s purpose without quantum terminology knowledge, follow a concrete example, open verified job evidence and retain comparison choices. All general explanations/navigation remain usable when example records cannot be checked. The browser-only personal-run playground is clearly distinguished from the API-backed application and from real execution.
+
+How to open: choose **Demo & Guide** in the sidebar or the introduction, use `?view=guide`, or open the local static preview at `http://127.0.0.1:5176/Quantum-Job-Tracker/?view=guide`. The API-backed development preview is `http://127.0.0.1:5175/?view=guide`; standard README setup remains unchanged.
+
+Remaining limitations: no local guide/demo blocker was found. Missing/unseeded local example data needs the documented seed/setup; the guide offers a readable fallback rather than substituting snapshot results in API mode. The hosted release remains unchanged because publishing/deploying was out of scope. No new backend work is required for this page; the next planned implementation remains the separately scoped permission foundation.
+
+
 ## Complete browser example publication — 20 October 2026
 
 Prepared the first-visit instructions and complete exported experiment for publication. The browser release now includes the 56-run synthetic compiler example, full histories and precomputed comparisons alongside the original 200 samples. The public example can be followed without a backend; the local application continues to read PostgreSQL.
@@ -80,7 +117,7 @@ Pre-push verification: **127 backend tests passed** against disposable PostgreSQ
 
 ## Current status
 
-The first-visit product story and complete example journey are implemented and tested. Jobs/Overview explain the audience and purpose, label synthetic data and its source, and open the seeded comparison with one action. The updated static browser build now includes the same named example and all supporting timelines as a read-only export; API mode continues to use PostgreSQL. The full journey preserves selections and the repository base path. This stage passed 159 backend tests, 59 frontend tests, four API-backed browser workflows and one static-hosting journey. Nothing was published or deployed.
+The Demo & Guide page is complete and linked from main navigation and the introduction. It describes existing pages and terms, resolves available seeded evidence, and supports direct hosting-base-path links and comparison return context. This stage passed 66 frontend tests, five API-backed browser checks and three static-hosting/mobile/keyboard checks, plus TypeScript and both frontend builds. Backend functionality was unchanged. No publication or deployment was performed.
 
 The project is named Quantum Job Tracker. All seeded and future quantum jobs and providers are synthetic; nothing connects to Horizon Quantum systems.
 
@@ -196,6 +233,8 @@ Limitations: metadata and timings are fictional fixture snapshots, not results f
 This stage is complete. The next planned implementation remains the separately scoped permission foundation; no worker, operator action, authentication, or external integration was added.
 
 ## Staged checklist
+
+- [x] **Demo & Guide** — visible usage explanations, verified example records, glossary and interpretation, responsive/keyboard navigation and base-path browser coverage.
 
 - [x] **First-visit refinement** — concise purpose/source labels, seeded example entry, guided evidence journey and relative-base static hosting checks.
 

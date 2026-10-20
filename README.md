@@ -4,6 +4,18 @@
 
 All jobs, providers, compiler metadata and results are **synthetic**. The featured example compares compiler versions; an experiment is a group of related runs and need not be a compiler-version comparison. No Horizon Quantum systems, real compiler service or quantum hardware is connected.
 
+## Demo & Guide
+
+Select **Demo & Guide** in the sidebar, or the smaller link in the Jobs/Overview introduction. The page explains what each working section is for, its main controls, a bulleted example journey, a small glossary and how to interpret the results. It is written for first-time visitors, including readers without quantum-computing knowledge, and identifies the app as an independent portfolio project using synthetic data.
+
+Listed explanations use visible bullet points. Longer groups sit side by side on wider screens and stack on narrow screens to keep them readable.
+
+Direct location: `?view=guide` under the app’s base path. For example, [local browser demo guide](http://127.0.0.1:5174/?view=guide), [local API-backed guide](http://localhost:5173/?view=guide), or the [public guide](https://thom4s05.github.io/Quantum-Job-Tracker/?view=guide). Follow the existing startup instructions below for either mode.
+
+The guide resolves its example and supporting compilation-failure job through the current data adapter, then verifies the recorded job’s experiment, compiler and failure stage. If the example or job is unavailable, it explains the situation and offers retry/general navigation instead of inventing links or results. Its **Explore example comparison** action preserves the featured selections; direct supporting-job links return to that same comparison.
+
+The guide is included in the GitHub Pages browser build.
+
 ## Three-minute walkthrough
 
 1. **Overview (0:00).** From the introduction choose **Start with Overview**. Read the success-rate denominators and timing sample counts. Rates describe completed attempts; missing observations are not zero. The page labels whether its source is bundled browser records or the local API/PostgreSQL application.
@@ -256,13 +268,13 @@ cd frontend
 QUANTUM_JOB_TRACKER_E2E_CHANNEL=chrome npm run test:e2e
 ```
 
-The default base URL is `http://127.0.0.1:5173`; override it with `QUANTUM_JOB_TRACKER_E2E_BASE_URL` if needed. The browser tests cover experiment comparison and timeline return navigation, the original failure investigation, and the operational overview: cohort selection, rates/counts, both chart drill-downs, failure evidence, and filter-preserving return navigation. Seed both profiles as above. The tests do not mock network responses or modify jobs. Failure traces/screenshots are written to ignored `frontend/test-results/`.
+The default base URL is `http://127.0.0.1:5173`; override it with `QUANTUM_JOB_TRACKER_E2E_BASE_URL` if needed. The browser tests cover Demo & Guide and its verified example links, the complete first-visit walkthrough, experiment comparison and timeline return navigation, the original failure investigation, and the operational overview: cohort selection, rates/counts, both chart drill-downs, failure evidence, and filter-preserving return navigation. Seed both profiles as above. The tests do not mock network responses or modify jobs. Failure traces/screenshots are written to ignored `frontend/test-results/`.
 
 On the implementation machine the packaged Chromium download ran out of disk space and was stopped. The test then **passed using installed Chrome** with the command above; no existing browser caches were removed.
 
 ### Static hosting base-path check
 
-The separate browser test checks the complete example at the GitHub Pages repository path and asserts that no API requests are made. From `frontend`, build and preview locally (no publishing):
+The separate browser tests check the complete example and Demo & Guide (including direct reload and supporting-job return) at the GitHub Pages repository path and assert that no API requests are made. From `frontend`, build and preview locally (no publishing):
 
 ```sh
 VITE_DEMO_MODE=true npx vite build --base=./ --outDir node_modules/.qjt-journey-dist

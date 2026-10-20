@@ -3,7 +3,7 @@ import { example, exampleHref } from './example';
 import { request } from './api';
 import { ComparisonChanges, TimingEvidence } from './ComparisonChanges';
 import { formatNumber as number, formatChange as change } from './comparisonFormatting';
-import { homeHref, isDemo, jobHref } from './environment';
+import { guideHref, homeHref, isDemo, jobHref } from './environment';
 import type { Attempts } from './overviewMetrics';
 
 type Choice = { experiment: string; baseline: string; candidate: string };
@@ -67,6 +67,7 @@ export function Comparison() {
   return <div className="app-shell">
     <aside className="sidebar" aria-label="Workspace navigation"><header><span className="mark" aria-hidden="true">Q</span><span className="brand-name">Quantum Job Tracker</span></header>
       <p className="workspace-label">WORKSPACE</p><a className="nav-item" href={homeHref}>▦ Jobs</a><a className="nav-item" href={`${homeHref}?view=overview`}>◷ Overview</a><a className="nav-item active" aria-current="page" href={`${homeHref}?${returnQuery}`}>⇄ Experiment comparison</a>
+      <a className="nav-item" href={guideHref}>Demo &amp; Guide</a>
       <div className="sidebar-note"><strong>Synthetic experiment evidence</strong><p>Descriptive comparisons of recorded runs.</p></div>
     </aside>
     <div className="workspace"><div className="topbar"><span>Workspace / <strong>Comparison</strong></span><span className="environment-badge">Synthetic data</span></div><main>
@@ -81,7 +82,7 @@ export function Comparison() {
       {visible.error && <div role="alert" className="error-state"><div><strong>{data ? 'Showing stale comparison' : 'Unable to compare'}</strong><p>{visible.error}</p></div><button onClick={() => setRefresh((value) => value + 1)}>Try again</button></div>}
       {data && data.experiments.length === 0 && <p className="evidence-warning">No named experiments are recorded in this data source. In the local application, run python -m app.seed --dataset compiler-comparison-v1 after migrations, then retry. No example results are substituted for missing data.</p>}
       {data?.selection_required && <p><a className="example-inline-link" href={exampleHref}>Explore example comparison</a> — compiler-version comparison is one way to investigate an experiment.</p>}
-      {data && !data.selection_required && data.rows.length > 0 && choice.experiment === example.id && choice.baseline === example.baseline && choice.candidate === example.candidate && <section className="example-guide" aria-label="What to notice in the example"><h2>What to notice</h2><ol><li><strong>One improvement:</strong> in resource-gain, compare estimated depth and gate count. These describe the compiled circuit estimate, not measured hardware usage.</li><li><strong>One change to investigate:</strong> in compile-regression, the featured candidate has recorded compilation failures. Expand its supporting jobs to inspect a timeline, failure stage, explanation and correlation ID. Missing execution timings mean it never executed.</li><li>Use <strong>Back to comparison</strong> to return to these exact selections. Also inspect execution-slowdown to see timing observations. These constructed samples are not real compiler benchmarks or proof of causation.</li></ol><p>Baseline and candidate are the selections above; reversing them reverses the comparison direction. Success rates use completed attempts, and observations show their sample counts.</p></section>}
+      {data && !data.selection_required && data.rows.length > 0 && choice.experiment === example.id && choice.baseline === example.baseline && choice.candidate === example.candidate && <section className="example-guide" aria-label="What to notice in the example"><h2>What to notice</h2><ul><li><strong>One improvement:</strong> in resource-gain, compare estimated depth and gate count. These describe the compiled circuit estimate, not measured hardware usage.</li><li><strong>One change to investigate:</strong> in compile-regression, the featured candidate has recorded compilation failures. Expand its supporting jobs to inspect a timeline, failure stage, explanation and correlation ID. Missing execution timings mean it never executed.</li><li>Use <strong>Back to comparison</strong> to return to these exact selections. Also inspect execution-slowdown to see timing observations. These constructed samples are not real compiler benchmarks or proof of causation.</li></ul><p>Baseline and candidate are the selections above; reversing them reverses the comparison direction. Success rates use completed attempts, and observations show their sample counts.</p></section>}
       {data?.selection_required && <p>Choose an experiment, then a baseline and a different candidate compiler version.</p>}
       {data && !data.selection_required && <>
         <p className="comparison-summary">{data.selected_jobs} selected runs · {data.matched_groups} matched configuration groups · {data.excluded_version_jobs} runs with other or missing compiler versions excluded.</p>

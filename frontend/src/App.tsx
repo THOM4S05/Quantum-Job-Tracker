@@ -1,5 +1,6 @@
 import { FormEvent, useEffect, useState } from 'react';
 import type { WorkloadMetadata, JobDurations } from './metadata';
+import { Guide } from './Guide';
 import { ProductIntro } from './ProductIntro';
 import { JobDetails } from './JobDetails';
 import { Comparison } from './Comparison';
@@ -7,7 +8,7 @@ import { Overview } from './Overview';
 import { Implementation } from './Implementation';
 import { CohortFields, Cohort, CohortOptions, cohortQuery, readCohort } from './CohortFields';
 import { request } from './api';
-import { homeHref, isDemo, jobHref } from './environment';
+import { guideHref, homeHref, isDemo, jobHref } from './environment';
 import { lazy, Suspense } from 'react';
 const Playground = lazy(() => import('./Playground').then((module) => ({ default: module.Playground })));
 
@@ -139,6 +140,7 @@ function JobsList() {
         <a className="nav-item active" href={homeHref} aria-current="page"><span aria-hidden="true">▦</span> Jobs</a>
         <a className="nav-item" href={`${homeHref}?view=overview&${cohortQuery(readCohort(new URLSearchParams(query)))}`}>◷ Overview</a>
         <a className="nav-item" href={`${homeHref}?view=comparison`}>⇄ Experiment comparison</a>
+        <a className="nav-item" href={guideHref}>Demo &amp; Guide</a>
         <div className="sidebar-note"><span className="sidebar-note-icon" aria-hidden="true">◇</span><strong>Synthetic environment</strong><p>Investigate fictional jobs and their outcomes.</p></div>
         <div className="sidebar-bottom"><span className="brand-footer">Quantum Job Tracker</span><span>{isDemo ? 'Browser demo' : 'Local workspace'}</span></div>
       </aside>
@@ -185,6 +187,7 @@ function JobsList() {
 }
 
 export function App() {
+  if (new URLSearchParams(window.location.search).get('view') === 'guide') return <Guide />;
   const comparisonContext = new URLSearchParams(window.location.search).get('view') === 'comparison';
   const showingJob = isDemo ? new URLSearchParams(window.location.search).has('job') : /^\/jobs\//.test(window.location.pathname);
   if (comparisonContext && !showingJob) return <Comparison />;
