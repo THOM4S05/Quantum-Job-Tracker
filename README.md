@@ -63,16 +63,6 @@ The guide resolves its example and supporting compilation-failure job through th
 
 The guide is included in the GitHub Pages browser build.
 
-## Three-minute walkthrough
-
-1. **Overview (0:00).** From the introduction choose **Start with Overview**. Read the success-rate denominators and timing sample counts. Rates describe completed attempts; missing observations are not zero. The page labels whether its source is bundled browser records or the local API/PostgreSQL application.
-2. **Experiment comparison (0:45).** Select **Explore example comparison**. It fills in **Synthetic compiler comparison v1**, baseline **synthetic-1.0.0**, candidate **synthetic-1.1.0**. In **resource-gain**, notice lower estimated depth (240 → 168) and gate count (1600 → 1120), both −30%. Estimates describe the compiled circuit, not measured hardware usage.
-3. **A change to investigate (1:30).** In **compile-regression**, the featured candidate has 7/7 recorded compilation failures versus 0/7 in the baseline. **Changes to investigate** also shows improvements and explains missing observations. These constructed differences are not real compiler benchmarks or evidence that a compiler change caused a regression.
-4. **Supporting job and evidence (2:00).** Expand **Supporting jobs for Compilation failures observed**, then open a candidate run. Select **Jump to timeline and failure evidence**. Inspect the compilation stage, recorded explanation, correlation ID and ordered three-event timeline. Execution timing is **Not available** because that run never executed; the comparison says **Insufficient data to compare**.
-5. **Return and share (2:45).** Select **Back to comparison**. Experiment and compiler choices remain selected through the return, reload and shared URL. The unchanged control and execution-slowdown are available for further exploration.
-
-The complete walkthrough works in the updated static build without an API and in the seeded local PostgreSQL application. The browser demo includes this walkthrough and the exported synthetic experiment records.
-
 ## Browser demo
 
 [Open the browser demo](https://thom4s05.github.io/Quantum-Job-Tracker/)
@@ -134,7 +124,7 @@ Choose **Synthetic compiler comparison v1**, baseline **synthetic-1.0.0**, candi
 
 **Changes to investigate** appears inside each compatible workload group. It shows newly observed compilation failures, lower execution success, higher timing/resource values, and decreases or other improvements alongside them. Counts, percentage-point changes and zero/missing-value explanations stay visible. Expand **Supporting jobs for …** to inspect the exact observations; **Runs contributing to timing medians** covers every timing metric. Compilation failures with no execution observations say **Insufficient data to compare**. These are descriptive synthetic differences, not confirmed regressions or causal conclusions.
 
-[Matching, metric definitions, units, delta rules and API contract](docs/comparisons.md). The browser build includes a frozen, read-only export of the named seed, both comparison directions and all supporting timelines. It uses no live API. The local application reads the same experiment through PostgreSQL; no snapshot is substituted if local data is missing. The comparison page is also available in the [browser demo](https://thom4s05.github.io/Quantum-Job-Tracker/?view=comparison); the updated local browser build supports the same seeded walkthrough without PostgreSQL.
+[Matching, metric definitions, units, delta rules and API contract](docs/comparisons.md). The browser build includes a frozen, read-only export of the named seed, both comparison directions and all supporting timelines. It uses no live API. The local application reads the same experiment through PostgreSQL; no snapshot is substituted if local data is missing. The comparison page is also available in the [browser demo](https://thom4s05.github.io/Quantum-Job-Tracker/?view=comparison); the local browser build supports the same seeded example without PostgreSQL.
 
 ## Operational overview
 
@@ -178,7 +168,7 @@ test -f .env || cp .env.example .env
 docker compose up --build -d
 ```
 
-For the walkthrough, load the example after startup with `docker compose exec -T api python -m app.seed --dataset compiler-comparison-v1`. This is repeatable and preserves existing jobs. The default 200-job profile remains optional.
+To load the example experiment after startup, run with `docker compose exec -T api python -m app.seed --dataset compiler-comparison-v1`. This is repeatable and preserves existing jobs. The default 200-job profile remains optional.
 
 Open [Quantum Job Tracker](http://localhost:5173) and [API documentation](http://localhost:8000/docs). Allow the initial image builds and health checks to finish; inspect status with `docker compose ps -a` and logs with `docker compose logs api migrate db frontend`.
 
@@ -310,7 +300,7 @@ cd frontend
 QUANTUM_JOB_TRACKER_E2E_CHANNEL=chrome npm run test:e2e:demo
 ```
 
-Open [the local static walkthrough](http://127.0.0.1:5176/Quantum-Job-Tracker/). The normal release build remains `npm run build:demo`, with relative assets and query-based navigation; the test serves those same relative assets under an explicit repository prefix. Static test artifacts are written to ignored `frontend/test-results-demo/`.
+Open [the local static demo](http://127.0.0.1:5176/Quantum-Job-Tracker/). The normal release build remains `npm run build:demo`, with relative assets and query-based navigation; the test serves those same relative assets under an explicit repository prefix. Static test artifacts are written to ignored `frontend/test-results-demo/`.
 
 ### Refresh the bundled example
 

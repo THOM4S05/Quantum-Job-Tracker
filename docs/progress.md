@@ -1,5 +1,10 @@
 # Quantum Job Tracker progress
 
+## README simplification — 20 October 2026
+
+- Removed the timed “Three-minute walkthrough” section at the user’s request. Kept screenshots, feature descriptions, guide links and setup instructions; reworded remaining setup references to the example experiment. Application pages are unchanged.
+- Checks actually run: verified README local links, balanced code fences, removal of the timed section, and `git diff --check`. No application tests rerun for this documentation-only change. No blockers or deployment.
+
 ## README screenshot refresh — 20 October 2026
 
 - Moved the screenshot section immediately below the short purpose/synthetic-data introduction and demo links. Kept existing startup instructions and detailed documentation.
