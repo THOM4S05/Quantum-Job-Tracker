@@ -10,6 +10,7 @@ export function Implementation() {
       <p className="workspace-label">WORKSPACE</p>
       <a className="nav-item" href={homeHref}>▦ Jobs</a>
       <a className="nav-item" href={`${homeHref}?view=overview`}>◷ Overview</a>
+      <a className="nav-item" href={`${homeHref}?view=comparison`}>⇄ Compare</a>
       <a className="nav-item active" aria-current="page" href={`${homeHref}?view=implementation`}>How it works</a>
     </aside>
     <div className="workspace"><div className="topbar"><span>Workspace / <strong>How it works</strong></span></div>

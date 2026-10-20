@@ -93,6 +93,9 @@ export function resetDemo() { customJobs = []; save(); }
 export async function demoRequest(path: string): Promise<Response> {
   const url = new URL(path, 'https://demo.invalid');
   const all = [...customJobs, ...fixtures];
+  // Browser samples have no named experiments. Do not fabricate backend comparisons.
+  if (url.pathname === '/api/comparisons') return Response.json({ synthetic: true, selection_required: true,
+    experiments: [], compiler_versions: [], experiment_jobs: 0, rows: [], selected_jobs: 0, excluded_version_jobs: 0, matched_groups: 0 });
   const id = url.pathname.match(/^\/api\/jobs\/([^/]+)$/)?.[1];
   if (id) {
     const found = all.find((item) => item.job.id === decodeURIComponent(id));

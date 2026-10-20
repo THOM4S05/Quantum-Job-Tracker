@@ -33,7 +33,7 @@ type EvidenceState = {
   problem: 'not-found' | 'invalid' | 'unavailable' | null; checked: string | null;
 };
 
-export function JobDetails({ jobId, backHref }: { jobId: string; backHref: string }) {
+export function JobDetails({ jobId, backHref, backLabel = "← Back to filtered jobs" }: { jobId: string; backHref: string; backLabel?: string }) {
   const [refresh, setRefresh] = useState(0);
   const [state, setState] = useState<EvidenceState>({ jobId, data: null, loading: true, problem: null, checked: null });
   useEffect(() => {
@@ -89,6 +89,7 @@ export function JobDetails({ jobId, backHref }: { jobId: string; backHref: strin
   const seconds = (value: number | null | undefined) => value == null ? 'Not available' : `${available(value)} s`;
   // Find the last failure event and keep the timeline in order
   const failure = evidence?.events.slice().reverse().find((event) => event.to_status === 'failed' && event.from_status !== 'failed');
+  const returnContext = backLabel === "← Back to comparison" ? "Comparison" : "Jobs";
   const lineageHref = (id: string) => jobHref(id, backHref.split('?')[1] ?? '');
 
   return (
@@ -96,14 +97,14 @@ export function JobDetails({ jobId, backHref }: { jobId: string; backHref: strin
       <aside className="sidebar" aria-label="Workspace navigation">
         <header><span className="mark" aria-hidden="true">Q</span><span className="brand-name">Quantum Job Tracker</span></header>
         <p className="workspace-label">WORKSPACE</p>
-        <a className="nav-item active" href={backHref}><span aria-hidden="true">▦</span> Jobs</a>
+        <a className="nav-item active" href={backHref}><span aria-hidden="true">▦</span> {returnContext}</a>
         <div className="sidebar-note"><span className="sidebar-note-icon" aria-hidden="true">◇</span><strong>Synthetic environment</strong><p>Investigate recorded evidence from fictional runs.</p></div>
         <div className="sidebar-bottom"><span className="brand-footer">Quantum Job Tracker</span><span>{isDemo ? 'Browser demo' : 'Local workspace'}</span></div>
       </aside>
       <div className="workspace">
-        <div className="topbar"><span>Workspace <span className="breadcrumb-divider">/</span><a href={backHref}>Jobs</a><span className="breadcrumb-divider">/</span><strong>Details</strong></span><span className="environment-badge">Synthetic environment</span></div>
+        <div className="topbar"><span>Workspace <span className="breadcrumb-divider">/</span><a href={backHref}>{returnContext}</a><span className="breadcrumb-divider">/</span><strong>Details</strong></span><span className="environment-badge">Synthetic environment</span></div>
         <main>
-          <a className="back-link" href={backHref}>← Back to filtered jobs</a>
+          <a className="back-link" href={backHref}>{backLabel}</a>
           <div className="page-heading"><div><h1>{job?.name ?? 'Job details'}</h1><p className="job-id">{jobId}</p></div>{job && <span className={`status-badge status-${job.status}`}>{label(job.status)}</span>}</div>
           {current.loading && <div className="result-state" role="status">Loading job evidence…</div>}
           {current.problem === 'not-found' && <section className="detail-panel" role="alert"><h2>Job not found</h2><p>No job with this ID was found in the current workspace.</p></section>}

@@ -72,6 +72,21 @@ Job details now group information into **Program and compiler**, **Target and co
 
 To inspect locally, run `docker compose up --build -d` and open a job such as `SYN-0004` (success), `SYN-0005` (compilation failure), or `SYN-0001` (deliberately missing estimates/version). Existing fixtures are enriched by migration; the seed command remains safe to repeat. The static demo uses the same metadata shape, including older saved-run compatibility. The browser demo includes these metadata sections.
 
+## Compare an experiment
+
+Open [Compare](http://localhost:5173/?view=comparison) in the full local application. Choose an experiment, a baseline compiler version and a different candidate version. Choices persist in the URL, including through job/timeline drill-down and **Back to comparison**.
+
+Each workload is split into exact configuration groups by program revision, inputs, target/provider, shots, compiler name and relevant settings. Changed settings, missing identity and unmatched groups are flagged; they are never silently treated as compiler-only changes. Tables show baseline, candidate, absolute change and meaningful relative change, with separate run/outcome counts and timing/resource sample counts. Rates use percentage points; zero baselines and missing observations have no relative percentage. Recorded failures remain visible.
+
+```sh
+docker compose up --build -d
+docker compose exec -T api python -m app.seed --dataset compiler-comparison-v1
+```
+
+Choose **Synthetic compiler comparison v1**, baseline **synthetic-1.0.0**, candidate **synthetic-1.1.0**. The four matched workloads include estimated qubits 32 → 24 (−25%), compilation success 100% → 0% (−100 pp), execution duration 10 → 18 s (+80%), and an unchanged control. Expand either side's jobs to inspect recorded timelines. Queue time can reflect operational conditions; synthetic comparisons establish no real compiler performance claim.
+
+[Matching, metric definitions, units, delta rules and API contract](docs/comparisons.md). The static browser samples have no named experiment membership and show an explicit empty state; comparison evidence comes from PostgreSQL in the local application. The comparison page is also available in the [browser demo](https://thom4s05.github.io/Quantum-Job-Tracker/?view=comparison); use the local application to compare the seeded experiment.
+
 ## Operational overview
 
 Open the [browser overview](https://thom4s05.github.io/Quantum-Job-Tracker/?view=overview), or [local Overview](http://localhost:5173/?view=overview) after starting the full application below. Four cards show compilation success rate, execution success rate, median queue time and median execution duration from actual PostgreSQL job records. Each shows its denominator or eligible timing sample count; unavailable observations display **Not enough data**. Expand each rate's exclusions for pending, cancelled/cancelling, not-started and unknown counts.
@@ -224,7 +239,7 @@ cd frontend
 QUANTUM_JOB_TRACKER_E2E_CHANNEL=chrome npm run test:e2e
 ```
 
-The default base URL is `http://127.0.0.1:5173`; override it with `QUANTUM_JOB_TRACKER_E2E_BASE_URL` if needed. The browser tests cover the original failure investigation and the operational overview: cohort selection, rates/counts, both chart drill-downs, failure evidence, and filter-preserving return navigation. Seed both profiles as above. The tests do not mock network responses or modify jobs. Failure traces/screenshots are written to ignored `frontend/test-results/`.
+The default base URL is `http://127.0.0.1:5173`; override it with `QUANTUM_JOB_TRACKER_E2E_BASE_URL` if needed. The browser tests cover experiment comparison and timeline return navigation, the original failure investigation, and the operational overview: cohort selection, rates/counts, both chart drill-downs, failure evidence, and filter-preserving return navigation. Seed both profiles as above. The tests do not mock network responses or modify jobs. Failure traces/screenshots are written to ignored `frontend/test-results/`.
 
 On the implementation machine the packaged Chromium download ran out of disk space and was stopped. The test then **passed using installed Chrome** with the command above; no existing browser caches were removed.
 

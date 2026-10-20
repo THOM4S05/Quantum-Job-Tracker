@@ -1,5 +1,11 @@
 # Quantum Job Tracker progress
 
+## Comparison publication — 20 October 2026
+
+Prepared the comparison workflow for GitHub Pages publication. The public page includes navigation and an explicit empty state because browser fixtures have no named experiments; seeded compiler comparisons continue to use the local PostgreSQL application. Updated the README with the public comparison URL.
+
+Pre-publication checks: **155 Python tests passed** against disposable PostgreSQL schemas, **39 frontend tests passed**, the browser-demo production build passed, and **3 Playwright workflows passed** using Chrome against the local API/database stack. Documentation file links and whitespace checks passed. The existing Starlette/AnyIO deprecation warning remains.
+
 ## Publication and implementation notes — 19 October 2026
 
 The release includes the compiler/resource metadata, experiment fixtures, operational overview, and an optional **How it works** page linked from jobs, details and overview. The implementation guide maps Python, React, PostgreSQL/SQL, FastAPI/HTTP, async behaviour, message brokers and Git/CI/CD to code references and discussion questions. NATS/MQTT and a job worker remain unimplemented; the public site uses browser data, while the local API uses synchronous PostgreSQL access. The 56-job compiler comparison dataset remains a local backend seed profile, not a browser fixture.
@@ -10,9 +16,35 @@ Pre-push verification: **127 backend tests passed** against disposable PostgreSQ
 
 ## Current status
 
-The operational overview stage is complete on top of the compiler/resource metadata and deterministic experiment dataset. It reads actual PostgreSQL job snapshots, applies shared submission-date/target/compiler/experiment filters, and shows four metric cards plus clickable failure-stage and target breakdowns. Missing observations remain unavailable and all data is labelled synthetic. Definitions are in `docs/metrics.md`; no worker, schema migration, authentication or operator action was added.
+The experiment comparison workflow is complete. It groups actual PostgreSQL runs conservatively by workload and configuration, reuses the overview outcome definitions, shows separate outcome and observation counts, and preserves experiment/baseline/candidate choices through timeline drill-down. Mismatches and unknown identity are visible, with no deltas for unsafe groups. Matching and delta definitions are in `docs/comparisons.md`. All evidence remains synthetic; no worker, migration, operator action or real quantum SDK was added.
 
 The project is named Quantum Job Tracker. All seeded and future quantum jobs and providers are synthetic; nothing connects to Horizon Quantum systems.
+
+## Experiment comparison — 20 October 2026
+
+- [x] Reinspected project instructions, README, metadata/experiment seeds, shared metrics, list/detail navigation, static demo and tests. No `AGENTS.md` is present. Preserved existing project work and the implementation-notes page.
+- [x] Defined conservative workload/configuration matching, unverifiable identity, changed settings, sample/denominator rules and null/zero/rate delta behavior in `docs/comparisons.md`.
+- [x] Added read-only `/comparisons` with experiment-scoped version options and one consistent PostgreSQL snapshot. No default compiler pair is invented.
+- [x] Partitioned runs by revision, canonical input/settings JSON, target/provider, shots, compiler identity, language, simulation version and extra recorded settings. Flagged other differences, unmatched workloads and contradictory/missing identity. Every selected run remains in one inspectable group.
+- [x] Reused outcome definitions and added completed compilation-duration and estimated-resource medians. Kept run counts, completed attempts, exclusions and observation samples separate. Included recorded failed attempts with timing endpoints; no fabricated execution duration for compilation failures.
+- [x] Added URL-persisted React comparison choices, baseline/candidate/value/delta/sample tables, failure visibility, bounded visible-tab polling, loading/error/retry/stale/empty states, and links to every side's job/timeline with exact return context.
+- [x] Documented queue-time confounding and synthetic limitations. The independent browser samples have no named experiments and show an honest empty comparison selection rather than invented backend evidence.
+
+Checks actually run:
+
+- Full backend suite with actual PostgreSQL: **155 passed**, with the existing Starlette/AnyIO deprecation warning. Includes matching every seeded workload, all selected jobs appearing once, changed revision/inputs/target/provider/shots/compiler/language/optimisation/simulation/extra settings, canonical key ordering, partially matched groups, unmatched workload names, missing inputs, contradictory shots, unavailable/zero baselines, rate percentage points, execution failures, API options/selections, invalid/same-version queries, sanitized outages, and all 56 drill-down histories.
+- Initial focused calculation run without a database URL: **27 passed, 1 PostgreSQL test skipped**; the subsequent full PostgreSQL run above executed that integration test.
+- Frontend suite: **39 passed**, including comparison values/units/samples, unavailable percentages, configuration/unmatched warnings, selection application and history restoration, loading/error/retry/empty states, exact comparison return routing and browser-demo empty contract.
+- `docker compose up --build -d`: passed, including the TypeScript/Vite production build. The static browser-demo production build with `VITE_DEMO_MODE=true` and relative base path also passed. Local TypeScript checking included browser-test sources.
+- Playwright with installed Chrome against the actual frontend/API/PostgreSQL stack: **3 passed**. New workflow selects the seeded pair, verifies −25% estimated qubits, −100 pp compilation success, +8 s / +80% execution duration, opens a failed candidate's three-event timeline, returns to the identical URL and reloads its choices. Existing failure-investigation and overview drill-down workflows also passed.
+- Final comparison/details wording follow-up: **14 focused frontend tests passed** and local TypeScript checking passed. Stack communication, Python compilation, `git diff --check`, and documentation fences/local links passed.
+- Inspected `/tmp/quantum-comparison.png`: four readable workload/configuration panels, explicit candidate compilation failures and missing execution samples, separate outcome summaries and metric tables, with no clipped content in the tested desktop layout. No mobile-device/screen-reader audit is claimed.
+
+What works: the running local application compares all four seeded workloads using actual database evidence and exposes every selected underlying run. The compilation-regression candidate shows seven failed completed compilations, a 4 s compilation median (n=7), and no execution duration (n=0). The slowdown remains 10 → 18 s, and estimated-qubit improvement remains 32 → 24. Original list, overview and investigation features remain working.
+
+Limitations: comparisons are descriptive synthetic observations, not causal or statistically significant estimates of real compiler performance. Queue times can depend on operational conditions. Strict matching can leave incomplete/legacy configurations unverifiable. The API currently groups a whole small experiment in memory and returns full job references; larger experiments need bounded group/job pagination. The static browser samples lack named experiment membership and require the local seeded PostgreSQL app for this workflow. No hosted deployment was performed. No implementation blocker remains.
+
+This stage is complete. The next planned implementation remains the separately scoped permission foundation; worker execution, operator actions and external integrations remain deferred.
 
 ## Overview readability follow-up — 19 October 2026
 
@@ -100,6 +132,8 @@ Limitations: metadata and timings are fictional fixture snapshots, not results f
 This stage is complete. The next planned implementation remains the separately scoped permission foundation; no worker, operator action, authentication, or external integration was added.
 
 ## Staged checklist
+
+- [x] **Experiment comparison extension** — exact configuration matching, explicit mismatches/unmatched groups, outcome/sample-aware deltas, URL choices and recorded timeline drill-downs.
 
 - [x] **Operational overview extension** — documented metrics, submission-cohort filters, counts/exclusions/units, linked breakdowns and API/React/PostgreSQL/browser checks.
 

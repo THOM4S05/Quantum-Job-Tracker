@@ -1,6 +1,7 @@
 import { FormEvent, useEffect, useState } from 'react';
 import type { WorkloadMetadata, JobDurations } from './metadata';
 import { JobDetails } from './JobDetails';
+import { Comparison } from './Comparison';
 import { Overview } from './Overview';
 import { Implementation } from './Implementation';
 import { CohortFields, Cohort, CohortOptions, cohortQuery, readCohort } from './CohortFields';
@@ -136,6 +137,7 @@ function JobsList() {
         <p className="workspace-label">WORKSPACE</p>
         <a className="nav-item active" href={homeHref} aria-current="page"><span aria-hidden="true">▦</span> Jobs</a>
         <a className="nav-item" href={`${homeHref}?view=overview&${cohortQuery(readCohort(new URLSearchParams(query)))}`}>◷ Overview</a>
+        <a className="nav-item" href={`${homeHref}?view=comparison`}>⇄ Compare</a>
         <div className="sidebar-note"><span className="sidebar-note-icon" aria-hidden="true">◇</span><strong>Synthetic environment</strong><p>Investigate fictional jobs and their outcomes.</p></div>
         <div className="sidebar-bottom"><span className="brand-footer">Quantum Job Tracker</span><span>{isDemo ? 'Browser demo' : 'Local workspace'}</span></div>
       </aside>
@@ -181,14 +183,17 @@ function JobsList() {
 }
 
 export function App() {
+  const comparisonContext = new URLSearchParams(window.location.search).get('view') === 'comparison';
+  const showingJob = isDemo ? new URLSearchParams(window.location.search).has('job') : /^\/jobs\//.test(window.location.pathname);
+  if (comparisonContext && !showingJob) return <Comparison />;
   if (new URLSearchParams(window.location.search).get('view') === 'implementation') return <Implementation />;
   if (new URLSearchParams(window.location.search).get('view') === 'overview') return <Overview />;
   if (isDemo) {
     const params = new URLSearchParams(window.location.search);
     const id = params.get('job');
     params.delete('job');
-    return id ? <JobDetails jobId={id} backHref={`${homeHref}?${params}`} /> : <JobsList />;
+    return id ? <JobDetails jobId={id} backHref={`${homeHref}?${params}`} backLabel={comparisonContext ? "← Back to comparison" : undefined} /> : <JobsList />;
   }
   const detail = window.location.pathname.match(/^\/jobs\/([^/]+)\/?$/);
-  return detail ? <JobDetails jobId={detail[1]} backHref={`/${window.location.search}`} /> : <JobsList />;
+  return detail ? <JobDetails jobId={detail[1]} backHref={`/${window.location.search}`} backLabel={comparisonContext ? "← Back to comparison" : undefined} /> : <JobsList />;
 }
