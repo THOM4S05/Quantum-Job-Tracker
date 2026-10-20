@@ -61,7 +61,7 @@ Open the [local jobs list on the experiment date](http://localhost:5173/?submitt
 - `EXP-3-BASELINE-1` and `EXP-3-CANDIDATE-1` for slower execution.
 - `EXP-4-BASELINE-1` and `EXP-4-CANDIDATE-1` for the unchanged control.
 
-Open a job and inspect the existing five metadata/evidence groups. Expand **Submission specification** under Target and configuration to inspect experiment, workload, input, pair and intended-difference records. The API search is `GET /jobs?q=EXP-2-CANDIDATE-1`; follow the returned ID with `GET /jobs/{id}` for complete evidence. There is no experiment-specific frontend filter or comparison view in this stage. The independent static browser demo retains its existing metadata shape but does not seed this PostgreSQL experiment or run its CLI.
+Open a job and inspect the existing five metadata/evidence groups. Expand **Submission specification** under Target and configuration to inspect experiment, workload, input, pair and intended-difference records. The API search is `GET /jobs?q=EXP-2-CANDIDATE-1`; follow the returned ID with `GET /jobs/{id}` for complete evidence. The experiment comparison and overview now expose these records in the frontend. The static browser build includes a read-only export of this seed and its timelines; it never seeds a database or runs the CLI.
 
 ## Verification
 

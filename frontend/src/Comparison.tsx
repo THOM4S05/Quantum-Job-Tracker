@@ -1,4 +1,5 @@
 import { FormEvent, useEffect, useState } from 'react';
+import { example, exampleHref } from './example';
 import { request } from './api';
 import { ComparisonChanges, TimingEvidence } from './ComparisonChanges';
 import { formatNumber as number, formatChange as change } from './comparisonFormatting';
@@ -65,12 +66,12 @@ export function Comparison() {
   const returnQuery = `view=comparison&${query}`;
   return <div className="app-shell">
     <aside className="sidebar" aria-label="Workspace navigation"><header><span className="mark" aria-hidden="true">Q</span><span className="brand-name">Quantum Job Tracker</span></header>
-      <p className="workspace-label">WORKSPACE</p><a className="nav-item" href={homeHref}>▦ Jobs</a><a className="nav-item" href={`${homeHref}?view=overview`}>◷ Overview</a><a className="nav-item active" aria-current="page" href={`${homeHref}?${returnQuery}`}>⇄ Compare</a>
+      <p className="workspace-label">WORKSPACE</p><a className="nav-item" href={homeHref}>▦ Jobs</a><a className="nav-item" href={`${homeHref}?view=overview`}>◷ Overview</a><a className="nav-item active" aria-current="page" href={`${homeHref}?${returnQuery}`}>⇄ Experiment comparison</a>
       <div className="sidebar-note"><strong>Synthetic experiment evidence</strong><p>Descriptive comparisons of recorded runs.</p></div>
     </aside>
     <div className="workspace"><div className="topbar"><span>Workspace / <strong>Comparison</strong></span><span className="environment-badge">Synthetic data</span></div><main>
-      <div className="page-heading"><div><h1>Compare compiler versions</h1><p>What changed for this workload under the candidate compiler?</p></div></div>
-      <p className="cohort-note">Source: {isDemo ? 'browser demo records' : 'PostgreSQL experiment jobs'}. All results are synthetic. Queue time can be affected by operational conditions, scheduling and provider load. These comparisons do not establish real compiler performance. Highlights describe synthetic samples, not confirmed regressions or proof that a compiler change caused a difference.</p>
+      <div className="page-heading"><div><h1>Experiment comparison</h1><p>Featured example: what changed for this workload under the candidate compiler?</p></div></div>
+      <p className="cohort-note">Source: {isDemo ? 'bundled snapshot of the synthetic seed (not a live API)' : 'PostgreSQL experiment jobs'}. All results are synthetic. Queue time can be affected by operational conditions, scheduling and provider load. These comparisons do not establish real compiler performance. Highlights describe synthetic samples, not confirmed regressions or proof that a compiler change caused a difference.</p>
       <form className="job-filters comparison-filters" onSubmit={apply} aria-label="Comparison choices">
         <label>Experiment<select aria-label="Experiment" required value={draft.experiment} onChange={(e) => navigate({ experiment: e.target.value, baseline: '', candidate: '' })}><option value="">Choose an experiment</option>{data?.experiments.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}{draft.experiment && !data?.experiments.some((item) => item.id === draft.experiment) && <option value={draft.experiment}>{draft.experiment}</option>}</select></label>
         {(['baseline', 'candidate'] as const).map((side) => <label key={side}>{side === 'baseline' ? 'Baseline compiler version' : 'Candidate compiler version'}<select aria-label={side === 'baseline' ? 'Baseline compiler version' : 'Candidate compiler version'} required value={draft[side]} disabled={!draft.experiment} onChange={(e) => setDraft((value) => ({ ...value, [side]: e.target.value }))}><option value="">Choose a version</option>{versions.map((version) => <option key={version}>{version}</option>)}</select></label>)}
@@ -78,7 +79,9 @@ export function Comparison() {
       </form>
       {!data && !visible.error && <p role="status">Loading comparison…</p>}
       {visible.error && <div role="alert" className="error-state"><div><strong>{data ? 'Showing stale comparison' : 'Unable to compare'}</strong><p>{visible.error}</p></div><button onClick={() => setRefresh((value) => value + 1)}>Try again</button></div>}
-      {data && data.experiments.length === 0 && <p className="evidence-warning">No named experiments are recorded in this data source. Seed the local PostgreSQL compiler comparison dataset to try this workflow.</p>}
+      {data && data.experiments.length === 0 && <p className="evidence-warning">No named experiments are recorded in this data source. In the local application, run python -m app.seed --dataset compiler-comparison-v1 after migrations, then retry. No example results are substituted for missing data.</p>}
+      {data?.selection_required && <p><a className="example-inline-link" href={exampleHref}>Explore example comparison</a> — compiler-version comparison is one way to investigate an experiment.</p>}
+      {data && !data.selection_required && data.rows.length > 0 && choice.experiment === example.id && choice.baseline === example.baseline && choice.candidate === example.candidate && <section className="example-guide" aria-label="What to notice in the example"><h2>What to notice</h2><ol><li><strong>One improvement:</strong> in resource-gain, compare estimated depth and gate count. These describe the compiled circuit estimate, not measured hardware usage.</li><li><strong>One change to investigate:</strong> in compile-regression, the featured candidate has recorded compilation failures. Expand its supporting jobs to inspect a timeline, failure stage, explanation and correlation ID. Missing execution timings mean it never executed.</li><li>Use <strong>Back to comparison</strong> to return to these exact selections. Also inspect execution-slowdown to see timing observations. These constructed samples are not real compiler benchmarks or proof of causation.</li></ol><p>Baseline and candidate are the selections above; reversing them reverses the comparison direction. Success rates use completed attempts, and observations show their sample counts.</p></section>}
       {data?.selection_required && <p>Choose an experiment, then a baseline and a different candidate compiler version.</p>}
       {data && !data.selection_required && <>
         <p className="comparison-summary">{data.selected_jobs} selected runs · {data.matched_groups} matched configuration groups · {data.excluded_version_jobs} runs with other or missing compiler versions excluded.</p>

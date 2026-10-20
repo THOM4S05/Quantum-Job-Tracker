@@ -65,9 +65,13 @@ def get_job(job_id: UUID, request: Request) -> dict:
                                             .order_by(job_events.c.sequence.asc())).mappings().all()
     except SQLAlchemyError:
         raise HTTPException(status_code=503, detail="Job evidence is temporarily unavailable. Please try again.") from None
+    return {"job": job, "events": events, "history_complete": history_complete(job, events)}
+
+
+def history_complete(job, events):
     # This checks the recorded history, not whether diagnostics explain a cause.
     # Check for missing events and make sure the history matches the job
-    complete = (
+    return (
         len(events) == job["version"]
         and all(event["sequence"] == index for index, event in enumerate(events, start=1))
         and bool(events)
@@ -77,4 +81,3 @@ def get_job(job_id: UUID, request: Request) -> dict:
         and events[-1]["to_status"] == job["status"]
         and events[-1]["occurred_at"] == job["updated_at"]
     )
-    return {"job": job, "events": events, "history_complete": complete}

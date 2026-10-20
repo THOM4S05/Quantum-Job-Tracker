@@ -90,10 +90,10 @@ it('explains invalid filters and allows retry after an API error', async () => {
 
 it('serves browser overview and drill-downs from recorded demo data with the shared filters', async () => {
   const overview = await (await demoRequest('/api/overview')).json() as OverviewData;
-  expect(overview.total_jobs).toBe(200);
+  expect(overview.total_jobs).toBe(256);
   expect(overview.compilation.rate_percent).toBe(87.5);
-  expect(overview.execution.rate_percent).toBe(80);
-  expect(overview.execution_duration).toEqual({ median_seconds: 2, samples: 100, excluded: 100 });
+  expect(overview.execution.rate_percent).toBeCloseTo(100 * 129 / 149, 5);
+  expect(overview.execution_duration).toEqual({ median_seconds: 2, samples: 149, excluded: 107 });
   for (const stage of overview.failures_by_stage) {
     const listed = await (await demoRequest(`/api/jobs?status=failed&failure_stage=${stage.key}`)).json();
     expect(listed.total).toBe(stage.count);

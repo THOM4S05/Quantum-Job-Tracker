@@ -5,12 +5,12 @@ import type { JobPage } from './App';
 beforeEach(resetDemo);
 const list = async (query = ''): Promise<JobPage> => (await demoRequest(`/api/jobs?${query}`)).json();
 
-it('offers 200 jobs with filtered, stable pagination and case-insensitive references', async () => {
+it('offers 256 jobs with filtered, stable pagination and case-insensitive references', async () => {
   const page = await list();
-  expect(page.total).toBe(200);
+  expect(page.total).toBe(256);
   expect(page.items).toHaveLength(25);
   const failed = await list('status=failed&page_size=10&page=2');
-  expect(failed.total).toBe(60);
+  expect(failed.total).toBe(67);
   expect(failed.items).toHaveLength(10);
   expect(failed.items.every((job) => job.status === 'failed')).toBe(true);
   const match = await list('q=syn-0005');
@@ -40,11 +40,11 @@ it('creates personal runs, persists them, and resets without removing the sample
   expect(item.job.name).toBe('My failure');
   expect(item.job.status).toBe('failed');
   expect(item.job.error_stage).toBe('execution');
-  expect((await list()).total).toBe(201);
+  expect((await list()).total).toBe(257);
   expect(localStorage.getItem('quantum-job-tracker-playground-v1')).toContain('My failure');
   expect((await demoRequest(`/api/jobs/${item.job.id}`)).status).toBe(200);
   resetDemo();
-  expect((await list()).total).toBe(200);
+  expect((await list()).total).toBe(256);
   expect((await demoRequest(`/api/jobs/${item.job.id}`)).status).toBe(404);
 });
 

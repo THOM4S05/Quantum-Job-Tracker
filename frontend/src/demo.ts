@@ -1,3 +1,5 @@
+import snapshot from './data/exampleSnapshot.json';
+import manifest from './data/exampleManifest.json';
 import type { Job, JobPage } from './App';
 import type { JobEvidence, RecordedEvent } from './JobDetails';
 import { calculateOverview } from './overviewMetrics';
@@ -92,10 +94,25 @@ export function resetDemo() { customJobs = []; save(); }
 
 export async function demoRequest(path: string): Promise<Response> {
   const url = new URL(path, 'https://demo.invalid');
-  const all = [...customJobs, ...fixtures];
-  // Browser samples have no named experiments. Do not fabricate backend comparisons.
-  if (url.pathname === '/api/comparisons') return Response.json({ synthetic: true, selection_required: true,
-    experiments: [], compiler_versions: [], experiment_jobs: 0, rows: [], selected_jobs: 0, excluded_version_jobs: 0, matched_groups: 0 });
+  const all = [...customJobs, ...fixtures, ...(snapshot.jobs as JobEvidence[])];
+  if (url.pathname === '/api/comparisons') {
+    const params = url.searchParams;
+    const experiment = params.get('experiment');
+    const baseline = params.get('baseline')?.trim();
+    const candidate = params.get('candidate')?.trim();
+    if ([...params.keys()].some((key) => !['experiment', 'baseline', 'candidate'].includes(key)) ||
+        (experiment !== null && !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(experiment)) ||
+        (baseline !== undefined && (!baseline || baseline.length > 80)) || (candidate !== undefined && (!candidate || candidate.length > 80)) ||
+        (baseline && baseline === candidate)) return Response.json({}, { status: 422 });
+    const ready = !!(experiment && baseline && candidate);
+    const known = experiment?.toLowerCase() === manifest.id;
+    const options = { synthetic: true, selection_required: !ready, experiments: [{ id: manifest.id, name: manifest.name }],
+      compiler_versions: known ? [manifest.baseline, manifest.candidate].sort() : [], experiment_jobs: known ? snapshot.jobs.length : 0,
+      rows: [], selected_jobs: 0, excluded_version_jobs: 0, matched_groups: 0 };
+    if (!ready || !known) return Response.json(options);
+    const comparison = (snapshot.comparisons as Record<string, unknown>)[`${baseline}:${candidate}`];
+    return comparison ? Response.json(comparison) : Response.json({}, { status: 422 });
+  }
   const id = url.pathname.match(/^\/api\/jobs\/([^/]+)$/)?.[1];
   if (id) {
     const found = all.find((item) => item.job.id === decodeURIComponent(id));

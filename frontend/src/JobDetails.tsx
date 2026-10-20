@@ -106,6 +106,7 @@ export function JobDetails({ jobId, backHref, backLabel = "← Back to filtered 
         <main>
           <a className="back-link" href={backHref}>{backLabel}</a>
           <div className="page-heading"><div><h1>{job?.name ?? 'Job details'}</h1><p className="job-id">{jobId}</p></div>{job && <span className={`status-badge status-${job.status}`}>{label(job.status)}</span>}</div>
+          {job && <p className="evidence-jump"><a href="#lifecycle-evidence">Jump to timeline and failure evidence ↓</a></p>}
           {current.loading && <div className="result-state" role="status">Loading job evidence…</div>}
           {current.problem === 'not-found' && <section className="detail-panel" role="alert"><h2>Job not found</h2><p>No job with this ID was found in the current workspace.</p></section>}
           {current.problem === 'invalid' && <section className="detail-panel" role="alert"><h2>Invalid job ID</h2><p>This address does not contain a valid job ID. Return to the list to select a job.</p></section>}
@@ -139,7 +140,7 @@ export function JobDetails({ jobId, backHref, backLabel = "← Back to filtered 
               <details className="diagnostics"><summary>Submission specification</summary><pre>{JSON.stringify(job.specification, null, 2)}</pre></details>
             </section>
             <section className="detail-panel" aria-labelledby="estimated-resources">
-              <h2 id="estimated-resources">Estimated resources</h2>
+              <h2 id="estimated-resources">Estimated resources</h2><p className="evidence-note">Estimates describe the compiled circuit: logical qubits, sequential circuit depth and gate count. They are not observed hardware usage or proof of execution quality.</p>
               <p>Compiler estimates for a synthetic workload. These are not observed results or measurements from quantum hardware.</p>
               <dl className="metadata-grid">
                 <div><dt>Estimated logical qubits (count)</dt><dd>{available(metadata.estimated_logical_qubits)}</dd></div>

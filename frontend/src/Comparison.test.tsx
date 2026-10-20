@@ -84,5 +84,5 @@ it('shows loading, validation errors, retry and empty selections honestly', asyn
   expect(await screen.findByText(/No named experiments/)).toBeInTheDocument();
   const browser = await (await demoRequest('/api/comparisons')).json();
   expect(browser.selection_required).toBe(true);
-  expect(browser.experiments).toEqual([]);
+  expect(browser.experiments).toHaveLength(1);
 });

@@ -1,5 +1,6 @@
 import { FormEvent, useEffect, useState } from 'react';
 import type { WorkloadMetadata, JobDurations } from './metadata';
+import { ProductIntro } from './ProductIntro';
 import { JobDetails } from './JobDetails';
 import { Comparison } from './Comparison';
 import { Overview } from './Overview';
@@ -137,7 +138,7 @@ function JobsList() {
         <p className="workspace-label">WORKSPACE</p>
         <a className="nav-item active" href={homeHref} aria-current="page"><span aria-hidden="true">▦</span> Jobs</a>
         <a className="nav-item" href={`${homeHref}?view=overview&${cohortQuery(readCohort(new URLSearchParams(query)))}`}>◷ Overview</a>
-        <a className="nav-item" href={`${homeHref}?view=comparison`}>⇄ Compare</a>
+        <a className="nav-item" href={`${homeHref}?view=comparison`}>⇄ Experiment comparison</a>
         <div className="sidebar-note"><span className="sidebar-note-icon" aria-hidden="true">◇</span><strong>Synthetic environment</strong><p>Investigate fictional jobs and their outcomes.</p></div>
         <div className="sidebar-bottom"><span className="brand-footer">Quantum Job Tracker</span><span>{isDemo ? 'Browser demo' : 'Local workspace'}</span></div>
       </aside>
@@ -145,7 +146,8 @@ function JobsList() {
         <div className="topbar"><span>Workspace <span className="breadcrumb-divider">/</span> <strong>Jobs</strong></span><span className="environment-badge">Synthetic environment</span></div>
         <main>
           <div className="page-heading"><div><h1>Jobs</h1><p>Search and inspect your synthetic quantum runs.</p></div><span className="version-badge">{isDemo ? 'Browser data' : 'Read-only workspace'}</span></div>
-          {isDemo && <Suspense fallback={<p>Loading simulation form…</p>}><Playground onReset={clear} /></Suspense>}
+          <ProductIntro />
+          {isDemo && <details className="playground-disclosure"><summary>Browser-only playground — create a personal simulated run</summary><Suspense fallback={<p>Loading simulation form…</p>}><Playground onReset={clear} /></Suspense></details>}
           <form className="job-filters" onSubmit={apply} aria-label="Job filters">
             <label className="search-field">Job ID or external reference<input type="search" value={draft.q} onChange={(e) => field('q', e.target.value)} maxLength={160} placeholder="e.g. SYN-0005" aria-describedby="search-help" /></label>
             <label>Status<select value={draft.status} onChange={(e) => field('status', e.target.value)}><option value="">All statuses</option>{statuses.map((status) => <option key={status} value={status}>{statusLabel(status)}</option>)}{draft.status && !statuses.includes(draft.status as Status) && <option value={draft.status}>{draft.status} (invalid)</option>}</select></label>

@@ -1,4 +1,5 @@
 import { FormEvent, useEffect, useState } from 'react';
+import { ProductIntro } from './ProductIntro';
 import { request } from './api';
 import { homeHref, isDemo } from './environment';
 import { CohortFields, cohortQuery, readCohort } from './CohortFields';
@@ -76,11 +77,13 @@ export function Overview() {
   return <div className="app-shell">
     <aside className="sidebar" aria-label="Workspace navigation"><header><span className="mark" aria-hidden="true">Q</span><span className="brand-name">Quantum Job Tracker</span></header>
       <p className="workspace-label">WORKSPACE</p><a className="nav-item" href={drillDown()}>▦ Jobs</a><a className="nav-item active" aria-current="page" href={`${homeHref}?view=overview&${query}`}>◷ Overview</a>
-      <a className="nav-item" href={`${homeHref}?view=comparison`}>⇄ Compare</a>
+      <a className="nav-item" href={`${homeHref}?view=comparison`}>⇄ Experiment comparison</a>
       <div className="sidebar-note"><strong>Synthetic environment</strong><p>Recorded job evidence, never real hardware telemetry.</p></div>
     </aside>
     <div className="workspace"><div className="topbar"><span>Workspace / <strong>Overview</strong></span><span className="environment-badge">Synthetic data</span></div><main>
       <div className="page-heading"><div><h1>Operational overview</h1><p>Recorded outcomes and timings for synthetic jobs.</p></div></div>
+      <ProductIntro onOverview />
+      <p className="overview-explanation">Success rates count completed attempts, not pending or cancelled jobs. Each card shows its denominator or timing sample count; missing observations are not treated as zero.</p>
       <p className="cohort-note">Dates select a cohort by <strong>job submission time (UTC)</strong>. Later lifecycle activity still contributes. {isDemo ? 'Source: browser demo records.' : 'Source: PostgreSQL job records.'}</p>
       <form className="job-filters overview-filters" aria-label="Overview filters" onSubmit={apply}><CohortFields value={draft} options={data} onChange={(key, value) => setDraft((previous) => ({ ...previous, [key]: value }))} />
         <div className="filter-actions"><button type="submit" className="primary">Apply filters</button><button type="button" onClick={() => navigate(readCohort(new URLSearchParams()))}>Clear filters</button></div>

@@ -1,21 +1,34 @@
 # Quantum Job Tracker
 
-Quantum Job Tracker displays **synthetic quantum jobs**, their recorded outcomes, and lifecycle events. All providers, execution results, durations, and failures are simulated. Quantum Job Tracker has no connection to Horizon Quantum systems or any real quantum service.
+**Inspect quantum-job compilation and execution, compare experiments, and investigate changes using the underlying job evidence.** Quantum Job Tracker helps developers and operators trace an observed difference back to recorded runs, timelines and failure diagnostics.
+
+All jobs, providers, compiler metadata and results are **synthetic**. The featured example compares compiler versions; an experiment is a group of related runs and need not be a compiler-version comparison. No Horizon Quantum systems, real compiler service or quantum hardware is connected.
+
+## Three-minute walkthrough
+
+1. **Overview (0:00).** From the introduction choose **Start with Overview**. Read the success-rate denominators and timing sample counts. Rates describe completed attempts; missing observations are not zero. The page labels whether its source is bundled browser records or the local API/PostgreSQL application.
+2. **Experiment comparison (0:45).** Select **Explore example comparison**. It fills in **Synthetic compiler comparison v1**, baseline **synthetic-1.0.0**, candidate **synthetic-1.1.0**. In **resource-gain**, notice lower estimated depth (240 → 168) and gate count (1600 → 1120), both −30%. Estimates describe the compiled circuit, not measured hardware usage.
+3. **A change to investigate (1:30).** In **compile-regression**, the featured candidate has 7/7 recorded compilation failures versus 0/7 in the baseline. **Changes to investigate** also shows improvements and explains missing observations. These constructed differences are not real compiler benchmarks or evidence that a compiler change caused a regression.
+4. **Supporting job and evidence (2:00).** Expand **Supporting jobs for Compilation failures observed**, then open a candidate run. Select **Jump to timeline and failure evidence**. Inspect the compilation stage, recorded explanation, correlation ID and ordered three-event timeline. Execution timing is **Not available** because that run never executed; the comparison says **Insufficient data to compare**.
+5. **Return and share (2:45).** Select **Back to comparison**. Experiment and compiler choices remain selected through the return, reload and shared URL. The unchanged control and execution-slowdown are available for further exploration.
+
+The complete walkthrough works in the updated static build without an API and in the seeded local PostgreSQL application. The browser demo includes this walkthrough and the exported synthetic experiment records.
 
 ## Browser demo
 
 [Open the browser demo](https://thom4s05.github.io/Quantum-Job-Tracker/)
 
-The demo is hosted on GitHub Pages and runs in the browser. It requires no installation or sign-in.
+The browser build runs without installation, sign-in or an API. GitHub Pages hosts the existing release; use the updated local browser build below to try this stage before a separately authorized publication.
 
-- Browse 200 sample jobs and filter by status, provider, submission date, or exact ID/reference.
+- Browse 256 bundled sample jobs (200 historical fixtures plus the 56-run example experiment) and filter by status, provider, submission date, or exact ID/reference.
 - Search for `syn-0005` and open the job to investigate a compilation failure and its lifecycle timeline.
-- Enter an experiment name, choose a simulated outcome, and select **Create simulated run** to inspect your own run.
+- Follow **Explore example comparison** through a supporting job and its recorded timeline. The read-only comparison snapshot is generated from the existing PostgreSQL seed and calculations.
+- Optionally expand **Browser-only playground**, enter a run name, choose an outcome, and select **Create simulated run**. This immediately generates personal browser data; it is not backend submission or real execution.
 - Select **Reset demo** to remove your personal runs and return to the sample workspace.
 
 Outcomes include success, compilation/queueing/execution failure, queued, running, and cancelled. Outcomes are generated immediately with fictional lifecycle timestamps; queued and running jobs remain in those states. No quantum hardware or background worker runs.
 
-Personal runs are stored separately for each browser. Up to 100 personal runs are saved in that browser's local storage when available; clearing browser data removes them. Sample-job links can be shared, but personal runs are available only in the browser where they were created. Browser-demo job IDs are separate from the local database fixtures.
+Personal runs are stored separately for each browser. Up to 100 personal runs are saved in that browser's local storage when available; clearing browser data removes them. Sample-job links can be shared, but personal runs are available only in the browser where they were created. The original 200 browser fixture IDs are separate from local database IDs. The 56-job example snapshot retains the seed IDs so every comparison reference resolves to its exported timeline. Reset removes personal runs and keeps all 256 bundled fixtures.
 
 ### Run the browser demo locally
 
@@ -87,7 +100,7 @@ Choose **Synthetic compiler comparison v1**, baseline **synthetic-1.0.0**, candi
 
 **Changes to investigate** appears inside each compatible workload group. It shows newly observed compilation failures, lower execution success, higher timing/resource values, and decreases or other improvements alongside them. Counts, percentage-point changes and zero/missing-value explanations stay visible. Expand **Supporting jobs for …** to inspect the exact observations; **Runs contributing to timing medians** covers every timing metric. Compilation failures with no execution observations say **Insufficient data to compare**. These are descriptive synthetic differences, not confirmed regressions or causal conclusions.
 
-[Matching, metric definitions, units, delta rules and API contract](docs/comparisons.md). The static browser samples have no named experiment membership and show an explicit empty state; comparison evidence comes from PostgreSQL in the local application. The comparison page is also available in the [browser demo](https://thom4s05.github.io/Quantum-Job-Tracker/?view=comparison); use the local application to compare the seeded experiment.
+[Matching, metric definitions, units, delta rules and API contract](docs/comparisons.md). The browser build includes a frozen, read-only export of the named seed, both comparison directions and all supporting timelines. It uses no live API. The local application reads the same experiment through PostgreSQL; no snapshot is substituted if local data is missing. The comparison page is also available in the [browser demo](https://thom4s05.github.io/Quantum-Job-Tracker/?view=comparison); the updated local browser build supports the same seeded walkthrough without PostgreSQL.
 
 ## Operational overview
 
@@ -131,6 +144,8 @@ test -f .env || cp .env.example .env
 docker compose up --build -d
 ```
 
+For the walkthrough, load the example after startup with `docker compose exec -T api python -m app.seed --dataset compiler-comparison-v1`. This is repeatable and preserves existing jobs. The default 200-job profile remains optional.
+
 Open [Quantum Job Tracker](http://localhost:5173) and [API documentation](http://localhost:8000/docs). Allow the initial image builds and health checks to finish; inspect status with `docker compose ps -a` and logs with `docker compose logs api migrate db frontend`.
 
 Compose starts PostgreSQL, runs `alembic upgrade head` as a one-shot migration service, then starts the API and frontend. PostgreSQL data persists in a named volume. The frontend serves a compiled build through Nginx and proxies `/api/` to the API; the browser never receives database credentials. All published ports bind to the local machine only.
@@ -150,7 +165,7 @@ docker compose exec -T api python -m app.seed --dataset compiler-comparison-v1
 docker compose exec -T api python -m app.seed --dataset compiler-comparison-v1 --reset
 ```
 
-The JSON output reports per-group medians/sample counts and a full job/event snapshot digest. Repeat/reset runs reproduce the same digest without duplicates. The original 200 fixtures and unrelated jobs are preserved. Open [the experiment date](http://localhost:5173/?submitted_from=2026-10-12&submitted_to=2026-10-12), or search `EXP-2-CANDIDATE-1` for the compile failure. Expand **Submission specification** in details to inspect experiment/workload/pair identity and intended differences. This dataset is available in the PostgreSQL application; the independent static demo remains unchanged.
+The JSON output reports per-group medians/sample counts and a full job/event snapshot digest. Repeat/reset runs reproduce the same digest without duplicates. The original 200 fixtures and unrelated jobs are preserved. Open [the experiment date](http://localhost:5173/?submitted_from=2026-10-12&submitted_to=2026-10-12), or search `EXP-2-CANDIDATE-1` for the compile failure. Expand **Submission specification** in details to inspect experiment/workload/pair identity and intended differences. This dataset is available in the PostgreSQL application and as a read-only exported snapshot in the browser build.
 
 See [experiment definitions, expected outcomes and reset behavior](docs/experiments.md). No worker or real compiler/hardware execution is involved.
 
@@ -220,7 +235,7 @@ The explanation is the stored error message, not an AI root-cause conclusion. Un
 
 The job and events are read from one PostgreSQL repeatable-read snapshot. Missing IDs return 404, invalid UUIDs return 422, and database failures return a sanitized 503. The endpoint is read-only local demo access. It currently returns the full history in one response; event pagination is deferred for larger histories.
 
-## Browser workflow test
+## Browser workflow tests
 
 The Playwright test uses the running frontend, actual FastAPI API, and seeded PostgreSQL data. Start and seed the stack first, then:
 
@@ -244,6 +259,34 @@ QUANTUM_JOB_TRACKER_E2E_CHANNEL=chrome npm run test:e2e
 The default base URL is `http://127.0.0.1:5173`; override it with `QUANTUM_JOB_TRACKER_E2E_BASE_URL` if needed. The browser tests cover experiment comparison and timeline return navigation, the original failure investigation, and the operational overview: cohort selection, rates/counts, both chart drill-downs, failure evidence, and filter-preserving return navigation. Seed both profiles as above. The tests do not mock network responses or modify jobs. Failure traces/screenshots are written to ignored `frontend/test-results/`.
 
 On the implementation machine the packaged Chromium download ran out of disk space and was stopped. The test then **passed using installed Chrome** with the command above; no existing browser caches were removed.
+
+### Static hosting base-path check
+
+The separate browser test checks the complete example at the GitHub Pages repository path and asserts that no API requests are made. From `frontend`, build and preview locally (no publishing):
+
+```sh
+VITE_DEMO_MODE=true npx vite build --base=./ --outDir node_modules/.qjt-journey-dist
+npx vite preview --host 127.0.0.1 --port 5176 --strictPort --base=/Quantum-Job-Tracker/ --outDir node_modules/.qjt-journey-dist
+```
+
+In another terminal:
+
+```sh
+cd frontend
+QUANTUM_JOB_TRACKER_E2E_CHANNEL=chrome npm run test:e2e:demo
+```
+
+Open [the local static walkthrough](http://127.0.0.1:5176/Quantum-Job-Tracker/). The normal release build remains `npm run build:demo`, with relative assets and query-based navigation; the test serves those same relative assets under an explicit repository prefix. Static test artifacts are written to ignored `frontend/test-results-demo/`.
+
+### Refresh the bundled example
+
+The committed export is deterministic and generated using the existing backend comparison calculations and history-completeness check. After the local database is migrated and the experiment is seeded, regenerate it without writing to the database:
+
+```sh
+(cd backend && .venv/bin/python -m app.export_example)
+```
+
+This writes only `frontend/src/data/exampleManifest.json` and `exampleSnapshot.json`. The PostgreSQL export test checks that they match fresh seeded data and contain all 56 complete histories. No credentials, personal jobs or runtime environment values are exported.
 
 ## Check communication
 

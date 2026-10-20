@@ -1,5 +1,38 @@
 # Quantum Job Tracker progress
 
+## Complete browser example publication — 20 October 2026
+
+Prepared the first-visit instructions and complete exported experiment for publication. The browser release now includes the 56-run synthetic compiler example, full histories and precomputed comparisons alongside the original 200 samples. The public example can be followed without a backend; the local application continues to read PostgreSQL.
+
+Pre-push verification passed: **159 Python tests** against disposable PostgreSQL schemas, **59 frontend tests**, the browser-demo production build, **4 API-backed Chrome workflows**, and **1 static-hosting Chrome workflow** under `/Quantum-Job-Tracker/` with zero API requests. Documentation file links and whitespace checks passed. The existing Starlette/AnyIO deprecation warning remains. Earlier source-stage notes below describe their state before this publication.
+
+## First-visit story and complete example — 20 October 2026
+
+- [x] Read README, project instructions and existing UI/data/navigation/test code before changing the design. No `AGENTS.md` is present. Preserved the jobs list, overview, matching/calculations, comparison highlights and recorded failure-investigation workflow.
+- [x] Added an audience/purpose introduction on Jobs and Overview, a visible synthetic-jobs/results label, data-source explanation, **Start with Overview**, and **Explore example comparison** with the existing seed's selections prefilled. Explained that compiler-version comparison is the featured example, not the definition of every experiment.
+- [x] Added **What to notice** for the improvement and candidate compilation failures, brief success-rate/resource explanations, consistent **Experiment comparison** navigation, and a jump to timeline/failure evidence. Existing **Back to comparison** retains experiment and compiler selections.
+- [x] Closed the main browser-demo gap: included a read-only, deterministic export of the existing 56-job experiment, its complete timelines, and both comparison directions. `app/export_example.py` reads only the named synthetic seed and uses existing comparison calculations plus the shared history-completeness check. A PostgreSQL test checks the committed snapshot against a fresh seed and verifies that export changes no job records. No browser matching algorithm or alternate simulator was added.
+- [x] Browser data now includes 256 bundled samples (the original 200 plus the 56-run example); reset preserves all samples. Personal-run creation remains an explicitly labelled, collapsed browser-only playground, with no backend submission or experiment-creation claim. API mode still reads PostgreSQL and never substitutes a snapshot for empty/missing local data.
+- [x] Added a shared complete-journey browser check, an API-backed test, and a static-hosting test under `/Quantum-Job-Tracker/`. Retained query-based links and the hosting base path through entry, job reload, and exact comparison return navigation.
+- [x] Updated README purpose, three-minute walkthrough, startup/seed instructions, export regeneration and static-hosting checks, plus architecture/comparison/implementation notes. No publication, deployment, push, auth, GitHub integration, worker or monitoring system was added.
+
+Checks actually run:
+
+- Full backend suite against actual PostgreSQL: **159 passed**, including fresh-schema export reproducibility, exact checked-in snapshot equality, all 56 complete histories/315 events, matching contributor references, read-only row-count preservation and refusal to export an unseeded database. The existing Starlette/AnyIO deprecation warning remains.
+- Full frontend suite: **59 passed**. New checks verify the example entry point, all 56 supporting job histories, reverse direction, validation/empty/missing-data behavior, purpose/source/synthetic labels while loading or on error, retry, empty overview values, absence of substituted example results in unseeded API mode, and withholding featured-direction guide notes when selections are reversed. Existing list/detail/comparison/highlight checks remain passing. Sample-count expectations were updated from 200 to 256; one accidentally changed HTTP-status expectation was corrected back to 200.
+- TypeScript checking passed, including both browser configurations and the journey helper. An initial test-only unsupported RTL `exact` option was removed. Normal API-mode and static-demo production builds passed. The static release-style relative-assets build was also served locally under `/Quantum-Job-Tracker/`.
+- API-backed Playwright/Chrome suite against the separate local Vite/FastAPI preview and actual PostgreSQL: **4 passed**. The new full journey covers initial purpose → Overview → preselected comparison → visible resource improvement and missing execution samples → supporting candidate job → timeline/failure evidence/correlation → exact return choices and reload. Existing three workflows passed too.
+- Static-hosting Playwright/Chrome suite: **1 passed** with the same complete journey at `/Quantum-Job-Tracker/`, using release-style `./` assets and asserting **zero API requests**. Direct job reload and comparison return preserve the repository prefix and full selection query. The initial journey assertion expected capitalized `Correlation ID` instead of the existing `Failure correlation ID`; it was corrected. Parallel runners initially collided in nested artifact directories; static artifacts now have a separate ignored output directory and the static test passed on rerun.
+- Read-only export command against the existing seeded database produced the committed snapshot. No application data was reset or reseeded for the demo. Snapshot contains only synthetic job models, evidence and derived comparisons, not credentials or environment configuration.
+- Inspected `/tmp/quantum-first-visit.png`, `/tmp/quantum-overview-intro.png` and `/tmp/quantum-example-hosting.png`: purpose, source labels, primary example action and guided explanation remain readable within the existing desktop design. No mobile-device/screen-reader audit is claimed.
+- Python compilation, `git diff --check` and documentation local-link/fence checks passed.
+
+What works: a first-time visitor can complete the same example using the updated static browser build alone or the seeded local application. The guide distinguishes lower estimates from measured performance, shows a change worth investigating without causal claims, and leads directly to recorded evidence. Loading/error/empty/missing states remain honest and preserve navigation.
+
+How to try now: open `http://127.0.0.1:5176/Quantum-Job-Tracker/`, choose **Start with Overview**, then **Explore example comparison**. The separate API-backed development preview remains at `http://127.0.0.1:5175/`. Standard README commands reproduce either mode without publishing.
+
+Remaining issues: no blocker prevents completing the updated local static or seeded API demo. The hosted release is unchanged because publication/deployment was explicitly out of scope. An unseeded local API database needs the documented seed command; it intentionally does not fall back to browser data. Static comparison snapshots support the featured pair in either direction, not arbitrary compiler experiments; no real compiler/hardware performance claim is made. The next planned implementation remains the separately scoped permission foundation.
+
 ## Comparison highlights publication — 20 October 2026
 
 Prepared the comparison highlights and supporting-observation links for publication. Pre-push validation passed: **157 backend tests** against disposable PostgreSQL schemas, **52 frontend tests**, the browser-demo production build, and **3 Chrome browser workflows** against the prepared local preview and real PostgreSQL data. Documentation file links and whitespace checks passed. The existing Starlette/AnyIO deprecation warning remains. The public comparison data source still has no named experiments; the local seeded application supplies the comparison evidence.
@@ -47,7 +80,7 @@ Pre-push verification: **127 backend tests passed** against disposable PostgreSQ
 
 ## Current status
 
-The comparison page now includes lightweight **Changes to investigate**, with balanced increases/decreases, explicit counts/units/zero/missing-data handling and supporting observation links. Matching, metric values and eligibility are reused unchanged. Timing contributors are identified explicitly. This stage passed 157 backend tests against PostgreSQL, 52 frontend tests, both production builds and three browser workflows. Publication is tracked in the entry above.
+The first-visit product story and complete example journey are implemented and tested. Jobs/Overview explain the audience and purpose, label synthetic data and its source, and open the seeded comparison with one action. The updated static browser build now includes the same named example and all supporting timelines as a read-only export; API mode continues to use PostgreSQL. The full journey preserves selections and the repository base path. This stage passed 159 backend tests, 59 frontend tests, four API-backed browser workflows and one static-hosting journey. Nothing was published or deployed.
 
 The project is named Quantum Job Tracker. All seeded and future quantum jobs and providers are synthetic; nothing connects to Horizon Quantum systems.
 
@@ -163,6 +196,8 @@ Limitations: metadata and timings are fictional fixture snapshots, not results f
 This stage is complete. The next planned implementation remains the separately scoped permission foundation; no worker, operator action, authentication, or external integration was added.
 
 ## Staged checklist
+
+- [x] **First-visit refinement** — concise purpose/source labels, seeded example entry, guided evidence journey and relative-base static hosting checks.
 
 - [x] **Changes to investigate extension** — inline descriptive highlights, balanced observations, exact timing contributor links and focused missing/zero/incompatible tests.
 

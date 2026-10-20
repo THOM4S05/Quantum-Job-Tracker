@@ -4,7 +4,7 @@ This document maps Python, React, PostgreSQL/SQL, FastAPI/HTTP, async behaviour,
 
 ## Data paths
 
-The GitHub Pages demo runs React and a JavaScript data adapter in the browser. It has 200 sample jobs, browser-local personal runs, metadata and an overview. The PostgreSQL compiler-comparison dataset is available through the local backend seed command; it is not included in the browser fixtures.
+The GitHub Pages demo runs React and a JavaScript data adapter in the browser. It has 256 bundled jobs: 200 historical samples and a read-only export of the existing 56-run PostgreSQL seed, plus browser-local personal runs, metadata, overview and comparison. The export includes both compiler comparison directions and every supporting timeline, using the backend calculations; no live API or execution is implied. The local API reads PostgreSQL and never substitutes this browser snapshot for missing jobs.
 
 The local application uses React → HTTP/JSON → FastAPI → SQLAlchemy/psycopg → PostgreSQL. Docker Compose runs migrations before starting the API. See [the README](../README.md) for startup and seed commands.
 
