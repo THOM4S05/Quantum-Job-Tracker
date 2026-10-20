@@ -1,5 +1,12 @@
 # Quantum Job Tracker progress
 
+## README screenshot refresh — 20 October 2026
+
+- Moved the screenshot section immediately below the short purpose/synthetic-data introduction and demo links. Kept existing startup instructions and detailed documentation.
+- Replaced the three historical screenshots with current local browser-demo captures. Added experiment comparison, operational overview and Demo & Guide images. Captions identify the bundled synthetic source, the resource improvement and recorded candidate compilation failure; additional views are expandable.
+- Checks actually run: opened the working local browser build under `/Quantum-Job-Tracker/` in Chrome, followed the guide’s example/supporting-job links, captured six screenshots and visually inspected each. Checked README image/local-file links, PNG headers/dimensions and balanced code fences; `git diff --check` passed. No application code changed, so unit/backend suites were not rerun for this documentation-only update.
+- No blocker found. No publication or deployment. The next implementation stage remains separately scoped.
+
 ## Guide and layout publication — 20 October 2026
 
 Prepared Demo & Guide, its verified example links, and the bulleted responsive layouts for publication. The README now links to the public guide. Validation passed: **66 frontend tests**, the browser-demo production build, **5 API-backed Chrome workflows**, and **4 static-hosting Chrome workflows**, including mobile layout and keyboard navigation. Documentation file links and whitespace checks passed. Backend source is unchanged; PostgreSQL tests remain required by the deployment workflow. Earlier stage notes below describe the state before this publication.

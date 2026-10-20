@@ -4,6 +4,53 @@
 
 All jobs, providers, compiler metadata and results are **synthetic**. The featured example compares compiler versions; an experiment is a group of related runs and need not be a compiler-version comparison. No Horizon Quantum systems, real compiler service or quantum hardware is connected.
 
+[Open the browser demo](https://thom4s05.github.io/Quantum-Job-Tracker/) · [Demo & Guide](https://thom4s05.github.io/Quantum-Job-Tracker/?view=guide) · [Local setup](#run-the-full-application-locally)
+
+## Screenshots
+
+Current browser-demo screenshots, captured on 20 October 2026. All jobs and outcomes shown are synthetic; this independent portfolio project does not execute on real quantum hardware. The browser demo uses bundled records, while the local FastAPI/PostgreSQL application reads database records.
+
+### Browse and filter jobs
+
+Search and filter 256 bundled sample jobs by status, provider, submission dates, target, compiler version or experiment, then open a recorded run.
+
+![Current Jobs page with synthetic-data label, example links, search and cohort filters, and job results](docs/images/quantum-job-tracker-jobs-overview.png)
+
+### Compare an experiment
+
+The seeded resource-gain workload shows lower estimated circuit depth and gate count for the candidate version. Run counts and outcome denominators stay visible alongside the observations; these synthetic examples are not real compiler benchmarks.
+
+![Resource-gain comparison showing lower estimated depth and gate count, baseline and candidate run counts, and comparison metrics](docs/images/quantum-job-tracker-experiment-comparison.png)
+
+### Investigate a failure
+
+Follow a supporting candidate run from compile-regression to its recorded compilation failure, correlation ID, ordered timeline and expanded diagnostics. No execution duration is fabricated for a run that never executed.
+
+![Recorded compilation failure evidence and ordered three-event timeline with expanded structured diagnostics](docs/images/quantum-job-tracker-lifecycle-diagnostics.png)
+
+<details>
+<summary><strong>More views: metadata, operational overview, and Demo & Guide</strong></summary>
+
+#### Job metadata
+
+Inspect the program revision, synthetic compiler version, target settings and resource estimates before reading phase timings and failure evidence.
+
+![Current supporting-job details showing program and compiler, target configuration, estimated resources and phase timings](docs/images/quantum-job-tracker-job-investigation.png)
+
+#### Operational overview
+
+Check success-rate denominators, timing sample counts, failures by stage and jobs by target for the selected submission cohort.
+
+![Operational overview showing compilation and execution success rates, median queue and execution times, and breakdowns](docs/images/quantum-job-tracker-operational-overview.png)
+
+#### Demo & Guide
+
+Follow the bulleted example journey, with direct links to the comparison and a verified supporting job.
+
+![Demo and Guide showing its bulleted example walkthrough and direct links to working features](docs/images/quantum-job-tracker-demo-guide.png)
+
+</details>
+
 ## Demo & Guide
 
 Select **Demo & Guide** in the sidebar, or the smaller link in the Jobs/Overview introduction. The page explains what each working section is for, its main controls, a bulleted example journey, a small glossary and how to interpret the results. It is written for first-time visitors, including readers without quantum-computing knowledge, and identifies the app as an independent portfolio project using synthetic data.
@@ -63,31 +110,6 @@ For a fork, select **GitHub Actions** under **Settings → Pages → Build and d
 [How it works on the site](https://thom4s05.github.io/Quantum-Job-Tracker/?view=implementation) explains data sources and request handling. [Implementation notes](docs/implementation.md) map the code to Python, React/TypeScript, PostgreSQL/SQL, FastAPI/HTTP, async requests, message-broker design and Git/CI/CD, with SQL examples and discussion questions.
 
 The local backend uses synchronous database calls. The frontend uses async requests; background worker execution and NATS/MQTT integration are not implemented. CI runs Python integration tests against PostgreSQL as well as frontend tests and the static build before deployment.
-
-## Screenshots
-
-Screenshots from the earlier React/FastAPI application backed by PostgreSQL. The compiler/resource stage adds the five metadata sections described below; these historical screenshots predate that layout.
-
-### Browse and filter jobs
-
-Search by job ID or external reference, combine status/provider/date filters, and page through 200 seeded jobs. Status badges show each job's current state.
-
-![Quantum Job Tracker jobs workspace showing search filters, provider and status selectors, and a paginated table of synthetic jobs](docs/images/quantum-job-tracker-jobs-overview.png)
-
-### Investigate a failure
-
-Open a job to inspect its submission details, timestamps, recorded failure stage, error code, and correlation ID. This example shows the synthetic compilation failure for `SYN-0005`.
-
-![Job details for SYN-0005 showing the job overview and recorded compilation failure evidence](docs/images/quantum-job-tracker-job-investigation.png)
-
-<details>
-<summary><strong>Lifecycle timeline and structured diagnostics</strong></summary>
-
-Follow ordered state transitions from submission to failure, with event actors, timestamps, correlation IDs, and expandable JSON diagnostics.
-
-![Ordered lifecycle timeline showing submission, compilation, failure, and expanded structured JSON diagnostics](docs/images/quantum-job-tracker-lifecycle-diagnostics.png)
-
-</details>
 
 ## Compiler and resource metadata
 
