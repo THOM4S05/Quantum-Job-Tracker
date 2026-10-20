@@ -1,18 +1,18 @@
 import { FormEvent, useEffect, useState } from 'react';
 import { request } from './api';
+import { ComparisonChanges, TimingEvidence } from './ComparisonChanges';
+import { formatNumber as number, formatChange as change } from './comparisonFormatting';
 import { homeHref, isDemo, jobHref } from './environment';
 import type { Attempts } from './overviewMetrics';
 
 type Choice = { experiment: string; baseline: string; candidate: string };
-type Observation = { value: number | null; samples: number };
-type Metric = { key: string; label: string; unit: string; delta_unit: string; baseline: Observation; candidate: Observation; absolute_change: number | null; percentage_change: number | null };
+type Observation = { value: number | null; samples: number; job_ids?: string[] };
+export type Metric = { key: string; label: string; unit: string; delta_unit: string; baseline: Observation; candidate: Observation; absolute_change: number | null; percentage_change: number | null };
 type Side = { runs: number; compilation: Attempts; execution: Attempts; jobs: { id: string; name: string; status: string }[] };
 export type ComparisonData = { synthetic: boolean; selection_required: boolean; experiment_jobs: number; selected_jobs: number; excluded_version_jobs: number; matched_groups: number; experiments: { id: string; name: string }[]; compiler_versions: string[];
   rows: { workload: string; status: string; configuration: Record<string, unknown>; differences: string[]; missing_fields: string[]; baseline: Side; candidate: Side; metrics: Metric[] }[] };
 const read = (): Choice => { const params = new URLSearchParams(window.location.search); return { experiment: params.get('experiment') ?? '', baseline: params.get('baseline') ?? '', candidate: params.get('candidate') ?? '' }; };
 const encode = (choice: Choice) => new URLSearchParams(Object.entries(choice).filter(([, value]) => value.trim()).map(([key, value]) => [key, value.trim()])).toString();
-const number = (value: number) => value.toLocaleString(undefined, { maximumFractionDigits: 6 });
-const change = (value: number | null, unit: string) => value === null ? 'Not applicable' : `${value > 0 ? '+' : ''}${number(value)} ${unit}`;
 
 function Outcomes({ name, side }: { name: string; side: Side }) {
   return <div><h3>{name}: {side.runs} runs</h3>{(['compilation', 'execution'] as const).map((phase) => {
@@ -70,7 +70,7 @@ export function Comparison() {
     </aside>
     <div className="workspace"><div className="topbar"><span>Workspace / <strong>Comparison</strong></span><span className="environment-badge">Synthetic data</span></div><main>
       <div className="page-heading"><div><h1>Compare compiler versions</h1><p>What changed for this workload under the candidate compiler?</p></div></div>
-      <p className="cohort-note">Source: {isDemo ? 'browser demo records' : 'PostgreSQL experiment jobs'}. All results are synthetic. Queue time can be affected by operational conditions, scheduling and provider load. These comparisons do not establish real compiler performance.</p>
+      <p className="cohort-note">Source: {isDemo ? 'browser demo records' : 'PostgreSQL experiment jobs'}. All results are synthetic. Queue time can be affected by operational conditions, scheduling and provider load. These comparisons do not establish real compiler performance. Highlights describe synthetic samples, not confirmed regressions or proof that a compiler change caused a difference.</p>
       <form className="job-filters comparison-filters" onSubmit={apply} aria-label="Comparison choices">
         <label>Experiment<select aria-label="Experiment" required value={draft.experiment} onChange={(e) => navigate({ experiment: e.target.value, baseline: '', candidate: '' })}><option value="">Choose an experiment</option>{data?.experiments.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}{draft.experiment && !data?.experiments.some((item) => item.id === draft.experiment) && <option value={draft.experiment}>{draft.experiment}</option>}</select></label>
         {(['baseline', 'candidate'] as const).map((side) => <label key={side}>{side === 'baseline' ? 'Baseline compiler version' : 'Candidate compiler version'}<select aria-label={side === 'baseline' ? 'Baseline compiler version' : 'Candidate compiler version'} required value={draft[side]} disabled={!draft.experiment} onChange={(e) => setDraft((value) => ({ ...value, [side]: e.target.value }))}><option value="">Choose a version</option>{versions.map((version) => <option key={version}>{version}</option>)}</select></label>)}
@@ -89,9 +89,11 @@ export function Comparison() {
           {row.differences.length > 0 && <p className="evidence-warning">Other configurations differ in this workload: {row.differences.join(', ')}. Only exact subgroups are matched.</p>}
           {row.missing_fields.length > 0 && <p className="evidence-warning">Unverifiable fields: {row.missing_fields.join(', ')}. No deltas calculated.</p>}
           {row.status !== 'matched' && row.status !== 'unverifiable' && <p className="evidence-warning">Unmatched configuration: no {row.status === 'baseline_only' ? 'candidate' : 'baseline'} runs. No deltas calculated.</p>}
+          <ComparisonChanges row={row} returnQuery={returnQuery} />
           <details className="diagnostics"><summary>Matching configuration</summary><pre>{JSON.stringify(row.configuration, null, 2)}</pre></details>
           <div className="comparison-outcomes"><Outcomes name="Baseline" side={row.baseline} /><Outcomes name="Candidate" side={row.candidate} /></div>
-          <div className="table-scroll"><table><caption className="sr-only">{row.workload}: baseline, candidate and changes; observations n shown independently</caption><thead><tr><th>Metric</th><th>Baseline<br /><small>{choice.baseline}</small></th><th>Candidate<br /><small>{choice.candidate}</small></th><th>Absolute change</th><th>Relative change</th></tr></thead><tbody>{row.metrics.map((metric) => <tr key={metric.key}><th scope="row">{metric.label}</th>{(['baseline', 'candidate'] as const).map((side) => <td key={side}>{metric[side].value === null ? 'Not enough data' : `${number(metric[side].value)} ${metric.unit}`}<span className="cell-secondary">n={metric[side].samples}</span></td>)}<td>{change(metric.absolute_change, metric.delta_unit)}</td><td>{change(metric.percentage_change, '%')}</td></tr>)}</tbody></table></div>
+          <div className="table-scroll"><table><caption className="sr-only">{row.workload}: baseline, candidate and changes; observations n shown independently</caption><thead><tr><th>Metric</th><th>Baseline<br /><small>{choice.baseline}</small></th><th>Candidate<br /><small>{choice.candidate}</small></th><th>Absolute change</th><th>Relative change</th></tr></thead><tbody>{row.metrics.map((metric) => <tr key={metric.key}><th scope="row">{metric.label}</th>{(['baseline', 'candidate'] as const).map((side) => <td key={side}>{metric[side].value === null ? 'Not enough data' : `${number(metric[side].value)} ${metric.unit}`}<span className="cell-secondary">n={metric[side].samples}</span></td>)}<td>{row.status === 'matched' && ['compilation_duration', 'queue_time', 'execution_duration'].includes(metric.key) && (!metric.baseline.samples || !metric.candidate.samples || metric.baseline.value === null || metric.candidate.value === null) ? 'Insufficient data to compare' : change(metric.absolute_change, metric.delta_unit)}</td><td>{change(metric.percentage_change, '%')}</td></tr>)}</tbody></table></div>
+          <TimingEvidence row={row} returnQuery={returnQuery} />
           <div className="comparison-outcomes">{(['baseline', 'candidate'] as const).map((side) => <details className="diagnostics" key={side}><summary>{side === 'baseline' ? 'Baseline' : 'Candidate'} jobs ({row[side].runs})</summary>{row[side].jobs.length === 0 ? <p>No runs recorded.</p> : <ul>{row[side].jobs.map((job) => <li key={job.id}><a href={jobHref(job.id, returnQuery)}>{job.name}</a> · {job.status.replaceAll('_', ' ')}</li>)}</ul>}</details>)}</div>
         </section>)}
       </>}

@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-test('compare compiler versions including compilation failures and inspect a timeline', async ({ page }) => {
+test('compare compiler versions including compilation failures and inspect a timeline', async ({ page, request }) => {
   await page.goto('/?view=comparison');
   await page.getByLabel('Experiment', { exact: true }).selectOption({ label: 'Synthetic compiler comparison v1' });
   await page.getByLabel('Baseline compiler version').selectOption('synthetic-1.0.0');
@@ -8,15 +8,21 @@ test('compare compiler versions including compilation failures and inspect a tim
   await page.getByRole('button', { name: 'Compare versions', exact: true }).click();
   const gain = page.getByRole('region', { name: /resource-gain comparison/ });
   await expect(gain).toContainText('-25 %');
+  await expect(gain.getByRole('region', { name: 'Changes to investigate: resource-gain' })).toContainText('Lower estimated circuit depth');
+  await expect(gain.getByRole('region', { name: 'Changes to investigate: resource-gain' })).toContainText('Lower estimated gate count');
   const failures = page.getByRole('region', { name: /compile-regression comparison/ });
   await expect(failures).toContainText('-100 pp');
   await expect(failures).toContainText('7 failed / 7 completed');
+  await expect(failures.getByRole('region', { name: 'Changes to investigate: compile-regression' })).toContainText('Compilation failures observed');
+  await expect(failures.getByRole('region', { name: 'Changes to investigate: compile-regression' })).toContainText('Insufficient data to compare');
   await expect(failures).toContainText('Not enough data');
   const slowdown = page.getByRole('region', { name: /execution-slowdown comparison/ });
   await expect(slowdown).toContainText('+8 s');
   await expect(slowdown).toContainText('+80 %');
+  await expect(slowdown.getByRole('region', { name: 'Changes to investigate: execution-slowdown' })).toContainText('Higher observed runtime');
+  await expect(page.getByRole('region', { name: 'Changes to investigate: unchanged' })).toContainText('No highlighted differences');
   const comparisonURL = page.url();
-  await page.screenshot({ path: '/tmp/quantum-comparison.png', fullPage: true });
+  await page.screenshot({ path: '/tmp/quantum-comparison-changes.png', fullPage: true });
   await failures.getByText('Candidate jobs (7)', { exact: true }).click();
   await failures.getByRole('link').last().click();
   await expect(page.getByRole('region', { name: 'Recorded failure evidence' })).toContainText('SYNTHETIC_CANDIDATE_COMPILE_FAILED');
@@ -25,5 +31,22 @@ test('compare compiler versions including compilation failures and inspect a tim
   await expect(page).toHaveURL(comparisonURL);
   await expect(page.getByLabel('Baseline compiler version')).toHaveValue('synthetic-1.0.0');
   await page.reload();
+  const highlights = slowdown.getByRole('region', { name: 'Changes to investigate: execution-slowdown' });
+  await highlights.getByText('Supporting jobs for Higher observed runtime', { exact: true }).click();
+  const params = new URL(comparisonURL).searchParams;
+  params.delete('view');
+  const evidenceResponse = await request.get(`/api/comparisons?${params}`);
+  expect(evidenceResponse.ok()).toBeTruthy();
+  const response = await evidenceResponse.json();
+  const runtime = response.rows.find((row: { workload: string }) => row.workload === 'execution-slowdown').metrics.find((entry: { key: string }) => entry.key === 'execution_duration');
+  const expectedIDs = [...runtime.baseline.job_ids, ...runtime.candidate.job_ids].sort();
+  const supportingLinks = highlights.getByRole('link');
+  await expect(supportingLinks).toHaveCount(expectedIDs.length);
+  const hrefs = await supportingLinks.evaluateAll((links) => links.map((link) => link.getAttribute('href')!));
+  expect(hrefs.map((href) => new URL(href, comparisonURL).pathname.split('/').at(-1)).sort()).toEqual(expectedIDs);
+  await supportingLinks.last().click();
+  await expect(page.getByRole('list', { name: 'Lifecycle timeline' })).toBeVisible();
+  await page.getByRole('link', { name: '← Back to comparison', exact: true }).click();
+  await expect(page).toHaveURL(comparisonURL);
   await expect(page.getByRole('region', { name: /compile-regression comparison/ })).toContainText('-100 pp');
 });

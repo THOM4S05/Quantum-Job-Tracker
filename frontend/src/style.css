@@ -196,3 +196,16 @@ section.comparison-panel { padding: 24px; overflow: visible; margin: 24px 0; }
 .comparison-panel a { color: #6930d4; }
 .comparison-panel ul { padding-left: 20px; }
 @media (max-width: 850px) { .comparison-filters, .comparison-outcomes { grid-template-columns: 1fr; } .comparison-heading { align-items: flex-start; flex-direction: column; } }
+
+section.comparison-changes { margin: 22px 0; padding: 18px; background: #faf9fc; border: 1px solid #e5dff0; border-radius: 6px; overflow: visible; }
+.comparison-changes::before { display: none; }
+.comparison-changes h3 { margin: 0 0 10px; font-size: 15px; }
+.comparison-changes .highlight-context { color: #656875; font-size: 12px; overflow-wrap: anywhere; }
+.comparison-changes p, .timing-contributors p { font-size: 12px; line-height: 1.8; }
+.change-list { list-style: none; padding: 0 !important; margin: 16px 0 0; }
+.observed-change { padding: 14px 16px; background: white; border-left: 3px solid #b598df; }
+.observed-change + .observed-change { margin-top: 12px; }
+.observed-insufficient { border-left-color: #b7b5bf; }
+.observed-change h4 { margin: 0 0 10px; font-size: 13px; }
+.highlight-support summary { cursor: pointer; color: #6930d4; font-size: 12px; line-height: 1.8; }
+.highlight-support h5, .timing-contributors h5 { font-size: 12px; margin: 6px 0; }

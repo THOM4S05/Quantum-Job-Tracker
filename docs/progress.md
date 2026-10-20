@@ -1,5 +1,36 @@
 # Quantum Job Tracker progress
 
+## Comparison highlights publication — 20 October 2026
+
+Prepared the comparison highlights and supporting-observation links for publication. Pre-push validation passed: **157 backend tests** against disposable PostgreSQL schemas, **52 frontend tests**, the browser-demo production build, and **3 Chrome browser workflows** against the prepared local preview and real PostgreSQL data. Documentation file links and whitespace checks passed. The existing Starlette/AnyIO deprecation warning remains. The public comparison data source still has no named experiments; the local seeded application supplies the comparison evidence.
+
+## Changes to investigate — 20 October 2026
+
+- [x] Read project instructions, README, matching/metric definitions, comparison API/page, existing tests and navigation before editing. No `AGENTS.md` is present in the project or inspected parent folders. Preserved existing work and the matching/delta definitions.
+- [x] Added lightweight **Changes to investigate** inside compatible comparison groups, using the existing calculated metrics and outcome counts. No dashboard, alerting service, rules configuration, migration, worker or persisted state was added.
+- [x] Highlighted newly observed compilation failures only when the baseline has successful compilations and no recorded compilation failures; lower execution success; higher observed compilation/runtime medians; and higher estimated depth/gate counts. Showed higher success rates and lower timing/resource observations alongside increases.
+- [x] Kept neutral synthetic language and the explicit absence of regression/causal proof. Included workload/target, baseline/candidate values, run/sample counts, absolute changes, percentage points for rates, and explicit zero-baseline/insufficient-data explanations. Incompatible/unverifiable groups receive no highlights.
+- [x] Added eligible observation `job_ids` to existing timing, rate and resource observations without changing their values or sample rules. Supporting-job links preserve comparison choices. **Runs contributing to timing medians** identifies the observations for compilation, queue and execution, including unchanged timings and eligible failures.
+- [x] Used the existing seeded experiment unchanged to demonstrate candidate compilation failures, increased runtime, lower resource estimates and the unchanged control. Compilation failures have no fabricated execution samples.
+- [x] Updated README and comparison definitions. Did not publish, push, deploy, rebuild/restart the existing Compose application, or reseed its data. Used separate local development servers for browser validation.
+
+Checks actually run for this stage:
+
+- Full backend regression suite with actual PostgreSQL: **157 passed**. Tests use disposable migrated schemas. Added checks that contributor ID sets exactly match eligibility (including cancelled-after-start queue observations, missing execution endpoints, completed failures and empty execution samples), sample counts and side-specific jobs. API checks follow compilation-failure contributor IDs to real complete timelines. Existing matching and delta tests remain passing. The pre-existing Starlette/AnyIO deprecation warning remains.
+- Frontend regression suite: **52 passed**. The 13 added focused checks cover new-failure conditions, lower/higher execution success, increased compilation/runtime/resource metrics, decreases shown alongside increases, sample/run counts, zero-baseline handling, missing timing observations, exact supporting links, timing provenance including queue samples, unchanged observations and all incompatible match statuses.
+- TypeScript checking passed, including browser-test sources. Both normal and static browser-demo Vite production builds passed. These are local build artifacts only; nothing was published or deployed.
+- Playwright with installed Chrome against the separate local Vite/FastAPI preview and actual seeded PostgreSQL data: **3 passed**. The extended comparison workflow verifies both concerns and resource decreases, missing execution observations, and that supporting runtime links exactly equal the API's contributor IDs; it opens a supporting timeline and returns to the unchanged comparison URL. Existing failure-investigation and overview workflows also passed.
+- Inspected `/tmp/quantum-runtime-change.png` and `/tmp/quantum-resource-changes.png`: neutral, readable inline highlights with workload/target, baseline/candidate samples, deltas and supporting-job controls. No mobile/screen-reader audit is claimed.
+- Python compilation, source whitespace checks, and documentation local-link/fence checks passed.
+
+What works: in the seeded comparison, compilation-regression shows baseline 0/7 versus candidate 7/7 failed compilations and −100 pp compilation success, with insufficient candidate execution timing. Execution-slowdown shows 10 → 18 s (+8 s, +80%; n=7 each). Resource-gain shows depth 240 → 168 and gates 1600 → 1120 (both −30%; n=7 each), and the unchanged control has no highlighted differences. Every timing contributor can be inspected without including ineligible runs in its median.
+
+How to inspect this work now: the local development preview is `http://127.0.0.1:5175/?view=comparison`, using a separate API at port 8001 and the existing database. Choose **Synthetic compiler comparison v1**, baseline **synthetic-1.0.0**, candidate **synthetic-1.1.0**. The existing Compose app and hosted site were left unchanged. Standard startup/build instructions in README remain valid for a future local run of the updated source.
+
+Limitations: descriptive highlighting has no statistical confidence or causal interpretation and cannot establish real compiler performance. Strict matching and existing observation eligibility still apply. The static browser samples have no named experiments; this feature is demonstrated in the local seeded PostgreSQL application. Full observation/job lists remain appropriate for the small fixture dataset. No implementation blocker remains.
+
+This stage is complete. The next planned implementation remains the separately scoped permission foundation; worker execution, actions and external integrations remain deferred.
+
 ## Comparison publication — 20 October 2026
 
 Prepared the comparison workflow for GitHub Pages publication. The public page includes navigation and an explicit empty state because browser fixtures have no named experiments; seeded compiler comparisons continue to use the local PostgreSQL application. Updated the README with the public comparison URL.
@@ -16,7 +47,7 @@ Pre-push verification: **127 backend tests passed** against disposable PostgreSQ
 
 ## Current status
 
-The experiment comparison workflow is complete. It groups actual PostgreSQL runs conservatively by workload and configuration, reuses the overview outcome definitions, shows separate outcome and observation counts, and preserves experiment/baseline/candidate choices through timeline drill-down. Mismatches and unknown identity are visible, with no deltas for unsafe groups. Matching and delta definitions are in `docs/comparisons.md`. All evidence remains synthetic; no worker, migration, operator action or real quantum SDK was added.
+The comparison page now includes lightweight **Changes to investigate**, with balanced increases/decreases, explicit counts/units/zero/missing-data handling and supporting observation links. Matching, metric values and eligibility are reused unchanged. Timing contributors are identified explicitly. This stage passed 157 backend tests against PostgreSQL, 52 frontend tests, both production builds and three browser workflows. Publication is tracked in the entry above.
 
 The project is named Quantum Job Tracker. All seeded and future quantum jobs and providers are synthetic; nothing connects to Horizon Quantum systems.
 
@@ -132,6 +163,8 @@ Limitations: metadata and timings are fictional fixture snapshots, not results f
 This stage is complete. The next planned implementation remains the separately scoped permission foundation; no worker, operator action, authentication, or external integration was added.
 
 ## Staged checklist
+
+- [x] **Changes to investigate extension** — inline descriptive highlights, balanced observations, exact timing contributor links and focused missing/zero/incompatible tests.
 
 - [x] **Experiment comparison extension** — exact configuration matching, explicit mismatches/unmatched groups, outcome/sample-aware deltas, URL choices and recorded timeline drill-downs.
 

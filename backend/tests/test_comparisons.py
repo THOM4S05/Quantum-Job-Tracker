@@ -45,8 +45,8 @@ def test_seed_matching_outcomes_samples_and_independent_deltas():
     assert metric(failure, 'compilation_success')['absolute_change'] == -100
     assert metric(failure, 'compilation_success')['delta_unit'] == 'pp'
     assert metric(failure, 'compilation_success')['percentage_change'] is None
-    assert metric(failure, 'compilation_duration')['candidate'] == {'value': 4, 'samples': 7}
-    assert metric(failure, 'execution_duration')['candidate'] == {'value': None, 'samples': 0}
+    assert {key: metric(failure, 'compilation_duration')['candidate'][key] for key in ('value', 'samples')} == {'value': 4, 'samples': 7}
+    assert metric(failure, 'execution_duration')['candidate'] == {'value': None, 'samples': 0, 'job_ids': []}
     assert metric(failure, 'execution_success')['absolute_change'] is None
     slowdown = by_workload['execution-slowdown']
     assert metric(slowdown, 'execution_duration')['absolute_change'] == 8
@@ -183,3 +183,41 @@ def test_outage_is_sanitized():
         with patch.object(client.app.state.engine, 'connect', side_effect=OperationalError('secret-host', {}, Exception('secret'))):
             response = client.get('/comparisons')
     assert response.status_code == 503 and 'secret' not in response.text
+
+
+def test_contributor_ids_identify_eligible_runs_without_changing_medians():
+    rows = pair()
+    extra = deepcopy(rows[0])
+    extra['id'] = 'excluded-execution-end'
+    extra['metadata']['execution_finished_at'] = None
+    cancelled = deepcopy(rows[0])
+    cancelled['id'] = 'cancelled-after-start'
+    cancelled['status'] = 'cancelled'
+    result = compare_jobs([*rows, extra, cancelled], BASELINE, CANDIDATE)['rows'][0]
+    baseline = str(rows[0]['id'])
+    assert metric(result, 'execution_duration')['baseline']['job_ids'] == [baseline]
+    assert metric(result, 'execution_duration')['baseline']['samples'] == 1
+    assert metric(result, 'compilation_duration')['baseline']['job_ids'] == sorted([baseline, extra['id']])
+    assert metric(result, 'queue_time')['baseline']['job_ids'] == sorted([baseline, extra['id'], cancelled['id']])
+    assert metric(result, 'execution_success')['baseline']['job_ids'] == sorted([baseline, extra['id']])
+    for row in compare_jobs(fixtures(), BASELINE, CANDIDATE)['rows']:
+        for entry in row['metrics']:
+            for side in ('baseline', 'candidate'):
+                observation = entry[side]
+                if 'job_ids' in observation:
+                    assert len(observation['job_ids']) == observation['samples']
+                    assert set(observation['job_ids']) <= {job['id'] for job in row[side]['jobs']}
+
+
+@pytest.mark.postgres
+def test_api_exposes_compilation_failure_contributors_and_no_execution_contributors(client):
+    body = client.get('/comparisons', params={'experiment': EXPERIMENT_ID, 'baseline': BASELINE, 'candidate': CANDIDATE}).json()
+    failure = next(row for row in body['rows'] if row['workload'] == 'compile-regression')
+    compiled = metric(failure, 'compilation_duration')['candidate']
+    assert compiled['value'] == 4 and compiled['samples'] == 7
+    assert set(compiled['job_ids']) == {job['id'] for job in failure['candidate']['jobs']}
+    assert metric(failure, 'execution_duration')['candidate']['job_ids'] == []
+    for identity in compiled['job_ids']:
+        evidence = client.get(f'/jobs/{identity}').json()
+        assert evidence['job']['error_stage'] == 'compilation'
+        assert evidence['history_complete'] is True

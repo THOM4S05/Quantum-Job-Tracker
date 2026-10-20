@@ -72,18 +72,27 @@ def summarize(rows):
 
     def observed(values):
         known = [value for value in values if isinstance(value, (float, int)) and not isinstance(value, bool) and math.isfinite(value)]
-        return {"value": median(known) if known else None, "samples": len(known)}
+        return {"value": median(known) if known else None, "samples": len(known),
+                "job_ids": sorted(str(row["id"]) for row, value in zip(rows, values)
+                                  if isinstance(value, (float, int)) and not isinstance(value, bool) and math.isfinite(value))}
 
     metrics = {"runs": {"value": len(rows), "samples": len(rows)}}
     for phase in ("compilation", "execution"):
         stats = overview[phase]
         metrics[f"{phase}_completed"] = {"value": stats["completed"], "samples": len(rows)}
-        metrics[f"{phase}_success"] = {"value": stats["rate_percent"], "samples": stats["completed"]}
+        metrics[f"{phase}_success"] = {"value": stats["rate_percent"], "samples": stats["completed"],
+                                           "job_ids": sorted(str(row["id"]) for row in rows
+                                                             if attempt(row, phase) in {"succeeded", "failed"})}
     metrics["compilation_duration"] = observed([
         interval(row.get("metadata") or {}, "compilation_started_at", "compilation_finished_at")
         if attempt(row, "compilation") in {"succeeded", "failed"} else None for row in rows])
     for key, source in (("queue_time", "queue_time"), ("execution_duration", "execution_duration")):
-        metrics[key] = {"value": overview[source]["median_seconds"], "samples": overview[source]["samples"]}
+        contributors = [row for row in rows if interval(row.get("metadata") or {},
+                        "queue_entered_at" if key == "queue_time" else "execution_started_at",
+                        "execution_started_at" if key == "queue_time" else "execution_finished_at") is not None
+                        and (key == "queue_time" or attempt(row, "execution") in {"succeeded", "failed"})]
+        metrics[key] = {"value": overview[source]["median_seconds"], "samples": overview[source]["samples"],
+                        "job_ids": sorted(str(row["id"]) for row in contributors)}
     for key in ("estimated_logical_qubits", "estimated_circuit_depth", "estimated_gate_count"):
         metrics[key] = observed([(row.get("metadata") or {}).get(key) for row in rows])
     return {"runs": len(rows), "compilation": overview["compilation"], "execution": overview["execution"],

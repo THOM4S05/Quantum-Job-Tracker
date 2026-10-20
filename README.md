@@ -85,6 +85,8 @@ docker compose exec -T api python -m app.seed --dataset compiler-comparison-v1
 
 Choose **Synthetic compiler comparison v1**, baseline **synthetic-1.0.0**, candidate **synthetic-1.1.0**. The four matched workloads include estimated qubits 32 → 24 (−25%), compilation success 100% → 0% (−100 pp), execution duration 10 → 18 s (+80%), and an unchanged control. Expand either side's jobs to inspect recorded timelines. Queue time can reflect operational conditions; synthetic comparisons establish no real compiler performance claim.
 
+**Changes to investigate** appears inside each compatible workload group. It shows newly observed compilation failures, lower execution success, higher timing/resource values, and decreases or other improvements alongside them. Counts, percentage-point changes and zero/missing-value explanations stay visible. Expand **Supporting jobs for …** to inspect the exact observations; **Runs contributing to timing medians** covers every timing metric. Compilation failures with no execution observations say **Insufficient data to compare**. These are descriptive synthetic differences, not confirmed regressions or causal conclusions.
+
 [Matching, metric definitions, units, delta rules and API contract](docs/comparisons.md). The static browser samples have no named experiment membership and show an explicit empty state; comparison evidence comes from PostgreSQL in the local application. The comparison page is also available in the [browser demo](https://thom4s05.github.io/Quantum-Job-Tracker/?view=comparison); use the local application to compare the seeded experiment.
 
 ## Operational overview
