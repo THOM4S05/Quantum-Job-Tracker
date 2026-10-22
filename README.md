@@ -8,25 +8,31 @@ All jobs, providers, compiler metadata and results are **synthetic**. The featur
 
 ## Screenshots
 
-Browser-demo screenshots captured on 20 October 2026. Introductory wording and navigation have since been updated. All jobs and outcomes shown are synthetic; this independent portfolio project does not execute on real quantum hardware. The browser demo uses bundled records, while the local FastAPI/PostgreSQL application reads database records.
+Screenshots captured from the public browser demo on 22 October 2026. All jobs and outcomes shown are synthetic; this independent portfolio project does not execute on real quantum hardware. The browser demo uses bundled records, while the local FastAPI/PostgreSQL application reads database records.
+
+### Introduction and navigation
+
+The introduction defines a recorded job, explains the main pages, and links to the example comparison, implementation notes and guide.
+
+![Current introduction with job definition, example-comparison controls, sample-count guidance and sidebar navigation](docs/images/quantum-job-tracker-introduction.jpg)
 
 ### Browse and filter jobs
 
 Search and filter 256 bundled sample jobs by status, provider, submission dates, target, compiler version or experiment, then open a recorded run.
 
-![Current Jobs page with synthetic-data label, example links, search and cohort filters, and job results](docs/images/quantum-job-tracker-jobs-overview.png)
+![Jobs page showing search and cohort filters, the 256-job count and recorded runs](docs/images/quantum-job-tracker-jobs-overview.jpg)
 
 ### Compare an experiment
 
 The seeded resource-gain workload shows lower estimated circuit depth and gate count for the candidate version. Run counts and outcome denominators stay visible alongside the observations; these synthetic examples are not real compiler benchmarks.
 
-![Resource-gain comparison showing lower estimated depth and gate count, baseline and candidate run counts, and comparison metrics](docs/images/quantum-job-tracker-experiment-comparison.png)
+![Resource-gain comparison showing lower estimated depth and gate count with baseline and candidate sample and outcome counts](docs/images/quantum-job-tracker-experiment-comparison.jpg)
 
 ### Investigate a failure
 
 Follow a supporting candidate run from compile-regression to its recorded compilation failure, correlation ID, ordered timeline and expanded diagnostics. No execution duration is fabricated for a run that never executed.
 
-![Recorded compilation failure evidence and ordered three-event timeline with expanded structured diagnostics](docs/images/quantum-job-tracker-lifecycle-diagnostics.png)
+![Recorded compilation failure evidence and ordered three-event timeline with expanded structured diagnostics](docs/images/quantum-job-tracker-lifecycle-diagnostics.jpg)
 
 <details>
 <summary><strong>More views: metadata, operational overview, and Demo & Guide</strong></summary>
@@ -35,19 +41,19 @@ Follow a supporting candidate run from compile-regression to its recorded compil
 
 Inspect the program revision, synthetic compiler version, target settings and resource estimates before reading phase timings and failure evidence.
 
-![Current supporting-job details showing program and compiler, target configuration, estimated resources and phase timings](docs/images/quantum-job-tracker-job-investigation.png)
+![Current supporting-job details showing program and compiler, target configuration, estimated resources and phase timings](docs/images/quantum-job-tracker-job-investigation.jpg)
 
 #### Operational overview
 
 Check success-rate denominators, timing sample counts, failures by stage and jobs by target for the selected submission cohort.
 
-![Operational overview showing compilation and execution success rates, median queue and execution times, and breakdowns](docs/images/quantum-job-tracker-operational-overview.png)
+![Operational overview showing compilation and execution success rates, median queue and execution times, and breakdowns](docs/images/quantum-job-tracker-operational-overview.jpg)
 
 #### Demo & Guide
 
 Follow the bulleted example journey, with direct links to the comparison and a verified supporting job.
 
-![Demo and Guide showing its bulleted example walkthrough and direct links to working features](docs/images/quantum-job-tracker-demo-guide.png)
+![Demo and Guide showing its bulleted example walkthrough and direct links to working features](docs/images/quantum-job-tracker-demo-guide.jpg)
 
 </details>
 

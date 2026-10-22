@@ -1,5 +1,11 @@
 # Quantum Job Tracker progress
 
+## Live-site README screenshots — 22 October 2026
+
+- Replaced the six older README screenshots with captures from the public GitHub Pages site and added the updated introduction/navigation view. Images cover Jobs filters/results, resource-gain comparison, supporting-job metadata, recorded compilation failure and the full three-event timeline with expanded diagnostics, Overview metrics/breakdowns, and Demo & Guide with verified example links.
+- Updated image paths, alt text, captions and the capture date. Screenshots use the browser's current desktop viewport; selected document sections are captured in full where needed to avoid cutting off metadata or timeline content. All displayed records are synthetic.
+- Visually inspected all seven captures, verified JPEG headers/dimensions and README image links, and checked whitespace and Markdown fences. No application code changed; application test suites were not rerun for this documentation update.
+
 ## Introduction, navigation and README update — 22 October 2026
 
 - Replaced the introduction with a definition of a recorded job, page roles, comparison direction and sample-count guidance. The example action is now **Open example comparison**. Data-source details are under **About the demo data**, and **How it works** is linked from main-page sidebars and the introduction.
