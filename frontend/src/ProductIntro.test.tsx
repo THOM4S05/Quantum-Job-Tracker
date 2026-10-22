@@ -11,11 +11,11 @@ afterEach(() => { vi.unstubAllGlobals(); });
 it('keeps purpose, synthetic label, source and example action visible while loading', () => {
   vi.mocked(fetch).mockImplementation(() => new Promise(() => {}));
   render(<App />);
-  expect(screen.getByRole('region', { name: 'About Quantum Job Tracker' })).toHaveTextContent('For developers and operators');
+  expect(screen.getByRole('region', { name: 'About Quantum Job Tracker' })).toHaveTextContent('A job is one recorded run of a quantum program.');
   expect(screen.getByText('Synthetic demo · jobs and results are simulated')).toBeVisible();
-  expect(screen.getByRole('link', { name: 'Explore example comparison' })).toHaveAttribute('href', exampleHref);
+  expect(screen.getByRole('link', { name: 'Open example comparison' })).toHaveAttribute('href', exampleHref);
   expect(screen.getByRole('status')).toHaveTextContent('Loading overview');
-  expect(screen.getByText(/Local application: browsing/)).toHaveTextContent('FastAPI API and PostgreSQL');
+  expect(screen.getByText(/Local application: browsing/)).toHaveTextContent('FastAPI and PostgreSQL');
 });
 
 it('keeps an empty overview honest and still provides the example entry point', async () => {
@@ -23,14 +23,14 @@ it('keeps an empty overview honest and still provides the example entry point', 
   render(<App />);
   expect(await screen.findAllByText('Not enough data')).toHaveLength(4);
   expect(screen.getByText(/No jobs match this submission cohort/)).toBeInTheDocument();
-  expect(screen.getByRole('link', { name: 'Explore example comparison' })).toHaveAttribute('href', exampleHref);
+  expect(screen.getByRole('link', { name: 'Open example comparison' })).toHaveAttribute('href', exampleHref);
 });
 
 it('allows an overview error to retry without hiding the introduction', async () => {
   vi.mocked(fetch).mockRejectedValueOnce(new Error('offline')).mockResolvedValue(Response.json({ ...calculateOverview([]), targets: [], compiler_versions: [], experiments: [] }));
   render(<App />);
   expect(await screen.findByRole('alert')).toHaveTextContent('Unable to show overview');
-  expect(screen.getByRole('link', { name: 'Explore example comparison' })).toBeVisible();
+  expect(screen.getByRole('link', { name: 'Open example comparison' })).toBeVisible();
   fireEvent.click(screen.getByRole('button', { name: 'Try again' }));
   expect(await screen.findByText(/No jobs match this submission cohort/)).toBeInTheDocument();
 });

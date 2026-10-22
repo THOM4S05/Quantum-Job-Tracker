@@ -141,6 +141,7 @@ function JobsList() {
         <a className="nav-item" href={`${homeHref}?view=overview&${cohortQuery(readCohort(new URLSearchParams(query)))}`}>◷ Overview</a>
         <a className="nav-item" href={`${homeHref}?view=comparison`}>⇄ Experiment comparison</a>
         <a className="nav-item" href={guideHref}>Demo &amp; Guide</a>
+        <a className="nav-item" href={`${homeHref}?view=implementation`}>How it works</a>
         <div className="sidebar-note"><span className="sidebar-note-icon" aria-hidden="true">◇</span><strong>Synthetic environment</strong><p>Investigate fictional jobs and their outcomes.</p></div>
         <div className="sidebar-bottom"><span className="brand-footer">Quantum Job Tracker</span><span>{isDemo ? 'Browser demo' : 'Local workspace'}</span></div>
       </aside>

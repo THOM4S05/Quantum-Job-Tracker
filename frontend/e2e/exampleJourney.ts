@@ -2,21 +2,21 @@ import { expect, type Page } from '@playwright/test';
 
 export async function exploreExample(page: Page, basePath = '/', browserSnapshot = false) {
   await page.goto(basePath);
-  await expect(page.getByRole('region', { name: 'About Quantum Job Tracker' })).toContainText('For developers and operators');
+  await expect(page.getByRole('region', { name: 'About Quantum Job Tracker' })).toContainText('A job is one recorded run of a quantum program.');
   await expect(page.getByText('Synthetic demo · jobs and results are simulated')).toBeVisible();
-  await page.getByRole('link', { name: 'Start with Overview', exact: true }).click();
+  await page.getByRole('link', { name: 'Open Overview', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Operational overview' })).toBeVisible();
   await expect(page.getByRole('article', { name: 'Compilation success rate' })).toBeVisible();
-  await page.getByRole('link', { name: 'Explore example comparison', exact: true }).click();
+  await page.getByRole('link', { name: 'Open example comparison', exact: true }).click();
   const comparisonURL = page.url();
   expect(new URL(comparisonURL).pathname).toBe(basePath);
   await expect(page.getByRole('heading', { name: 'Experiment comparison', exact: true })).toBeVisible();
   await expect(page.getByLabel('Baseline compiler version')).toHaveValue('synthetic-1.0.0');
   await expect(page.getByLabel('Candidate compiler version')).toHaveValue('synthetic-1.1.0');
   const guide = page.getByRole('region', { name: 'What to notice in the example' });
-  await expect(guide).toContainText('One improvement');
-  await expect(guide).toContainText('One change to investigate');
-  await expect(guide).toContainText('not real compiler benchmarks');
+  await expect(guide).toContainText('Lower resource estimates');
+  await expect(guide).toContainText('Compilation failures');
+  await expect(guide).toContainText('do not measure real compiler performance');
   const gain = page.getByRole('region', { name: 'Changes to investigate: resource-gain', exact: true });
   await expect(gain).toContainText('Lower estimated circuit depth');
   await expect(gain).toContainText('-30 %');

@@ -6,7 +6,7 @@ export async function followGuide(page: Page, basePath = '/', browserSnapshot = 
   expect(new URL(page.url()).pathname).toBe(basePath);
   await expect(page.getByRole('heading', { level: 1, name: 'Demo & Guide', exact: true })).toBeVisible();
   await page.reload();
-  await expect(page.getByRole('link', { name: 'Explore example comparison', exact: true })).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Open example comparison', exact: true })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'A small glossary' })).toBeVisible();
   await expect(page.getByText('Independent portfolio project · synthetic jobs and results')).toBeVisible();
   const guideURL = page.url();
@@ -15,7 +15,7 @@ export async function followGuide(page: Page, basePath = '/', browserSnapshot = 
   const href = new URL((await supporting.getAttribute('href'))!, guideURL);
   if (browserSnapshot) expect(href.pathname).toBe(basePath);
   expect(href.searchParams.get('view')).toBe('comparison');
-  await page.getByRole('link', { name: 'Explore example comparison', exact: true }).click();
+  await page.getByRole('link', { name: 'Open example comparison', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Experiment comparison', exact: true })).toBeVisible();
   expect(new URL(page.url()).pathname).toBe(basePath);
   const comparisonURL = page.url();

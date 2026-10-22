@@ -23,7 +23,7 @@ it('directly loads the guide with visible purpose, actual page controls, glossar
   for (const title of ['Overview', 'Jobs', 'Job details', 'Experiment comparison', 'Changes to investigate', 'Browser-only playground', 'How it works']) {
     expect(screen.getByRole('heading', { level: 3, name: title })).toBeInTheDocument();
   }
-  expect(await screen.findByRole('link', { name: 'Explore example comparison' })).toHaveAttribute('href', exampleHref);
+  expect(await screen.findByRole('link', { name: 'Open example comparison' })).toHaveAttribute('href', exampleHref);
 });
 
 it('resolves supporting evidence from available data and preserves the comparison return query', async () => {
@@ -45,7 +45,7 @@ it('leaves the guide readable while checking example records', () => {
   render(<App />);
   expect(screen.getByRole('status')).toHaveTextContent('Checking example links');
   expect(screen.getByRole('heading', { name: 'What this app is for' })).toBeVisible();
-  expect(screen.getByRole('button', { name: 'Explore example comparison' })).toBeDisabled();
+  expect(screen.getByRole('button', { name: 'Open example comparison' })).toBeDisabled();
   expect(screen.getByRole('link', { name: 'Open operational overview' })).toBeVisible();
 });
 
@@ -53,7 +53,7 @@ it('handles an unavailable experiment without inventing records', async () => {
   vi.mocked(fetch).mockResolvedValue(Response.json({ rows: [] }));
   render(<App />);
   expect(await screen.findByText(/featured example is not available/)).toBeInTheDocument();
-  expect(screen.getByRole('button', { name: 'Explore example comparison' })).toBeDisabled();
+  expect(screen.getByRole('button', { name: 'Open example comparison' })).toBeDisabled();
   expect(screen.queryByRole('link', { name: 'Open supporting compilation-failure job' })).not.toBeInTheDocument();
   expect(screen.getByRole('link', { name: 'Open Jobs' })).toBeVisible();
 });
@@ -63,7 +63,7 @@ it('can retry a failed example check while general navigation stays available', 
   render(<App />);
   expect(await screen.findByRole('alert')).toHaveTextContent('Example records could not be checked');
   fireEvent.click(screen.getByRole('button', { name: 'Check example again' }));
-  expect(await screen.findByRole('link', { name: 'Explore example comparison' })).toBeVisible();
+  expect(await screen.findByRole('link', { name: 'Open example comparison' })).toBeVisible();
 });
 
 it.each(['missing', 'wrong-stage'])('does not link to an unverified supporting job: %s', async (problem) => {
@@ -77,6 +77,6 @@ it.each(['missing', 'wrong-stage'])('does not link to an unverified supporting j
   });
   render(<App />);
   await waitFor(() => expect(screen.getByText(/supporting compilation-failure job could not be verified/)).toBeInTheDocument());
-  expect(screen.getByRole('link', { name: 'Explore example comparison' })).toBeVisible();
+  expect(screen.getByRole('link', { name: 'Open example comparison' })).toBeVisible();
   expect(screen.queryByRole('link', { name: 'Open supporting compilation-failure job' })).not.toBeInTheDocument();
 });

@@ -6,7 +6,7 @@ body { margin: 0; }
 header { display: flex; align-items: center; gap: 10px; padding: 0 12px; font-size: 22px; font-weight: 700; letter-spacing: -.7px; }
 .mark { display: grid; place-items: center; width: 34px; height: 34px; background: #743be7; color: white; border-radius: 9px; font-size: 22px; }
 .workspace-label { margin: 36px 14px 12px; font-size: 10px; font-weight: 700; letter-spacing: 1.5px; color: #868092; }
-.nav-item { display: flex; align-items: center; gap: 12px; padding: 10px 14px; border-radius: 6px; font-size: 14px; font-weight: 600; text-decoration: none; }
+.nav-item { color: #51495d; display: flex; align-items: center; gap: 12px; padding: 10px 14px; border-radius: 6px; font-size: 14px; font-weight: 600; text-decoration: none; }
 .nav-item.active { background: #eee7fc; color: #6930d4;  }
 .nav-item span { font-size: 20px; }
 a:focus-visible { outline: 2px solid #743be7; outline-offset: 3px; }
@@ -216,9 +216,25 @@ section.product-intro { display: grid; grid-template-columns: 1.2fr 1fr; gap: 22
 .product-intro h3 { font-size: 15px; margin: 0 0 12px; }
 .product-intro p, .example-guide li, .example-guide p, .overview-explanation { font-size: 13px; line-height: 1.8; color: #625b6e; }
 .synthetic-label { display: inline-block; font-size: 11px; font-weight: 600; color: #6036a4; background: #efe7fc; padding: 7px 10px; border-radius: 5px; }
-.product-intro .source-note { grid-column: 1 / -1; margin: 0; padding-top: 16px; border-top: 1px solid #e4daf5; font-size: 12px; }
-.intro-example { align-self: center; }
-.intro-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 18px; }
+.product-intro .source-note { margin: 10px 0 0; font-size: 12px; }
+.intro-example { align-self: start; padding-left: 24px; border-left: 1px solid #e4daf5; }
+.product-intro .intro-portfolio { font-size: 12px; margin: 14px 0 0; }
+.intro-steps { list-style: decimal; margin: 14px 0 0; padding-left: 22px; }
+.intro-steps li { padding-left: 4px; font-size: 13px; line-height: 1.5; }
+.intro-steps li + li { margin-top: 12px; }
+.intro-steps li::marker { color: #6930d4; font-weight: 700; }
+.intro-steps strong, .intro-steps span { display: block; }
+.intro-steps span { margin-top: 3px; color: #625b6e; }
+.intro-start { display: flex; flex-direction: column; }
+.intro-action-hint { color: #625b6e; display: block; margin-top: 4px; font-size: 11px; font-weight: 400; }
+.intro-footer { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: 10px 20px; padding-top: 14px; border-top: 1px solid #e4daf5; }
+.product-intro .intro-footer > p { margin: 0; font-size: 12px; }
+.intro-help-links { display: flex; flex-wrap: wrap; gap: 16px; }
+.intro-footer a, .intro-source summary { color: #6930d4; font-size: 12px; }
+.intro-source { flex-basis: 100%; }
+.intro-source summary { cursor: pointer; }
+summary:focus-visible { outline: 2px solid #743be7; outline-offset: 3px; }
+.intro-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-start; margin-top: 18px; }
 .intro-actions a { padding: 10px 13px; border-radius: 5px; font-size: 12px; text-decoration: none; font-weight: 600; }
 .intro-primary { color: white; background: #6930d4; }
 .intro-secondary { color: #6930d4; border: 1px solid #dcd0ed; background: white; }
@@ -230,7 +246,7 @@ section.example-guide { padding: 20px 24px; margin: 24px 0; background: #faf9fc;
 .example-guide ul { padding-left: 20px; margin: 0; }
 .example-guide li + li { margin-top: 12px; }
 .example-inline-link { color: #6930d4; }
-@media (max-width: 850px) { section.product-intro { grid-template-columns: 1fr; } }
+@media (max-width: 850px) { section.product-intro { grid-template-columns: 1fr; } .intro-example { padding: 18px 0 0; border-left: 0; border-top: 1px solid #e4daf5; } }
 
 .demo-guide { max-width: 1120px; }
 .guide-contents { display: flex; flex-wrap: wrap; gap: 12px 20px; padding: 0 0 24px; font-size: 13px; }
@@ -297,3 +313,5 @@ section.guide-page-sections { padding: 0; border: 0; background: transparent; bo
 .change-list > li { min-width: 0; overflow-wrap: anywhere; }
 .observed-change + .observed-change { margin-top: 0; }
 .metric-definitions > ul > li + li { margin-top: 0; }
+
+@media (max-width: 560px) { .sidebar { flex-wrap: wrap; justify-content: flex-start; gap: 6px; } .sidebar header { flex-basis: 100%; margin-bottom: 10px; } .sidebar .nav-item { flex: 1 1 140px; min-height: 44px; font-size: 13px; } .intro-actions a { min-height: 44px; display: inline-flex; flex-direction: column; justify-content: center; } }

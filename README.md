@@ -1,6 +1,6 @@
 # Quantum Job Tracker
 
-**Inspect quantum-job compilation and execution, compare experiments, and investigate changes using the underlying job evidence.** Quantum Job Tracker helps developers and operators trace an observed difference back to recorded runs, timelines and failure diagnostics.
+Quantum Job Tracker displays recorded quantum-program runs, their compiler and target settings, status, timings and event history. Jobs lists individual runs, Overview summarises selected runs, and Experiment comparison groups runs with matching settings to compare compiler versions.
 
 All jobs, providers, compiler metadata and results are **synthetic**. The featured example compares compiler versions; an experiment is a group of related runs and need not be a compiler-version comparison. No Horizon Quantum systems, real compiler service or quantum hardware is connected.
 
@@ -8,7 +8,7 @@ All jobs, providers, compiler metadata and results are **synthetic**. The featur
 
 ## Screenshots
 
-Current browser-demo screenshots, captured on 20 October 2026. All jobs and outcomes shown are synthetic; this independent portfolio project does not execute on real quantum hardware. The browser demo uses bundled records, while the local FastAPI/PostgreSQL application reads database records.
+Browser-demo screenshots captured on 20 October 2026. Introductory wording and navigation have since been updated. All jobs and outcomes shown are synthetic; this independent portfolio project does not execute on real quantum hardware. The browser demo uses bundled records, while the local FastAPI/PostgreSQL application reads database records.
 
 ### Browse and filter jobs
 
@@ -59,19 +59,25 @@ Listed explanations use visible bullet points. Longer groups sit side by side on
 
 Direct location: `?view=guide` under the app’s base path. For example, [local browser demo guide](http://127.0.0.1:5174/?view=guide), [local API-backed guide](http://localhost:5173/?view=guide), or the [public guide](https://thom4s05.github.io/Quantum-Job-Tracker/?view=guide). Follow the existing startup instructions below for either mode.
 
-The guide resolves its example and supporting compilation-failure job through the current data adapter, then verifies the recorded job’s experiment, compiler and failure stage. If the example or job is unavailable, it explains the situation and offers retry/general navigation instead of inventing links or results. Its **Explore example comparison** action preserves the featured selections; direct supporting-job links return to that same comparison.
+The guide resolves its example and supporting compilation-failure job through the current data adapter, then verifies the recorded job’s experiment, compiler and failure stage. If the example or job is unavailable, it explains the situation and offers retry/general navigation instead of inventing links or results. Its **Open example comparison** action preserves the featured selections; direct supporting-job links return to that same comparison.
 
 The guide is included in the GitHub Pages browser build.
+
+## Page navigation and example controls
+
+Jobs and Overview include **About this tracker**, which explains a recorded job and the purpose of each main page. Select **Open example comparison** to load the example with its baseline and candidate versions selected. **How to read the example** explains comparison direction, sample counts (`n`), and how to open a failed job and return with **Back to comparison**.
+
+**How it works** is available in the sidebar and introduction for implementation details. **Demo & Guide** provides the longer page explanations and glossary. Expand **About the demo data** for the current data source and the distinction between bundled records and browser-only personal runs. On narrow screens, navigation wraps into rows and the introduction stacks vertically.
 
 ## Browser demo
 
 [Open the browser demo](https://thom4s05.github.io/Quantum-Job-Tracker/)
 
-The browser build runs without installation, sign-in or an API. GitHub Pages hosts the existing release; use the updated local browser build below to try this stage before a separately authorized publication.
+The browser build runs without installation, sign-in or an API and is hosted on GitHub Pages.
 
 - Browse 256 bundled sample jobs (200 historical fixtures plus the 56-run example experiment) and filter by status, provider, submission date, or exact ID/reference.
 - Search for `syn-0005` and open the job to investigate a compilation failure and its lifecycle timeline.
-- Follow **Explore example comparison** through a supporting job and its recorded timeline. The read-only comparison snapshot is generated from the existing PostgreSQL seed and calculations.
+- Follow **Open example comparison** through a supporting job and its recorded timeline. The read-only comparison snapshot is generated from the existing PostgreSQL seed and calculations.
 - Optionally expand **Browser-only playground**, enter a run name, choose an outcome, and select **Create simulated run**. This immediately generates personal browser data; it is not backend submission or real execution.
 - Select **Reset demo** to remove your personal runs and return to the sample workspace.
 

@@ -99,6 +99,7 @@ export function JobDetails({ jobId, backHref, backLabel = "← Back to filtered 
         <p className="workspace-label">WORKSPACE</p>
         <a className="nav-item active" href={backHref}><span aria-hidden="true">▦</span> {returnContext}</a>
         <a className="nav-item" href={guideHref}>Demo &amp; Guide</a>
+        <a className="nav-item" href={`${homeHref}?view=implementation`}>How it works</a>
       <div className="sidebar-note"><span className="sidebar-note-icon" aria-hidden="true">◇</span><strong>Synthetic environment</strong><p>Investigate recorded evidence from fictional runs.</p></div>
         <div className="sidebar-bottom"><span className="brand-footer">Quantum Job Tracker</span><span>{isDemo ? 'Browser demo' : 'Local workspace'}</span></div>
       </aside>

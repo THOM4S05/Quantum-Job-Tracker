@@ -79,6 +79,7 @@ export function Overview() {
       <p className="workspace-label">WORKSPACE</p><a className="nav-item" href={drillDown()}>▦ Jobs</a><a className="nav-item active" aria-current="page" href={`${homeHref}?view=overview&${query}`}>◷ Overview</a>
       <a className="nav-item" href={`${homeHref}?view=comparison`}>⇄ Experiment comparison</a>
       <a className="nav-item" href={guideHref}>Demo &amp; Guide</a>
+        <a className="nav-item" href={`${homeHref}?view=implementation`}>How it works</a>
       <div className="sidebar-note"><strong>Synthetic environment</strong><p>Recorded job evidence, never real hardware telemetry.</p></div>
     </aside>
     <div className="workspace"><div className="topbar"><span>Workspace / <strong>Overview</strong></span><span className="environment-badge">Synthetic data</span></div><main>

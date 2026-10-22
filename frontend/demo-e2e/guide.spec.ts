@@ -11,7 +11,7 @@ test('guide deep loading and example links preserve the hosting base path', asyn
 test('guide stays readable on a narrow screen and its example action works by keyboard', async ({ page, baseURL }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(`${baseURL}?view=guide`);
-  const example = page.getByRole('link', { name: 'Explore example comparison', exact: true });
+  const example = page.getByRole('link', { name: 'Open example comparison', exact: true });
   await expect(example).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
   await page.screenshot({ path: '/tmp/quantum-guide-mobile.png', fullPage: false });

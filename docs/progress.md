@@ -1,5 +1,12 @@
 # Quantum Job Tracker progress
 
+## Introduction, navigation and README update — 22 October 2026
+
+- Replaced the introduction with a definition of a recorded job, page roles, comparison direction and sample-count guidance. The example action is now **Open example comparison**. Data-source details are under **About the demo data**, and **How it works** is linked from main-page sidebars and the introduction.
+- Improved mobile navigation wrapping and stacked introduction layout. Updated README descriptions/control labels, noted the screenshot capture date, and removed stale publication wording without adding a timed walkthrough.
+- Validation: **66 frontend tests passed**, the browser-demo production build passed, and **4 static-hosting Chrome workflows passed** against the current build under `/Quantum-Job-Tracker/`, including example navigation, guide links, mobile stacking and keyboard activation. The first browser check still expected the removed “Start with Overview” label and old explanation text; updated the shared check to the current labels and reran successfully. README links/fences and whitespace checks passed.
+- Backend source is unchanged; its full PostgreSQL suite remains part of GitHub's deployment checks.
+
 ## README simplification — 20 October 2026
 
 - Removed the timed “Three-minute walkthrough” section at the user’s request. Kept screenshots, feature descriptions, guide links and setup instructions; reworded remaining setup references to the example experiment. Application pages are unchanged.
