@@ -2,7 +2,7 @@ import { expect, type Page } from '@playwright/test';
 
 export async function exploreExample(page: Page, basePath = '/', browserSnapshot = false) {
   await page.goto(basePath);
-  await expect(page.getByRole('region', { name: 'About Quantum Job Tracker' })).toContainText('A job is one recorded run of a quantum program.');
+  await expect(page.getByRole('region', { name: 'About Quantum Job Tracker' })).toContainText('Compare compiler versions, check results, or open a job to see what happened.');
   await expect(page.getByText('Synthetic demo · jobs and results are simulated')).toBeVisible();
   await page.getByRole('link', { name: 'Open Overview', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Operational overview' })).toBeVisible();

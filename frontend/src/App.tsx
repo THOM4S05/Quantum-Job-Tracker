@@ -150,20 +150,25 @@ function JobsList() {
         <main>
           <div className="page-heading"><div><h1>Jobs</h1><p>Search and inspect your synthetic quantum runs.</p></div><span className="version-badge">{isDemo ? 'Browser data' : 'Read-only workspace'}</span></div>
           <ProductIntro />
-          {isDemo && <details className="playground-disclosure"><summary>Browser-only playground — create a personal simulated run</summary><Suspense fallback={<p>Loading simulation form…</p>}><Playground onReset={clear} /></Suspense></details>}
+          {isDemo && <details className="playground-disclosure"><summary>Create a simulated run</summary><Suspense fallback={<p>Loading simulation form…</p>}><Playground onReset={clear} /></Suspense></details>}
           <form className="job-filters" onSubmit={apply} aria-label="Job filters">
             <label className="search-field">Job ID or external reference<input type="search" value={draft.q} onChange={(e) => field('q', e.target.value)} maxLength={160} placeholder="e.g. SYN-0005" aria-describedby="search-help" /></label>
             <label>Status<select value={draft.status} onChange={(e) => field('status', e.target.value)}><option value="">All statuses</option>{statuses.map((status) => <option key={status} value={status}>{statusLabel(status)}</option>)}{draft.status && !statuses.includes(draft.status as Status) && <option value={draft.status}>{draft.status} (invalid)</option>}</select></label>
             <label>Provider<select value={draft.provider} onChange={(e) => field('provider', e.target.value)}><option value="">All providers</option>{providers.map((provider) => <option key={provider}>{provider}</option>)}</select></label>
-            <CohortFields value={draft} options={data} onChange={field} />
-            {draft.failure_stage && <label>Failure stage<select value={draft.failure_stage} onChange={(e) => field('failure_stage', e.target.value)}><option value="">All stages</option>{['compilation', 'queueing', 'execution', 'unknown'].map((stage) => <option key={stage}>{stage}</option>)}</select></label>}
-            <label>Rows per page<select value={draft.page_size} onChange={(e) => field('page_size', e.target.value)}>{[...new Set(['10', '25', '50', '100', draft.page_size])].map((size) => <option key={size} value={size}>{size}</option>)}</select></label>
+            <details className="advanced-filters" key={query} open={Boolean(current.submitted_from || current.submitted_to || current.target || current.compiler_version || current.experiment || current.failure_stage || current.page_size !== '25')}>
+              <summary>More filters<span className="advanced-filter-hint">Date, target, compiler &amp; experiment</span></summary>
+              <div className="advanced-filter-fields">
+                <CohortFields value={draft} options={data} onChange={field} />
+                {draft.failure_stage && <label>Failure stage<select value={draft.failure_stage} onChange={(e) => field('failure_stage', e.target.value)}><option value="">All stages</option>{['compilation', 'queueing', 'execution', 'unknown'].map((stage) => <option key={stage}>{stage}</option>)}</select></label>}
+                <label>Rows per page<select value={draft.page_size} onChange={(e) => field('page_size', e.target.value)}>{[...new Set(['10', '25', '50', '100', draft.page_size])].map((size) => <option key={size} value={size}>{size}</option>)}</select></label>
+              </div>
+            </details>
             <div className="filter-actions"><button type="submit" className="primary">Apply filters</button><button type="button" onClick={clear}>Clear filters</button></div>
             <p id="search-help" className="filter-help">Exact ID or reference · References ignore case · Dates include the whole UTC day</p>
           </form>
 
-          <section className="jobs-panel" aria-label="Job results" aria-busy={result.loading}>
-            <div className="results-heading"><h2>{data ? `${data.total.toLocaleString()} ${data.total === 1 ? 'job' : 'jobs'}` : 'Job results'}</h2><span>{result.checked ? `Updated ${new Date(result.checked).toLocaleTimeString([], { timeZoneName: 'short' })} · Refreshes every 5s` : isDemo ? 'Browser demo data' : 'Live PostgreSQL data'}</span></div>
+          <section id="job-results" tabIndex={-1} className="jobs-panel" aria-label="Job results" aria-busy={result.loading}>
+            <div className="results-heading"><div><h2>{data ? `${data.total.toLocaleString()} ${data.total === 1 ? 'job' : 'jobs'}` : 'Job results'}</h2><p className="results-hint">Select a job to view its results and timeline.</p></div><span>{result.checked ? `Updated ${new Date(result.checked).toLocaleTimeString([], { timeZoneName: 'short' })} · Refreshes every 5s` : isDemo ? 'Browser demo data' : 'Live PostgreSQL data'}</span></div>
             {result.loading && <div className="result-state" role="status"><span className="spinner" aria-hidden="true" />Loading jobs…</div>}
             {result.error && <div className="error-state" role="alert"><div><strong>{data ? 'Showing previously loaded results' : 'Unable to show jobs'}</strong><p>{result.error}</p></div><button type="button" onClick={() => setRefresh((value) => value + 1)}>Try again</button></div>}
             {data && data.items.length === 0 && <div className="result-state"><h3>{data.total > 0 ? 'This page has no jobs' : 'No jobs found'}</h3><p>{data.total > 0 ? 'The requested page is beyond the available results.' : 'Try a different reference or a wider set of filters.'}</p>{data.total > 0 ? <button onClick={() => navigate({ ...current, page: '1' })}>Go to first page</button> : <button onClick={clear}>Clear filters</button>}</div>}

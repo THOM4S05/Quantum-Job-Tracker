@@ -11,7 +11,7 @@ afterEach(() => { vi.unstubAllGlobals(); });
 it('keeps purpose, synthetic label, source and example action visible while loading', () => {
   vi.mocked(fetch).mockImplementation(() => new Promise(() => {}));
   render(<App />);
-  expect(screen.getByRole('region', { name: 'About Quantum Job Tracker' })).toHaveTextContent('A job is one recorded run of a quantum program.');
+  expect(screen.getByRole('region', { name: 'About Quantum Job Tracker' })).toHaveTextContent('Compare compiler versions, check results, or open a job to see what happened.');
   expect(screen.getByText('Synthetic demo · jobs and results are simulated')).toBeVisible();
   expect(screen.getByRole('link', { name: 'Open example comparison' })).toHaveAttribute('href', exampleHref);
   expect(screen.getByRole('status')).toHaveTextContent('Loading overview');
