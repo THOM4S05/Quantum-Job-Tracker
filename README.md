@@ -8,19 +8,19 @@ All jobs, providers, compiler metadata and results are **synthetic**. The featur
 
 ## Screenshots
 
-Screenshots captured from the public browser demo on 22 October 2026. All jobs and outcomes shown are synthetic; this independent portfolio project does not execute on real quantum hardware. The browser demo uses bundled records, while the local FastAPI/PostgreSQL application reads database records.
+Screenshots captured from the public browser demo. Introduction, jobs and operational overview refreshed on 24 October 2026; other views captured on 22 October 2026. All jobs and outcomes shown are synthetic; this independent portfolio project does not execute on real quantum hardware. The browser demo uses bundled records, while the local FastAPI/PostgreSQL application reads database records.
 
 ### Introduction and navigation
 
-The introduction defines a recorded job, explains the main pages, and links to the example comparison, implementation notes and guide.
+Start with **Open example comparison**, **Browse jobs**, or **Open Overview**. Background information and guide links sit inside **About this demo**.
 
-![Current introduction with job definition, example-comparison controls, sample-count guidance and sidebar navigation](docs/images/quantum-job-tracker-introduction.jpg)
+![Simplified introduction with clearly labelled example comparison, browse jobs and overview buttons, plus expandable demo information](docs/images/quantum-job-tracker-introduction.jpg)
 
 ### Browse and filter jobs
 
-Search and filter 256 bundled sample jobs by status, provider, submission dates, target, compiler version or experiment, then open a recorded run.
+Search 256 bundled sample jobs by ID or reference, status and provider. Expand **More filters** for submission dates, target, compiler version and experiment, then select a job to view its results and timeline.
 
-![Jobs page showing search and cohort filters, the 256-job count and recorded runs](docs/images/quantum-job-tracker-jobs-overview.jpg)
+![Jobs page showing search, status and provider controls, collapsed More filters, the 256-job count and links to recorded runs](docs/images/quantum-job-tracker-jobs-overview.jpg)
 
 ### Compare an experiment
 
@@ -47,7 +47,7 @@ Inspect the program revision, synthetic compiler version, target settings and re
 
 Check success-rate denominators, timing sample counts, failures by stage and jobs by target for the selected submission cohort.
 
-![Operational overview showing compilation and execution success rates, median queue and execution times, and breakdowns](docs/images/quantum-job-tracker-operational-overview.jpg)
+![Updated operational overview with the compact introduction, cohort filters, success rates, timing sample counts and breakdowns](docs/images/quantum-job-tracker-operational-overview.jpg)
 
 #### Demo & Guide
 
@@ -59,7 +59,7 @@ Follow the bulleted example journey, with direct links to the comparison and a v
 
 ## Demo & Guide
 
-Select **Demo & Guide** in the sidebar, or the smaller link in the Jobs/Overview introduction. The page explains what each working section is for, its main controls, a bulleted example journey, a small glossary and how to interpret the results. It is written for first-time visitors, including readers without quantum-computing knowledge, and identifies the app as an independent portfolio project using synthetic data.
+Select **Demo & Guide** in the sidebar, or **Read the demo guide** inside **About this demo** on Jobs or Overview. The page explains what each working section is for, its main controls, a bulleted example journey, a small glossary and how to interpret the results. It is written for first-time visitors, including readers without quantum-computing knowledge, and identifies the app as an independent portfolio project using synthetic data.
 
 Listed explanations use visible bullet points. Longer groups sit side by side on wider screens and stack on narrow screens to keep them readable.
 
@@ -71,9 +71,11 @@ The guide is included in the GitHub Pages browser build.
 
 ## Page navigation and example controls
 
-Jobs and Overview include **About this tracker**, which explains a recorded job and the purpose of each main page. Select **Open example comparison** to load the example with its baseline and candidate versions selected. **How to read the example** explains comparison direction, sample counts (`n`), and how to open a failed job and return with **Back to comparison**.
+Jobs and Overview include a compact **Explore a quantum run** introduction. Select **Open example comparison** to load the example with its baseline and candidate versions selected, or **Browse jobs** to inspect individual runs. Jobs also offers **Open Overview** for aggregate results.
 
-**How it works** is available in the sidebar and introduction for implementation details. **Demo & Guide** provides the longer page explanations and glossary. Expand **About the demo data** for the current data source and the distinction between bundled records and browser-only personal runs. On narrow screens, navigation wraps into rows and the introduction stacks vertically.
+Expand **About this demo** for the job definition, current data source, implementation notes and guide links. **Demo & Guide** explains comparison direction, sample counts (`n`), and how to open a failed job and return with **Back to comparison**. **How it works** is also available in the sidebar.
+
+The Jobs page keeps search, status and provider controls visible. **More filters** reveals dates, target, compiler version, experiment and rows per page; it opens automatically when an advanced filter is applied through a shared link. On narrow screens, navigation wraps into rows and the action buttons stack vertically.
 
 ## Browser demo
 
@@ -84,7 +86,7 @@ The browser build runs without installation, sign-in or an API and is hosted on 
 - Browse 256 bundled sample jobs (200 historical fixtures plus the 56-run example experiment) and filter by status, provider, submission date, or exact ID/reference.
 - Search for `syn-0005` and open the job to investigate a compilation failure and its lifecycle timeline.
 - Follow **Open example comparison** through a supporting job and its recorded timeline. The read-only comparison snapshot is generated from the existing PostgreSQL seed and calculations.
-- Optionally expand **Browser-only playground**, enter a run name, choose an outcome, and select **Create simulated run**. This immediately generates personal browser data; it is not backend submission or real execution.
+- Optionally expand **Create a simulated run**, enter a run name, choose an outcome, and select **Create simulated run**. This immediately generates personal browser data; it is not backend submission or real execution.
 - Select **Reset demo** to remove your personal runs and return to the sample workspace.
 
 Outcomes include success, compilation/queueing/execution failure, queued, running, and cancelled. Outcomes are generated immediately with fictional lifecycle timestamps; queued and running jobs remain in those states. No quantum hardware or background worker runs.
