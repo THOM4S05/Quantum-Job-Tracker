@@ -2,35 +2,34 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import { App } from './App';
 import { demoRequest } from './demo';
-import { example, exampleHref, exampleQuery } from './example';
+import { example, exampleQuery } from './example';
 import { calculateOverview } from './overviewMetrics';
 
 beforeEach(() => { window.history.replaceState(null, '', '/?view=overview'); vi.stubGlobal('fetch', vi.fn()); });
 afterEach(() => { vi.unstubAllGlobals(); });
 
-it('keeps purpose, synthetic label, source and example action visible while loading', () => {
+it('keeps the overview focused on jobs while loading', () => {
   vi.mocked(fetch).mockImplementation(() => new Promise(() => {}));
   render(<App />);
-  expect(screen.getByRole('region', { name: 'About Quantum Job Tracker' })).toHaveTextContent('Start with the recorded outcomes below, then open a group of jobs to investigate.');
+  expect(screen.queryByRole('region', { name: 'About Quantum Job Tracker' })).not.toBeInTheDocument();
   expect(screen.getByText('Synthetic data')).toBeVisible();
-  expect(screen.getByRole('link', { name: 'Open example comparison' })).toHaveAttribute('href', exampleHref);
+  expect(screen.getByRole('link', { name: 'Browse jobs →' })).toBeVisible();
   expect(screen.getByRole('status')).toHaveTextContent('Loading overview');
-  expect(screen.getByText(/Local application: browsing/)).toHaveTextContent('FastAPI and PostgreSQL');
 });
 
-it('keeps an empty overview honest and still provides the example entry point', async () => {
+it('keeps an empty overview honest and provides job navigation', async () => {
   vi.mocked(fetch).mockResolvedValue(Response.json({ ...calculateOverview([]), targets: [], compiler_versions: [], experiments: [] }));
   render(<App />);
   expect(await screen.findAllByText('Not enough data')).toHaveLength(4);
   expect(screen.getByText(/No jobs match this submission cohort/)).toBeInTheDocument();
-  expect(screen.getByRole('link', { name: 'Open example comparison' })).toHaveAttribute('href', exampleHref);
+  expect(screen.getByRole('link', { name: 'Browse jobs →' })).toBeVisible();
 });
 
-it('allows an overview error to retry without hiding the introduction', async () => {
+it('allows an overview error to retry without hiding job navigation', async () => {
   vi.mocked(fetch).mockRejectedValueOnce(new Error('offline')).mockResolvedValue(Response.json({ ...calculateOverview([]), targets: [], compiler_versions: [], experiments: [] }));
   render(<App />);
   expect(await screen.findByRole('alert')).toHaveTextContent('Unable to show overview');
-  expect(screen.getByRole('link', { name: 'Open example comparison' })).toBeVisible();
+  expect(screen.getByRole('link', { name: 'Browse jobs →' })).toBeVisible();
   fireEvent.click(screen.getByRole('button', { name: 'Try again' }));
   expect(await screen.findByText(/No jobs match this submission cohort/)).toBeInTheDocument();
 });

@@ -1,6 +1,5 @@
 import { Sidebar } from './Sidebar';
 import { FormEvent, useEffect, useState } from 'react';
-import { ProductIntro } from './ProductIntro';
 import { request } from './api';
 import { homeHref, isDemo } from './environment';
 import { CohortFields, cohortQuery, readCohort } from './CohortFields';
@@ -79,7 +78,6 @@ export function Overview() {
     <Sidebar active="overview" jobsHref={drillDown()} overviewHref={`${homeHref}?view=overview&${query}`} />
     <div className="workspace"><div className="topbar"><span>Workspace / <strong>Overview</strong></span><span className="environment-badge">Synthetic data</span></div><main>
       <div className="page-heading"><div><h1>Operational overview</h1><p>Review job outcomes, find failures, and follow the evidence.</p></div><a className="primary-link" href={drillDown()}>Browse jobs →</a></div>
-      <ProductIntro />
       <details className="disclosure-panel" key={query} open={Boolean(query)}><summary>{query ? 'Filters applied · edit or clear' : 'Filter this overview'}</summary>
       <p className="cohort-note">Dates select a cohort by <strong>job submission time (UTC)</strong>. Later lifecycle activity still contributes. {isDemo ? 'Source: browser demo records.' : 'Source: PostgreSQL job records.'}</p>
       <form className="job-filters overview-filters" aria-label="Overview filters" onSubmit={apply}><CohortFields value={draft} options={data} onChange={(key, value) => setDraft((previous) => ({ ...previous, [key]: value }))} />

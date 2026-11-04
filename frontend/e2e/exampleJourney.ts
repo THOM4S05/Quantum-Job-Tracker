@@ -2,10 +2,10 @@ import { expect, type Page } from '@playwright/test';
 
 export async function exploreExample(page: Page, basePath = '/', browserSnapshot = false) {
   await page.goto(basePath);
-  await expect(page.getByRole('region', { name: 'About Quantum Job Tracker' })).toContainText('Start with the recorded outcomes below, then open a group of jobs to investigate.');
   await expect(page.getByText('Synthetic data', { exact: true })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Operational overview' })).toBeVisible();
   await expect(page.getByRole('article', { name: 'Compilation success rate' })).toBeVisible();
+  await page.getByRole('navigation', { name: 'Main', exact: true }).getByRole('link', { name: 'Comparisons', exact: true }).click();
   await page.getByRole('link', { name: 'Open example comparison', exact: true }).click();
   const comparisonURL = page.url();
   expect(new URL(comparisonURL).pathname).toBe(basePath);
