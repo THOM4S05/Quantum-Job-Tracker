@@ -9,7 +9,8 @@ test('network fixtures work through direct reload and return navigation at the h
 });
 test('network details remain readable on mobile and evidence links work by keyboard', async ({ page, baseURL }) => {
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto(baseURL!);
+  await page.goto(`${baseURL}?view=jobs`);
+  await page.getByText('Explore network examples', { exact: true }).click();
   const success = page.getByRole('link', { name: 'Open network success example', exact: true });
   await success.focus();
   await page.keyboard.press('Enter');

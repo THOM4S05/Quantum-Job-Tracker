@@ -1,9 +1,10 @@
+import { Sidebar } from './Sidebar';
 import { FormEvent, useEffect, useState } from 'react';
 import { example, exampleHref } from './example';
 import { request } from './api';
 import { ComparisonChanges, TimingEvidence } from './ComparisonChanges';
 import { formatNumber as number, formatChange as change } from './comparisonFormatting';
-import { guideHref, homeHref, isDemo, jobHref } from './environment';
+import { homeHref, isDemo, jobHref } from './environment';
 import type { Attempts } from './overviewMetrics';
 
 type Choice = { experiment: string; baseline: string; candidate: string };
@@ -65,15 +66,12 @@ export function Comparison() {
   const versions = [...new Set([...(data?.compiler_versions ?? []), draft.baseline, draft.candidate].filter(Boolean))].sort();
   const returnQuery = `view=comparison&${query}`;
   return <div className="app-shell">
-    <aside className="sidebar" aria-label="Workspace navigation"><header><span className="mark" aria-hidden="true">Q</span><span className="brand-name">Quantum Job Tracker</span></header>
-      <p className="workspace-label">WORKSPACE</p><a className="nav-item" href={homeHref}>▦ Jobs</a><a className="nav-item" href={`${homeHref}?view=overview`}>◷ Overview</a><a className="nav-item active" aria-current="page" href={`${homeHref}?${returnQuery}`}>⇄ Experiment comparison</a>
-      <a className="nav-item" href={guideHref}>Demo &amp; Guide</a>
-        <a className="nav-item" href={`${homeHref}?view=implementation`}>How it works</a>
-      <div className="sidebar-note"><strong>Synthetic experiment evidence</strong><p>Descriptive comparisons of recorded runs.</p></div>
-    </aside>
+    <Sidebar active="comparison" comparisonHref={`${homeHref}?${returnQuery}`} />
     <div className="workspace"><div className="topbar"><span>Workspace / <strong>Comparison</strong></span><span className="environment-badge">Synthetic data</span></div><main>
-      <div className="page-heading"><div><h1>Experiment comparison</h1><p>Featured example: what changed for this workload under the candidate compiler?</p></div></div>
+      <div className="page-heading"><div><h1>Experiment comparison</h1><p>Compare compiler versions, then open the jobs behind a difference.</p></div></div>
+      <details className="disclosure-panel"><summary>About the comparison data</summary>
       <p className="cohort-note">Source: {isDemo ? 'bundled snapshot of the synthetic seed (not a live API)' : 'PostgreSQL experiment jobs'}. All results are synthetic. Queue time can be affected by operational conditions, scheduling and provider load. These comparisons do not establish real compiler performance. Highlights describe synthetic samples, not confirmed regressions or proof that a compiler change caused a difference.</p>
+      </details>
       <form className="job-filters comparison-filters" onSubmit={apply} aria-label="Comparison choices">
         <label>Experiment<select aria-label="Experiment" required value={draft.experiment} onChange={(e) => navigate({ experiment: e.target.value, baseline: '', candidate: '' })}><option value="">Choose an experiment</option>{data?.experiments.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}{draft.experiment && !data?.experiments.some((item) => item.id === draft.experiment) && <option value={draft.experiment}>{draft.experiment}</option>}</select></label>
         {(['baseline', 'candidate'] as const).map((side) => <label key={side}>{side === 'baseline' ? 'Baseline compiler version' : 'Candidate compiler version'}<select aria-label={side === 'baseline' ? 'Baseline compiler version' : 'Candidate compiler version'} required value={draft[side]} disabled={!draft.experiment} onChange={(e) => setDraft((value) => ({ ...value, [side]: e.target.value }))}><option value="">Choose a version</option>{versions.map((version) => <option key={version}>{version}</option>)}</select></label>)}
@@ -96,9 +94,11 @@ export function Comparison() {
           {row.status !== 'matched' && row.status !== 'unverifiable' && <p className="evidence-warning">Unmatched configuration: no {row.status === 'baseline_only' ? 'candidate' : 'baseline'} runs. No deltas calculated.</p>}
           <ComparisonChanges row={row} returnQuery={returnQuery} />
           <details className="diagnostics"><summary>Matching configuration</summary><pre>{JSON.stringify(row.configuration, null, 2)}</pre></details>
+          <details className="disclosure-panel"><summary>All metrics and outcome counts</summary>
           <div className="comparison-outcomes"><Outcomes name="Baseline" side={row.baseline} /><Outcomes name="Candidate" side={row.candidate} /></div>
           <div className="table-scroll"><table><caption className="sr-only">{row.workload}: baseline, candidate and changes; observations n shown independently</caption><thead><tr><th>Metric</th><th>Baseline<br /><small>{choice.baseline}</small></th><th>Candidate<br /><small>{choice.candidate}</small></th><th>Absolute change</th><th>Relative change</th></tr></thead><tbody>{row.metrics.map((metric) => <tr key={metric.key}><th scope="row">{metric.label}</th>{(['baseline', 'candidate'] as const).map((side) => <td key={side}>{metric[side].value === null ? 'Not enough data' : `${number(metric[side].value)} ${metric.unit}`}<span className="cell-secondary">n={metric[side].samples}</span></td>)}<td>{row.status === 'matched' && ['compilation_duration', 'queue_time', 'execution_duration'].includes(metric.key) && (!metric.baseline.samples || !metric.candidate.samples || metric.baseline.value === null || metric.candidate.value === null) ? 'Insufficient data to compare' : change(metric.absolute_change, metric.delta_unit)}</td><td>{change(metric.percentage_change, '%')}</td></tr>)}</tbody></table></div>
           <TimingEvidence row={row} returnQuery={returnQuery} />
+          </details>
           <div className="comparison-outcomes">{(['baseline', 'candidate'] as const).map((side) => <details className="diagnostics" key={side}><summary>{side === 'baseline' ? 'Baseline' : 'Candidate'} jobs ({row[side].runs})</summary>{row[side].jobs.length === 0 ? <p>No runs recorded.</p> : <ul>{row[side].jobs.map((job) => <li key={job.id}><a href={jobHref(job.id, returnQuery)}>{job.name}</a> · {job.status.replaceAll('_', ' ')}</li>)}</ul>}</details>)}</div>
         </section>)}
       </>}

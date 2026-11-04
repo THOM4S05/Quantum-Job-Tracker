@@ -2,9 +2,8 @@ import { expect, type Page } from '@playwright/test';
 
 export async function exploreExample(page: Page, basePath = '/', browserSnapshot = false) {
   await page.goto(basePath);
-  await expect(page.getByRole('region', { name: 'About Quantum Job Tracker' })).toContainText('Compare compiler versions, check results, or open a job to see what happened.');
-  await expect(page.getByText('Synthetic demo · jobs and results are simulated')).toBeVisible();
-  await page.getByRole('link', { name: 'Open Overview', exact: true }).click();
+  await expect(page.getByRole('region', { name: 'About Quantum Job Tracker' })).toContainText('Start with the recorded outcomes below, then open a group of jobs to investigate.');
+  await expect(page.getByText('Synthetic data', { exact: true })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Operational overview' })).toBeVisible();
   await expect(page.getByRole('article', { name: 'Compilation success rate' })).toBeVisible();
   await page.getByRole('link', { name: 'Open example comparison', exact: true }).click();
@@ -38,6 +37,7 @@ export async function exploreExample(page: Page, basePath = '/', browserSnapshot
   await page.getByRole('link', { name: 'Jump to timeline and failure evidence ↓' }).click();
   await expect(page.getByRole('region', { name: 'Recorded failure evidence' })).toContainText('SYNTHETIC_CANDIDATE_COMPILE_FAILED');
   await expect(page.getByRole('region', { name: 'Recorded failure evidence' })).toContainText('Failure correlation ID');
+  await page.getByText('Resource estimates and full timings', { exact: true }).click();
   await expect(page.getByRole('region', { name: 'Timings' })).toContainText('Not available');
   await expect(page.getByRole('list', { name: 'Lifecycle timeline' }).getByRole('listitem')).toHaveCount(3);
   await page.getByRole('link', { name: '← Back to comparison', exact: true }).click();

@@ -1,15 +1,15 @@
+import { Sidebar } from './Sidebar';
 import { NetworkExampleLinks } from './NetworkExecution';
 import { FormEvent, useEffect, useState } from 'react';
 import type { WorkloadMetadata, JobDurations } from './metadata';
 import { Guide } from './Guide';
-import { ProductIntro } from './ProductIntro';
 import { JobDetails } from './JobDetails';
 import { Comparison } from './Comparison';
 import { Overview } from './Overview';
 import { Implementation } from './Implementation';
 import { CohortFields, Cohort, CohortOptions, cohortQuery, readCohort } from './CohortFields';
 import { request } from './api';
-import { guideHref, homeHref, isDemo, jobHref } from './environment';
+import { homeHref, isDemo, jobHref } from './environment';
 import { lazy, Suspense } from 'react';
 const Playground = lazy(() => import('./Playground').then((module) => ({ default: module.Playground })));
 
@@ -120,7 +120,7 @@ function JobsList() {
   function navigate(filters: Filters) {
     const next = encodeFilters(filters);
     if (next !== query) {
-      window.history.pushState(null, '', `${window.location.pathname}${next ? `?${next}` : ''}${window.location.hash}`);
+      window.history.pushState(null, '', `${window.location.pathname}?${next || 'view=jobs'}${window.location.hash}`);
       setQuery(next);
     } else setRefresh((value) => value + 1);
     setDraft(readFilters(next));
@@ -136,24 +136,15 @@ function JobsList() {
 
   return (
     <div className="app-shell">
-      <aside className="sidebar" aria-label="Workspace navigation">
-        <header><span className="mark" aria-hidden="true">Q</span><span className="brand-name">Quantum Job Tracker</span></header>
-        <p className="workspace-label">WORKSPACE</p>
-        <a className="nav-item active" href={homeHref} aria-current="page"><span aria-hidden="true">▦</span> Jobs</a>
-        <a className="nav-item" href={`${homeHref}?view=overview&${cohortQuery(readCohort(new URLSearchParams(query)))}`}>◷ Overview</a>
-        <a className="nav-item" href={`${homeHref}?view=comparison`}>⇄ Experiment comparison</a>
-        <a className="nav-item" href={guideHref}>Demo &amp; Guide</a>
-        <a className="nav-item" href={`${homeHref}?view=implementation`}>How it works</a>
-        <div className="sidebar-note"><span className="sidebar-note-icon" aria-hidden="true">◇</span><strong>Synthetic environment</strong><p>Investigate fictional jobs and their outcomes.</p></div>
-        <div className="sidebar-bottom"><span className="brand-footer">Quantum Job Tracker</span><span>{isDemo ? 'Browser demo' : 'Local workspace'}</span></div>
-      </aside>
+      <Sidebar active="jobs" overviewHref={`${homeHref}?view=overview&${cohortQuery(readCohort(new URLSearchParams(query)))}`} />
       <div className="workspace">
         <div className="topbar"><span>Workspace <span className="breadcrumb-divider">/</span> <strong>Jobs</strong></span><span className="environment-badge">Synthetic environment</span></div>
         <main>
           <div className="page-heading"><div><h1>Jobs</h1><p>Search and inspect your synthetic quantum runs.</p></div><span className="version-badge">{isDemo ? 'Browser data' : 'Read-only workspace'}</span></div>
-          <ProductIntro />
-          <NetworkExampleLinks />
+          <div className="job-tools">
           {isDemo && <details className="playground-disclosure"><summary>Create a simulated run</summary><Suspense fallback={<p>Loading simulation form…</p>}><Playground onReset={clear} /></Suspense></details>}
+          </div>
+          <nav className="job-views" aria-label="Job status views">{[['', 'All jobs'], ['running', 'Running'], ['queued', 'Queued'], ['failed', 'Failed']].map(([status, title]) => <button key={status} type="button" aria-pressed={current.status === status} onClick={() => navigate({ ...current, status, page: '1' })}>{title}</button>)}</nav>
           <form className="job-filters" onSubmit={apply} aria-label="Job filters">
             <label className="search-field">Job ID or external reference<input type="search" value={draft.q} onChange={(e) => field('q', e.target.value)} maxLength={160} placeholder="e.g. SYN-0005" aria-describedby="search-help" /></label>
             <label>Status<select value={draft.status} onChange={(e) => field('status', e.target.value)}><option value="">All statuses</option>{statuses.map((status) => <option key={status} value={status}>{statusLabel(status)}</option>)}{draft.status && !statuses.includes(draft.status as Status) && <option value={draft.status}>{draft.status} (invalid)</option>}</select></label>
@@ -188,6 +179,7 @@ function JobsList() {
             </table></div>}
             {data && <nav className="pagination" aria-label="Job pages"><span>{first}–{last} of {data.total} jobs</span><div><button disabled={data.page <= 1} onClick={() => navigate({ ...current, page: String(data.page - 1) })}>Previous</button><span>Page {data.page} of {Math.max(1, data.total_pages)}</span><button disabled={data.page >= data.total_pages} onClick={() => navigate({ ...current, page: String(data.page + 1) })}>Next</button></div></nav>}
           </section>
+          <details className="disclosure-panel"><summary>Explore network examples</summary><p>Follow one execution across two machines.</p><NetworkExampleLinks /></details>
           <footer><a href={`${homeHref}?view=implementation`}>How it works</a> · All jobs and providers are simulated. No connection to Horizon Quantum systems or real quantum hardware.</footer>
         </main>
       </div>
@@ -196,6 +188,7 @@ function JobsList() {
 }
 
 export function App() {
+  if (!window.location.search && !/^\/jobs\//.test(window.location.pathname)) return <Overview />;
   if (new URLSearchParams(window.location.search).get('view') === 'guide') return <Guide />;
   const comparisonContext = new URLSearchParams(window.location.search).get('view') === 'comparison';
   const showingJob = isDemo ? new URLSearchParams(window.location.search).has('job') : /^\/jobs\//.test(window.location.pathname);
@@ -206,8 +199,8 @@ export function App() {
     const params = new URLSearchParams(window.location.search);
     const id = params.get('job');
     params.delete('job');
-    return id ? <JobDetails jobId={id} backHref={`${homeHref}?${params}`} backLabel={comparisonContext ? "← Back to comparison" : undefined} /> : <JobsList />;
+    return id ? <JobDetails jobId={id} backHref={`${homeHref}?${params.size ? params : "view=jobs"}`} backLabel={comparisonContext ? "← Back to comparison" : undefined} /> : <JobsList />;
   }
   const detail = window.location.pathname.match(/^\/jobs\/([^/]+)\/?$/);
-  return detail ? <JobDetails jobId={detail[1]} backHref={`/${window.location.search}`} backLabel={comparisonContext ? "← Back to comparison" : undefined} /> : <JobsList />;
+  return detail ? <JobDetails jobId={detail[1]} backHref={`/${window.location.search || "?view=jobs"}`} backLabel={comparisonContext ? "← Back to comparison" : undefined} /> : <JobsList />;
 }

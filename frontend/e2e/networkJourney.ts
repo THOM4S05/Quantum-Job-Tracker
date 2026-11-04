@@ -4,6 +4,7 @@ export async function exploreNetwork(page: Page, basePath = '/') {
   await page.goto(`${basePath}?status=failed`);
   await page.getByRole('heading', { name: /jobs$/ }).waitFor();
   const filteredURL = page.url();
+  await page.getByText('Explore network examples', { exact: true }).click();
   await page.getByRole('link', { name: 'Open network success example', exact: true }).click();
   const successURL = page.url();
   const network = page.getByRole('region', { name: 'Network execution', exact: true });

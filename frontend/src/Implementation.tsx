@@ -1,19 +1,12 @@
-import { guideHref, homeHref } from './environment';
+import { Sidebar } from './Sidebar';
+import { homeHref } from './environment';
 
 const repository = 'https://github.com/THOM4S05/Quantum-Job-Tracker';
 const source = (path: string) => `${repository}/blob/main/${path}`;
 
 export function Implementation() {
   return <div className="app-shell">
-    <aside className="sidebar" aria-label="Workspace navigation">
-      <header><span className="mark" aria-hidden="true">Q</span><span className="brand-name">Quantum Job Tracker</span></header>
-      <p className="workspace-label">WORKSPACE</p>
-      <a className="nav-item" href={homeHref}>▦ Jobs</a>
-      <a className="nav-item" href={`${homeHref}?view=overview`}>◷ Overview</a>
-      <a className="nav-item" href={`${homeHref}?view=comparison`}>⇄ Experiment comparison</a>
-      <a className="nav-item" href={guideHref}>Demo &amp; Guide</a>
-      <a className="nav-item active" aria-current="page" href={`${homeHref}?view=implementation`}>How it works</a>
-    </aside>
+    <Sidebar active="implementation" />
     <div className="workspace"><div className="topbar"><span>Workspace / <strong>How it works</strong></span></div>
       <main className="implementation-notes">
         <div className="page-heading"><div><h1>How it works</h1><p>Data sources, request handling, persistence, and deployment.</p></div></div>

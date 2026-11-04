@@ -12,7 +12,7 @@ const page: JobPage = { items: [job], total: 26, page: 1, page_size: 25, total_p
 const response = (body: JobPage, status = 200) => new Response(JSON.stringify(body), { status });
 
 beforeEach(() => {
-  window.history.replaceState(null, '', '/');
+  window.history.replaceState(null, '', '/?view=jobs');
   vi.stubGlobal('fetch', vi.fn().mockImplementation(() => Promise.resolve(response(page))));
 });
 afterEach(() => { vi.useRealTimers(); vi.unstubAllGlobals(); });
@@ -32,7 +32,7 @@ describe('jobs page', () => {
     expect(screen.getByText('SYN-0005')).toBeInTheDocument();
     expect(screen.getByText(job.id)).toBeInTheDocument();
     expect(screen.getByText('Failed', { selector: '.status-badge' })).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: job.name })).toHaveAttribute('href', `/jobs/${job.id}`);
+    expect(screen.getByRole('link', { name: job.name })).toHaveAttribute('href', `/jobs/${job.id}?view=jobs`);
     expect(screen.getByRole('button', { name: 'Previous' })).toBeDisabled();
     expect(screen.getByRole('button', { name: 'Next' })).toBeDisabled();
   });
@@ -45,7 +45,7 @@ describe('jobs page', () => {
     expect(screen.queryByRole('table')).not.toBeInTheDocument();
     await userEvent.click(screen.getAllByRole('button', { name: 'Clear filters' })[0]);
     await screen.findByText('SYN-0005');
-    expect(window.location.search).toBe('');
+    expect(window.location.search).toBe('?view=jobs');
   });
 
   it('handles network failure and retries successfully', async () => {
@@ -107,7 +107,7 @@ describe('jobs page', () => {
     expect(await screen.findByText('This page has no jobs')).toBeInTheDocument();
     await userEvent.click(screen.getByRole('button', { name: 'Go to first page' }));
     await screen.findByRole('table');
-    expect(window.location.search).toBe('');
+    expect(window.location.search).toBe('?view=jobs');
   });
 
   it('marks retained data as stale if polling fails', async () => {

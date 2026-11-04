@@ -1,9 +1,10 @@
+import { Sidebar } from './Sidebar';
 import { NetworkExecution, networkEventLabel, type NetworkingEvidence } from './NetworkExecution';
 import { emptyMetadata } from './metadata';
 import { useEffect, useState } from 'react';
 import type { Job } from './App';
 import { request } from './api';
-import { guideHref, homeHref, isDemo, jobHref } from './environment';
+import { homeHref, isDemo, jobHref } from './environment';
 
 export type RecordedEvent = {
   id: string; job_id: string; sequence: number; occurred_at: string;
@@ -96,15 +97,7 @@ export function JobDetails({ jobId, backHref, backLabel = "← Back to filtered 
 
   return (
     <div className="app-shell">
-      <aside className="sidebar" aria-label="Workspace navigation">
-        <header><span className="mark" aria-hidden="true">Q</span><span className="brand-name">Quantum Job Tracker</span></header>
-        <p className="workspace-label">WORKSPACE</p>
-        <a className="nav-item active" href={backHref}><span aria-hidden="true">▦</span> {returnContext}</a>
-        <a className="nav-item" href={guideHref}>Demo &amp; Guide</a>
-        <a className="nav-item" href={`${homeHref}?view=implementation`}>How it works</a>
-      <div className="sidebar-note"><span className="sidebar-note-icon" aria-hidden="true">◇</span><strong>Synthetic environment</strong><p>Investigate recorded evidence from fictional runs.</p></div>
-        <div className="sidebar-bottom"><span className="brand-footer">Quantum Job Tracker</span><span>{isDemo ? 'Browser demo' : 'Local workspace'}</span></div>
-      </aside>
+      <Sidebar active={returnContext === "Comparison" ? "comparison" : "jobs"} jobsHref={returnContext === "Jobs" ? backHref : undefined} comparisonHref={returnContext === "Comparison" ? backHref : undefined} />
       <div className="workspace">
         <div className="topbar"><span>Workspace <span className="breadcrumb-divider">/</span><a href={backHref}>{returnContext}</a><span className="breadcrumb-divider">/</span><strong>Details</strong></span><span className="environment-badge">Synthetic environment</span></div>
         <main>
@@ -116,7 +109,11 @@ export function JobDetails({ jobId, backHref, backLabel = "← Back to filtered 
           {current.problem === 'invalid' && <section className="detail-panel" role="alert"><h2>Invalid job ID</h2><p>This address does not contain a valid job ID. Return to the list to select a job.</p></section>}
           {current.problem === 'unavailable' && <div className="error-state" role="alert"><div><strong>{job ? 'Showing previously loaded evidence' : 'Unable to load job evidence'}</strong><p>The API could not return the recorded data. Please try again.</p></div><button onClick={() => setRefresh((value) => value + 1)}>Try again</button></div>}
           {job && evidence && <>
+            <section className="detail-panel outcome-summary" aria-label="Job outcome"><h2>What happened?</h2><p>{job.status === 'failed' ? job.error_message || 'This run failed. Review the recorded failure and timeline below.' : job.status === 'succeeded' ? 'This run completed successfully. Its recorded result and timeline are available below.' : job.status === 'queued' ? 'This job is queued and has no completed result yet.' : job.status === 'running' ? 'This job is running. Follow its recorded progress in the timeline.' : job.status === 'cancel_requested' ? 'Cancellation has been requested. The job has not yet recorded a cancelled outcome.' : 'This job was cancelled.'}</p>
+              <dl className="metadata-grid"><div><dt>Compiler version</dt><dd>{available(metadata.compiler_version)}</dd></div><div><dt>Provider / target</dt><dd>{job.provider} / {job.target}</dd></div><div><dt>Execution duration</dt><dd>{seconds(job.durations?.execution_seconds)}</dd></div></dl>
+            </section>
             <p className="detail-refresh">Last successful refresh: {timestamp(current.checked)} · Refreshes every 5s</p>
+            <details className="disclosure-panel"><summary>Program, compiler and submission details</summary>
             <section className="detail-panel" aria-labelledby="program-compiler">
               <h2 id="program-compiler">Program and compiler</h2>
               <dl className="metadata-grid">
@@ -143,7 +140,9 @@ export function JobDetails({ jobId, backHref, backLabel = "← Back to filtered 
               <details className="diagnostics"><summary>Optimisation settings</summary>{metadata.optimisation_settings === null ? <p>Not available</p> : <pre>{JSON.stringify(metadata.optimisation_settings, null, 2)}</pre>}</details>
               <details className="diagnostics"><summary>Submission specification</summary><pre>{JSON.stringify(job.specification, null, 2)}</pre></details>
             </section>
+            </details>
             {(evidence.networking || job.execution_method === 'entanglement_network' || job.specification.execution_method === 'entanglement_network') && <NetworkExecution evidence={evidence} />}
+            <details className="disclosure-panel"><summary>Resource estimates and full timings</summary>
             <section className="detail-panel" aria-labelledby="estimated-resources">
               <h2 id="estimated-resources">Estimated resources</h2><p className="evidence-note">Estimates describe the compiled circuit: logical qubits, sequential circuit depth and gate count. They are not observed hardware usage or proof of execution quality.</p>
               <p>Compiler estimates for a synthetic workload. These are not observed results or measurements from quantum hardware.</p>
@@ -172,6 +171,7 @@ export function JobDetails({ jobId, backHref, backLabel = "← Back to filtered 
                 <div><dt>Execution duration (seconds)</dt><dd>{seconds(job.durations?.execution_seconds)}</dd></div>
               </dl>
             </section>
+            </details>
             <div role="region" aria-labelledby="lifecycle-evidence">
             <h2 id="lifecycle-evidence" className="investigation-heading">Lifecycle and failure evidence</h2>
             {job.status === 'succeeded' && <details className="diagnostics observed-result"><summary>Recorded result (synthetic observed output)</summary>{job.result ? <pre>{JSON.stringify(job.result, null, 2)}</pre> : <p>No result was recorded.</p>}</details>}

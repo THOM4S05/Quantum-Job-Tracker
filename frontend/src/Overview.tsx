@@ -1,7 +1,8 @@
+import { Sidebar } from './Sidebar';
 import { FormEvent, useEffect, useState } from 'react';
 import { ProductIntro } from './ProductIntro';
 import { request } from './api';
-import { guideHref, homeHref, isDemo } from './environment';
+import { homeHref, isDemo } from './environment';
 import { CohortFields, cohortQuery, readCohort } from './CohortFields';
 import type { Attempts, OverviewData, Timing } from './overviewMetrics';
 
@@ -66,7 +67,7 @@ export function Overview() {
     const params = new URLSearchParams(query);
     if (key && value) params.set(key, value);
     if (key === 'failure_stage') params.set('status', 'failed');
-    return `${homeHref}${params.size ? `?${params}` : ''}`;
+    return `${homeHref}?${params.size ? params : 'view=jobs'}`;
   }
   function chart(title: string, rows: { key: string; count: number }[], filter: string) {
     const max = Math.max(1, ...rows.map((row) => row.count));
@@ -75,29 +76,29 @@ export function Overview() {
     </section>;
   }
   return <div className="app-shell">
-    <aside className="sidebar" aria-label="Workspace navigation"><header><span className="mark" aria-hidden="true">Q</span><span className="brand-name">Quantum Job Tracker</span></header>
-      <p className="workspace-label">WORKSPACE</p><a className="nav-item" href={drillDown()}>▦ Jobs</a><a className="nav-item active" aria-current="page" href={`${homeHref}?view=overview&${query}`}>◷ Overview</a>
-      <a className="nav-item" href={`${homeHref}?view=comparison`}>⇄ Experiment comparison</a>
-      <a className="nav-item" href={guideHref}>Demo &amp; Guide</a>
-        <a className="nav-item" href={`${homeHref}?view=implementation`}>How it works</a>
-      <div className="sidebar-note"><strong>Synthetic environment</strong><p>Recorded job evidence, never real hardware telemetry.</p></div>
-    </aside>
+    <Sidebar active="overview" jobsHref={drillDown()} overviewHref={`${homeHref}?view=overview&${query}`} />
     <div className="workspace"><div className="topbar"><span>Workspace / <strong>Overview</strong></span><span className="environment-badge">Synthetic data</span></div><main>
-      <div className="page-heading"><div><h1>Operational overview</h1><p>Recorded outcomes and timings for synthetic jobs.</p></div></div>
-      <ProductIntro onOverview />
-      <p className="overview-explanation">Success rates count completed attempts, not pending or cancelled jobs. Each card shows its denominator or timing sample count; missing observations are not treated as zero.</p>
+      <div className="page-heading"><div><h1>Operational overview</h1><p>Review job outcomes, find failures, and follow the evidence.</p></div><a className="primary-link" href={drillDown()}>Browse jobs →</a></div>
+      <ProductIntro />
+      <details className="disclosure-panel" key={query} open={Boolean(query)}><summary>{query ? 'Filters applied · edit or clear' : 'Filter this overview'}</summary>
       <p className="cohort-note">Dates select a cohort by <strong>job submission time (UTC)</strong>. Later lifecycle activity still contributes. {isDemo ? 'Source: browser demo records.' : 'Source: PostgreSQL job records.'}</p>
       <form className="job-filters overview-filters" aria-label="Overview filters" onSubmit={apply}><CohortFields value={draft} options={data} onChange={(key, value) => setDraft((previous) => ({ ...previous, [key]: value }))} />
         <div className="filter-actions"><button type="submit" className="primary">Apply filters</button><button type="button" onClick={() => navigate(readCohort(new URLSearchParams()))}>Clear filters</button></div>
       </form>
+      </details>
       {!data && !visible.error && <p role="status">Loading overview…</p>}
       {visible.error && <div className="error-state" role="alert"><div><strong>{data ? 'Showing stale overview' : 'Unable to show overview'}</strong><p>{visible.error}</p></div><button onClick={() => setRefresh((count) => count + 1)}>Try again</button></div>}
       {data && <>
+        <section className="attention-panel" aria-labelledby="attention-title"><div><span className="eyebrow">INVESTIGATE</span><h2 id="attention-title">{data.failures_by_stage.some(row => row.count > 0) ? 'Failures to review' : 'No recorded failures in this selection'}</h2><p>Recorded job outcomes for this selection. Infrastructure health and live alerts are not monitored here.</p></div>
+          <div className="attention-links">{data.failures_by_stage.filter(row => row.count > 0).map(row => <a key={row.key} href={drillDown('failure_stage', row.key)}><span>{row.key === 'unknown' ? 'Unclassified failures' : `${row.key[0].toUpperCase()}${row.key.slice(1)} failures`}</span><strong>{row.count}<span aria-hidden="true"> →</span></strong></a>)}
+          {data.cancelling_jobs > 0 && <a href={drillDown('status', 'cancel_requested')}><span>Cancellation requested</span><strong>{data.cancelling_jobs} →</strong></a>}</div>
+        </section>
         <div className="overview-summary"><p><strong>{data.total_jobs} jobs</strong> in cohort · {data.cancelled_jobs} cancelled · {data.cancelling_jobs} cancellation requested</p><a href={drillDown()}>Inspect cohort jobs →</a></div>
         {data.total_jobs === 0 && <p className="evidence-warning">No jobs match this submission cohort. Try widening the dates or clearing filters.</p>}
         <div className="metric-grid"><RateCard title="Compilation success rate" metric={data.compilation} /><RateCard title="Execution success rate" metric={data.execution} /><TimingCard title="Median queue time" metric={data.queue_time} /><TimingCard title="Median execution duration" metric={data.execution_duration} /></div>
         <details className="metric-definitions">
           <summary>Metric definitions and exclusions</summary>
+          <p className="overview-explanation">Success rates count completed attempts, not pending or cancelled jobs. Missing observations are not treated as zero.</p>
           <ul>
             <li><strong>Compilation rate:</strong> recorded successful compilations / completed compilation attempts. A failed job is a compilation failure only when its recorded failure stage is compilation.</li>
             <li><strong>Execution rate:</strong> successful / completed execution attempts, including explicit execution failures.</li>
@@ -107,8 +108,10 @@ export function Overview() {
             <li><strong>Units and missing data:</strong> all timing units are seconds. No eligible observations means “Not enough data”.</li>
           </ul>
         </details>
+        <details className="disclosure-panel"><summary>Explore breakdowns by stage and target</summary>
         {data.network_outcomes && data.network_outcomes.some((row) => row.count > 0) && <section className="detail-panel" aria-label="Networked job outcomes"><h2>Networked job outcomes</h2><p>Each parent counts once in the totals and execution rate above. Entanglement-attempt rates appear only on job details.</p><ul>{data.network_outcomes.map((row) => <li key={row.key}>{row.key.replaceAll('_', ' ')}: {row.count} jobs</li>)}</ul></section>}
         <div className="breakdown-grid">{chart('Failures by stage', data.failures_by_stage, 'failure_stage')}{chart('Jobs by target', data.jobs_by_target, 'target')}</div>
+        </details>
       </>}
       {visible.checked && <p className="detail-refresh">Updated {new Date(visible.checked).toLocaleTimeString()} · Polls every 5s while visible</p>}
       <footer><a href={`${homeHref}?view=implementation`}>How it works</a> · All jobs, compiler data, providers and timings are synthetic. No connection to Horizon Quantum or real quantum hardware.</footer>
