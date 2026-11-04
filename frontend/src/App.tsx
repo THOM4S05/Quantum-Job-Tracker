@@ -169,7 +169,11 @@ function JobsList() {
             {data && data.items.length > 0 && <div className="table-scroll"><table>
               <caption className="sr-only">Synthetic jobs, newest submissions first. All submission times are UTC.</caption>
               <thead><tr><th scope="col">Job</th><th scope="col">Provider / target</th><th scope="col">Status</th><th scope="col">Submitted (UTC)</th><th scope="col">Requested by</th></tr></thead>
-              <tbody>{data.items.map((job) => <tr key={job.id}>
+              <tbody>{data.items.map((job) => <tr key={job.id} className="job-row" onClick={(event) => {
+                if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+                if ((event.target as Element).closest('a, button, input, select, textarea') || window.getSelection()?.toString()) return;
+                event.currentTarget.querySelector<HTMLAnchorElement>('a.job-link')?.click();
+              }}>
                 <td><strong><a className="job-link" href={jobHref(job.id, query)}>{job.name}</a></strong><span className="external-ref">{job.external_reference ?? 'No external reference'}</span><code>{job.id}</code>{job.retry_of && <span className="external-ref">Retry of {job.retry_of}</span>}</td>
                 <td>{job.execution_method === 'entanglement_network' && <strong className="cell-secondary">Networked · 2 machines</strong>}{job.provider}<span className="cell-secondary">{job.target}</span></td>
                 <td><span className={`status-badge status-${job.status}`}>{statusLabel(job.status)}</span></td>

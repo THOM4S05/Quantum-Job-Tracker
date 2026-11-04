@@ -8,7 +8,10 @@ test('overview leads to failures, job evidence and a reloadable unfiltered list'
   await expect(page.getByRole('combobox', { name: 'Status', exact: true })).toHaveValue('failed');
   await expect(page.getByRole('combobox', { name: 'Failure stage', exact: true })).toHaveValue('compilation');
   const filteredURL = page.url();
-  await page.getByRole('table').getByRole('link').first().click();
+  const firstJob = page.getByRole('table').getByRole('row').nth(1);
+  const jobHref = await firstJob.getByRole('link').getAttribute('href');
+  await firstJob.getByText('Failed', { exact: true }).click();
+  await expect(page).toHaveURL(new URL(jobHref!, baseURL!).href);
   await expect(page.getByRole('region', { name: 'Job outcome' })).toBeVisible();
   await expect(page.getByRole('region', { name: 'Recorded failure evidence' })).toBeVisible();
   await expect(page.getByRole('region', { name: 'Program and compiler' })).not.toBeVisible();

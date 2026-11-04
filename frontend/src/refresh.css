@@ -128,6 +128,8 @@ td { padding: 17px 20px; border-color: #2b2e41; }
 td strong { font-weight: 450; }
 .job-link { color: var(--text); }
 .job-link:hover { color: var(--cyan); }
+.job-row { cursor: pointer; }
+.job-row:focus-within { background: var(--panel-raised); }
 td code { color: var(--text-muted); font-size: 10px; margin-top: 4px; }
 .external-ref, .cell-secondary { font-size: 10px; color: var(--text-muted); }
 .status-badge { display: inline-flex; align-items: center; gap: 6px; border: 1px solid transparent; border-radius: 20px; padding: 4px 8px; font-size: 10px; font-weight: 450; }
@@ -272,6 +274,11 @@ footer { margin-top: 24px; max-width: none; color: var(--text-muted); font-size:
 .job-tools .playground-disclosure { margin: 0 0 18px; }
 .job-tools .playground-disclosure > summary { cursor: pointer; color: var(--cyan); font-size: 13px; }
 .outcome-summary > p { font-size: 15px; line-height: 1.7; max-width: 85ch; color: var(--text-secondary); }
+.outcome-summary > h2 { display: flex; align-items: center; gap: 10px; }
+.outcome-dot { width: 10px; height: 10px; flex-shrink: 0; border-radius: 50%; }
+.outcome-dot-succeeded { background: #73d6b2; }
+.outcome-dot-failed { background: #f87171; }
+.outcome-dot-queued, .outcome-dot-cancel_requested { background: var(--warning); }
 .outcome-summary .metadata-grid { margin-top: 22px; }
 @media (max-width: 760px) {
   .workspace-intro, .attention-panel { grid-template-columns: 1fr; gap: 16px; padding: 20px; }
