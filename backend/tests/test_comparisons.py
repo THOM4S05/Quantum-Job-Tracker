@@ -221,3 +221,20 @@ def test_api_exposes_compilation_failure_contributors_and_no_execution_contribut
         evidence = client.get(f'/jobs/{identity}').json()
         assert evidence['job']['error_stage'] == 'compilation'
         assert evidence['history_complete'] is True
+
+
+def test_network_method_topology_and_configuration_are_compatibility_identity():
+    rows = pair()
+    plan = {'version': 'two-machine-v1', 'topology': 'A-B', 'operation': 'remote-cz-1',
+            'channel': 'synthetic_entanglement', 'deadline_seconds': 12}
+    rows[1]['specification'].update(execution_method='entanglement_network', network_plan=plan)
+    result = compare_jobs(rows, BASELINE, CANDIDATE)
+    assert result['matched_groups'] == 0
+    assert all('additional_settings' in row['differences'] for row in result['rows'])
+    rows[0]['specification'].update(execution_method='entanglement_network', network_plan=deepcopy(plan))
+    assert compare_jobs(rows, BASELINE, CANDIDATE)['matched_groups'] == 1
+    rows[1]['specification']['network_plan']['deadline_seconds'] = 24
+    assert compare_jobs(rows, BASELINE, CANDIDATE)['matched_groups'] == 0
+    del rows[1]['specification']['network_plan']
+    result = compare_jobs(rows, BASELINE, CANDIDATE)
+    assert any(row['status'] == 'unverifiable' and 'network_plan.topology' in row['missing_fields'] for row in result['rows'])

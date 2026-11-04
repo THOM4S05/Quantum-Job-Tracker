@@ -95,7 +95,7 @@ def seed_jobs(connection: Connection) -> dict[str, int]:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--dataset", choices=(DATASET, "compiler-comparison-v1"), default=DATASET)
+    parser.add_argument("--dataset", choices=(DATASET, "compiler-comparison-v1", "quantum-networking-v1"), default=DATASET)
     parser.add_argument("--reset", action="store_true", help="Replace only the compiler comparison fixtures")
     args = parser.parse_args()
     if args.reset and args.dataset != "compiler-comparison-v1":
@@ -107,6 +107,9 @@ def main() -> None:
                 from app.experiment_seed import comparison_report, seed_experiment
                 summary = seed_experiment(connection, reset=args.reset)
                 summary["comparison"] = comparison_report(connection)
+            elif args.dataset == "quantum-networking-v1":
+                from app.network_seed import seed_networking
+                summary = seed_networking(connection)
             else:
                 summary = seed_jobs(connection)
             summary["total_jobs"] = connection.scalar(select(func.count()).select_from(jobs))

@@ -1,3 +1,4 @@
+import { NetworkExampleLinks } from './NetworkExecution';
 import { FormEvent, useEffect, useState } from 'react';
 import type { WorkloadMetadata, JobDurations } from './metadata';
 import { Guide } from './Guide';
@@ -17,6 +18,7 @@ type Status = typeof statuses[number];
 const statusLabel = (status: string) => status.replaceAll('_', ' ').replace(/^./, (letter) => letter.toUpperCase());
 
 export type Job = {
+  execution_method?: 'single_machine' | 'entanglement_network';
   metadata?: WorkloadMetadata; durations?: JobDurations;
   id: string; name: string; provider: string; target: string;
   external_reference: string | null; status: Status; created_at: string;
@@ -150,6 +152,7 @@ function JobsList() {
         <main>
           <div className="page-heading"><div><h1>Jobs</h1><p>Search and inspect your synthetic quantum runs.</p></div><span className="version-badge">{isDemo ? 'Browser data' : 'Read-only workspace'}</span></div>
           <ProductIntro />
+          <NetworkExampleLinks />
           {isDemo && <details className="playground-disclosure"><summary>Create a simulated run</summary><Suspense fallback={<p>Loading simulation form…</p>}><Playground onReset={clear} /></Suspense></details>}
           <form className="job-filters" onSubmit={apply} aria-label="Job filters">
             <label className="search-field">Job ID or external reference<input type="search" value={draft.q} onChange={(e) => field('q', e.target.value)} maxLength={160} placeholder="e.g. SYN-0005" aria-describedby="search-help" /></label>
@@ -177,7 +180,7 @@ function JobsList() {
               <thead><tr><th scope="col">Job</th><th scope="col">Provider / target</th><th scope="col">Status</th><th scope="col">Submitted (UTC)</th><th scope="col">Requested by</th></tr></thead>
               <tbody>{data.items.map((job) => <tr key={job.id}>
                 <td><strong><a className="job-link" href={jobHref(job.id, query)}>{job.name}</a></strong><span className="external-ref">{job.external_reference ?? 'No external reference'}</span><code>{job.id}</code>{job.retry_of && <span className="external-ref">Retry of {job.retry_of}</span>}</td>
-                <td>{job.provider}<span className="cell-secondary">{job.target}</span></td>
+                <td>{job.execution_method === 'entanglement_network' && <strong className="cell-secondary">Networked · 2 machines</strong>}{job.provider}<span className="cell-secondary">{job.target}</span></td>
                 <td><span className={`status-badge status-${job.status}`}>{statusLabel(job.status)}</span></td>
                 <td className="nowrap"><time dateTime={job.created_at}>{utcTime(job.created_at)}</time></td>
                 <td>{job.requested_by}</td>

@@ -30,7 +30,7 @@ def export_example(connection):
                                     .order_by(job_events.c.sequence)).mappings().all()
         if not history_complete(row, events):
             raise ValueError('Example history is incomplete; export refused')
-        evidence.append(JobEvidence(job=row, events=events, history_complete=True).model_dump(mode='json'))
+        evidence.append(JobEvidence(job=row, events=events, history_complete=True).model_dump(mode='json', exclude={"networking": True, "job": {"execution_method"}}))
     manifest = {'id': EXPERIMENT_ID, 'name': 'Synthetic compiler comparison v1',
                 'baseline': VERSIONS['baseline'], 'candidate': VERSIONS['candidate'], 'synthetic': True}
     comparisons = {}

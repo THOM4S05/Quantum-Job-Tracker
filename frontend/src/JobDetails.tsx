@@ -1,3 +1,4 @@
+import { NetworkExecution, networkEventLabel, type NetworkingEvidence } from './NetworkExecution';
 import { emptyMetadata } from './metadata';
 import { useEffect, useState } from 'react';
 import type { Job } from './App';
@@ -20,6 +21,7 @@ export type JobEvidence = {
   };
   events: RecordedEvent[];
   history_complete: boolean;
+  networking?: NetworkingEvidence | null;
 };
 
 const recorded = (value: string | null | undefined) => value?.trim() ? value : 'Not available';
@@ -141,6 +143,7 @@ export function JobDetails({ jobId, backHref, backLabel = "← Back to filtered 
               <details className="diagnostics"><summary>Optimisation settings</summary>{metadata.optimisation_settings === null ? <p>Not available</p> : <pre>{JSON.stringify(metadata.optimisation_settings, null, 2)}</pre>}</details>
               <details className="diagnostics"><summary>Submission specification</summary><pre>{JSON.stringify(job.specification, null, 2)}</pre></details>
             </section>
+            {(evidence.networking || job.execution_method === 'entanglement_network' || job.specification.execution_method === 'entanglement_network') && <NetworkExecution evidence={evidence} />}
             <section className="detail-panel" aria-labelledby="estimated-resources">
               <h2 id="estimated-resources">Estimated resources</h2><p className="evidence-note">Estimates describe the compiled circuit: logical qubits, sequential circuit depth and gate count. They are not observed hardware usage or proof of execution quality.</p>
               <p>Compiler estimates for a synthetic workload. These are not observed results or measurements from quantum hardware.</p>
@@ -186,11 +189,13 @@ export function JobDetails({ jobId, backHref, backLabel = "← Back to filtered 
 
             <section className="detail-panel" aria-labelledby="timeline-title">
               <div className="timeline-heading"><h2 id="timeline-title">Lifecycle timeline</h2><span>{evidence.events.length} recorded events · Sequence order</span></div>
+              {evidence.networking && <p className="evidence-note">Synthetic recorded order: job sequence numbers are authoritative, including equal timestamps. This does not claim global physical event ordering.</p>}
               {!evidence.history_complete && <p className="evidence-warning" role="status">The recorded history is incomplete or does not agree with the current job record. Missing events have not been reconstructed.</p>}
               {evidence.events.length === 0 ? <p>No lifecycle events were recorded. The timeline is unavailable.</p> : <ol className="timeline" aria-label="Lifecycle timeline">
                 {evidence.events.map((event) => <li key={event.id} id={`event-${event.sequence}`} data-sequence={event.sequence}>
                   <div className="event-marker" aria-hidden="true">{event.sequence}</div>
                   <div className="event-body"><div className="event-heading"><h3>{label(event.stage)}</h3><time dateTime={event.occurred_at}>{timestamp(event.occurred_at)}</time></div>
+                    {networkEventLabel(event, evidence.networking) && <p className="network-event-label">{networkEventLabel(event, evidence.networking)}</p>}
                     <p className="event-transition">{event.from_status ? label(event.from_status) : 'Initial state'} → {label(event.to_status)}</p>
                     <p>{event.message?.trim() ? event.message : 'No event message was recorded.'}</p>
                     <dl className="event-metadata"><div><dt>Actor</dt><dd>{recorded(event.actor)}</dd></div><div><dt>Correlation ID</dt><dd><code>{recorded(event.correlation_id)}</code></dd></div></dl>

@@ -18,7 +18,7 @@ Start with **Open example comparison**, **Browse jobs**, or **Open Overview**. B
 
 ### Browse and filter jobs
 
-Search 256 bundled sample jobs by ID or reference, status and provider. Expand **More filters** for submission dates, target, compiler version and experiment, then select a job to view its results and timeline.
+Search 258 bundled sample jobs by ID or reference, status and provider. Expand **More filters** for submission dates, target, compiler version and experiment, then select a job to view its results and timeline.
 
 ![Jobs page showing search, status and provider controls, collapsed More filters, the 256-job count and links to recorded runs](docs/images/quantum-job-tracker-jobs-overview.jpg)
 
@@ -83,7 +83,7 @@ The Jobs page keeps search, status and provider controls visible. **More filters
 
 The browser build runs without installation, sign-in or an API and is hosted on GitHub Pages.
 
-- Browse 256 bundled sample jobs (200 historical fixtures plus the 56-run example experiment) and filter by status, provider, submission date, or exact ID/reference.
+- Browse 258 bundled sample jobs (200 historical fixtures, the 56-run compiler experiment and 2 network examples) and filter by status, provider, submission date, or exact ID/reference.
 - Search for `syn-0005` and open the job to investigate a compilation failure and its lifecycle timeline.
 - Follow **Open example comparison** through a supporting job and its recorded timeline. The read-only comparison snapshot is generated from the existing PostgreSQL seed and calculations.
 - Optionally expand **Create a simulated run**, enter a run name, choose an outcome, and select **Create simulated run**. This immediately generates personal browser data; it is not backend submission or real execution.
@@ -91,7 +91,7 @@ The browser build runs without installation, sign-in or an API and is hosted on 
 
 Outcomes include success, compilation/queueing/execution failure, queued, running, and cancelled. Outcomes are generated immediately with fictional lifecycle timestamps; queued and running jobs remain in those states. No quantum hardware or background worker runs.
 
-Personal runs are stored separately for each browser. Up to 100 personal runs are saved in that browser's local storage when available; clearing browser data removes them. Sample-job links can be shared, but personal runs are available only in the browser where they were created. The original 200 browser fixture IDs are separate from local database IDs. The 56-job example snapshot retains the seed IDs so every comparison reference resolves to its exported timeline. Reset removes personal runs and keeps all 256 bundled fixtures.
+Personal runs are stored separately for each browser. Up to 100 personal runs are saved in that browser's local storage when available; clearing browser data removes them. Sample-job links can be shared, but personal runs are available only in the browser where they were created. The original 200 browser fixture IDs are separate from local database IDs. The 56-job compiler snapshot and 2-job networking snapshot retain their seed IDs so evidence links resolve to the exported timelines. Reset removes personal runs and keeps all 258 bundled fixtures.
 
 ### Run the browser demo locally
 
@@ -391,3 +391,11 @@ Tests cover all 36 state pairs, database terminal protection, real transaction r
 The details stage passed 85 backend tests (including real PostgreSQL evidence/history checks), 19 React tests, and the Playwright failure-investigation workflow against the live stack. The API-backed React tests mock HTTP responses inside the test suite; the normal local application calls FastAPI/PostgreSQL. The public browser demo uses browser-generated data, covered by additional tests for filtering, pagination, histories, personal runs, and reset. The browser demo release passed all 24 frontend tests and both production builds, with browser checks for creating a run, inspecting its failure, resetting, and searching. Production build and dependency audit passed. Exact live-stack/browser check results and remaining limitations are recorded in [progress](docs/progress.md).
 
 The initial application will use polling. Redis, Kubernetes, additional services, and real quantum SDKs are outside the plan.
+
+## Synthetic quantum networking
+
+Inspect one shared source job across two synthetic machines and one entanglement link, with success and entanglement-timeout examples in Jobs and Demo & Guide. Network details show local preparation, completed attempts, pair consumption, the remote operation and an explicit coordination-failure panel. Overview counts each parent once.
+
+The browser bundles both examples, bringing its total to 258 jobs while preserving the original 256 records and personal storage. For the local application, apply migrations and run `docker compose run --rm api python -m app.seed --dataset quantum-networking-v1`. No worker, hardware connection or deployment is included.
+
+See [implemented networking contract, setup, fixture metrics and limits](docs/quantum-networking.md).

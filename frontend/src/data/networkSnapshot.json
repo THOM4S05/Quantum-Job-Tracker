@@ -1,0 +1,912 @@
+{
+  "dataset": "quantum-networking-v1",
+  "fixture_ids": {
+    "success": "c5ed0733-fdae-5135-9d40-a4d1b3db000e",
+    "timeout": "0e83a2a4-5f1f-5e21-8672-7e06b602dedd"
+  },
+  "jobs": [
+    {
+      "events": [
+        {
+          "actor": "demo.network.operator",
+          "correlation_id": "aeadd770-16e9-5395-8dc0-fd7dba5427aa",
+          "details": {
+            "synthetic": true
+          },
+          "from_status": null,
+          "id": "e15af5a2-0885-5ad7-9b0a-df5be9c2241a",
+          "job_id": "c5ed0733-fdae-5135-9d40-a4d1b3db000e",
+          "message": "Synthetic job submitted",
+          "occurred_at": "2026-10-14T12:00:00Z",
+          "sequence": 1,
+          "stage": "submission",
+          "to_status": "queued"
+        },
+        {
+          "actor": "network-fixture",
+          "correlation_id": "aeadd770-16e9-5395-8dc0-fd7dba5427aa",
+          "details": {},
+          "from_status": "queued",
+          "id": "75ae0219-04e7-540a-8c9b-262fc4420dc9",
+          "job_id": "c5ed0733-fdae-5135-9d40-a4d1b3db000e",
+          "message": "Shared source compilation started",
+          "occurred_at": "2026-10-14T12:00:01Z",
+          "sequence": 2,
+          "stage": "compilation",
+          "to_status": "running"
+        },
+        {
+          "actor": "network-fixture",
+          "correlation_id": "aeadd770-16e9-5395-8dc0-fd7dba5427aa",
+          "details": {
+            "plan_version": "two-machine-v1"
+          },
+          "from_status": "running",
+          "id": "36211588-a60d-59ad-a2c8-55679a43bf17",
+          "job_id": "c5ed0733-fdae-5135-9d40-a4d1b3db000e",
+          "message": "Two-part execution plan compiled",
+          "occurred_at": "2026-10-14T12:00:03Z",
+          "sequence": 3,
+          "stage": "compilation",
+          "to_status": "running"
+        },
+        {
+          "actor": "network-fixture",
+          "correlation_id": "aeadd770-16e9-5395-8dc0-fd7dba5427aa",
+          "details": {},
+          "from_status": "running",
+          "id": "89e7e0a4-9ea8-5156-b4bc-e43df6fcf02b",
+          "job_id": "c5ed0733-fdae-5135-9d40-a4d1b3db000e",
+          "message": "Execution queue entered",
+          "occurred_at": "2026-10-14T12:00:03Z",
+          "sequence": 4,
+          "stage": "queueing",
+          "to_status": "running"
+        },
+        {
+          "actor": "network-fixture",
+          "correlation_id": "aeadd770-16e9-5395-8dc0-fd7dba5427aa",
+          "details": {},
+          "from_status": "running",
+          "id": "032e1c9b-a03c-50a2-aa78-5885ec82dc84",
+          "job_id": "c5ed0733-fdae-5135-9d40-a4d1b3db000e",
+          "message": "Execution queue left",
+          "occurred_at": "2026-10-14T12:00:05Z",
+          "sequence": 5,
+          "stage": "queueing",
+          "to_status": "running"
+        },
+        {
+          "actor": "network-fixture",
+          "correlation_id": "aeadd770-16e9-5395-8dc0-fd7dba5427aa",
+          "details": {
+            "network": {
+              "kind": "execution_started"
+            }
+          },
+          "from_status": "running",
+          "id": "2ce9368a-8907-5666-ab80-fa1283af770e",
+          "job_id": "c5ed0733-fdae-5135-9d40-a4d1b3db000e",
+          "message": "Execution started",
+          "occurred_at": "2026-10-14T12:00:05Z",
+          "sequence": 6,
+          "stage": "execution",
+          "to_status": "running"
+        },
+        {
+          "actor": "network-fixture",
+          "correlation_id": "aeadd770-16e9-5395-8dc0-fd7dba5427aa",
+          "details": {
+            "network": {
+              "kind": "part_started",
+              "part_id": "f6232e7b-6609-5ea9-a43e-ea8353e136fa"
+            }
+          },
+          "from_status": "running",
+          "id": "3e9d219f-57dd-52f9-8b3b-45006e253f21",
+          "job_id": "c5ed0733-fdae-5135-9d40-a4d1b3db000e",
+          "message": "Part started",
+          "occurred_at": "2026-10-14T12:00:05Z",
+          "sequence": 7,
+          "stage": "execution",
+          "to_status": "running"
+        },
+        {
+          "actor": "network-fixture",
+          "correlation_id": "aeadd770-16e9-5395-8dc0-fd7dba5427aa",
+          "details": {
+            "network": {
+              "kind": "part_started",
+              "part_id": "cec071ad-9b1c-5c3c-acf3-5611e57ece37"
+            }
+          },
+          "from_status": "running",
+          "id": "3cacdfcd-5b8e-5925-9201-b1fcbf7d0d82",
+          "job_id": "c5ed0733-fdae-5135-9d40-a4d1b3db000e",
+          "message": "Part started",
+          "occurred_at": "2026-10-14T12:00:05Z",
+          "sequence": 8,
+          "stage": "execution",
+          "to_status": "running"
+        },
+        {
+          "actor": "network-fixture",
+          "correlation_id": "aeadd770-16e9-5395-8dc0-fd7dba5427aa",
+          "details": {
+            "network": {
+              "kind": "local_prepared",
+              "part_id": "f6232e7b-6609-5ea9-a43e-ea8353e136fa"
+            }
+          },
+          "from_status": "running",
+          "id": "e085fcb8-0b2a-5e36-8fdb-24f9b26c8e69",
+          "job_id": "c5ed0733-fdae-5135-9d40-a4d1b3db000e",
+          "message": "Local prepared",
+          "occurred_at": "2026-10-14T12:00:07Z",
+          "sequence": 9,
+          "stage": "execution",
+          "to_status": "running"
+        },
+        {
+          "actor": "network-fixture",
+          "correlation_id": "aeadd770-16e9-5395-8dc0-fd7dba5427aa",
+          "details": {
+            "network": {
+              "kind": "local_prepared",
+              "part_id": "cec071ad-9b1c-5c3c-acf3-5611e57ece37"
+            }
+          },
+          "from_status": "running",
+          "id": "2307a98b-7e2e-5477-b0eb-fc75f8da23dc",
+          "job_id": "c5ed0733-fdae-5135-9d40-a4d1b3db000e",
+          "message": "Local prepared",
+          "occurred_at": "2026-10-14T12:00:07Z",
+          "sequence": 10,
+          "stage": "execution",
+          "to_status": "running"
+        },
+        {
+          "actor": "network-fixture",
+          "correlation_id": "aeadd770-16e9-5395-8dc0-fd7dba5427aa",
+          "details": {
+            "network": {
+              "deadline": "2026-10-14T12:00:20Z",
+              "kind": "entanglement_requested",
+              "link_id": "09b53fae-9a0f-54c0-b589-060bad5cb04b",
+              "operation_id": "remote-cz-1"
+            }
+          },
+          "from_status": "running",
+          "id": "7b2641b2-d169-57b0-bd23-058723496d24",
+          "job_id": "c5ed0733-fdae-5135-9d40-a4d1b3db000e",
+          "message": "Entanglement requested",
+          "occurred_at": "2026-10-14T12:00:08Z",
+          "sequence": 11,
+          "stage": "execution",
+          "to_status": "running"
+        },
+        {
+          "actor": "network-fixture",
+          "correlation_id": "aeadd770-16e9-5395-8dc0-fd7dba5427aa",
+          "details": {
+            "network": {
+              "attempt_id": "attempt-1",
+              "kind": "attempt_completed",
+              "link_id": "09b53fae-9a0f-54c0-b589-060bad5cb04b",
+              "operation_id": "remote-cz-1",
+              "outcome": "failed"
+            }
+          },
+          "from_status": "running",
+          "id": "b71b452a-6aa1-52cd-8cf6-a1e602a0a2f6",
+          "job_id": "c5ed0733-fdae-5135-9d40-a4d1b3db000e",
+          "message": "Attempt completed",
+          "occurred_at": "2026-10-14T12:00:10Z",
+          "sequence": 12,
+          "stage": "execution",
+          "to_status": "running"
+        },
+        {
+          "actor": "network-fixture",
+          "correlation_id": "aeadd770-16e9-5395-8dc0-fd7dba5427aa",
+          "details": {
+            "network": {
+              "attempt_id": "attempt-2",
+              "kind": "attempt_completed",
+              "link_id": "09b53fae-9a0f-54c0-b589-060bad5cb04b",
+              "operation_id": "remote-cz-1",
+              "outcome": "succeeded",
+              "resource_id": "pair-1"
+            }
+          },
+          "from_status": "running",
+          "id": "d154a9f2-216b-5a6a-9117-e4b7f7ea8cdf",
+          "job_id": "c5ed0733-fdae-5135-9d40-a4d1b3db000e",
+          "message": "Attempt completed",
+          "occurred_at": "2026-10-14T12:00:12Z",
+          "sequence": 13,
+          "stage": "execution",
+          "to_status": "running"
+        },
+        {
+          "actor": "network-fixture",
+          "correlation_id": "aeadd770-16e9-5395-8dc0-fd7dba5427aa",
+          "details": {
+            "network": {
+              "kind": "remote_started",
+              "link_id": "09b53fae-9a0f-54c0-b589-060bad5cb04b",
+              "operation_id": "remote-cz-1",
+              "resource_id": "pair-1"
+            }
+          },
+          "from_status": "running",
+          "id": "2959895e-32d6-5ea4-a52c-08c52af2a29d",
+          "job_id": "c5ed0733-fdae-5135-9d40-a4d1b3db000e",
+          "message": "Remote started",
+          "occurred_at": "2026-10-14T12:00:12Z",
+          "sequence": 14,
+          "stage": "execution",
+          "to_status": "running"
+        },
+        {
+          "actor": "network-fixture",
+          "correlation_id": "aeadd770-16e9-5395-8dc0-fd7dba5427aa",
+          "details": {
+            "network": {
+              "kind": "remote_completed",
+              "link_id": "09b53fae-9a0f-54c0-b589-060bad5cb04b",
+              "operation_id": "remote-cz-1",
+              "resource_id": "pair-1"
+            }
+          },
+          "from_status": "running",
+          "id": "38899917-7f33-5e0f-bac5-229c0233c8dc",
+          "job_id": "c5ed0733-fdae-5135-9d40-a4d1b3db000e",
+          "message": "Remote completed",
+          "occurred_at": "2026-10-14T12:00:14Z",
+          "sequence": 15,
+          "stage": "execution",
+          "to_status": "running"
+        },
+        {
+          "actor": "network-fixture",
+          "correlation_id": "aeadd770-16e9-5395-8dc0-fd7dba5427aa",
+          "details": {
+            "network": {
+              "kind": "part_completed",
+              "part_id": "f6232e7b-6609-5ea9-a43e-ea8353e136fa"
+            }
+          },
+          "from_status": "running",
+          "id": "acb1969a-edc0-5990-8d0d-b9276b6151fe",
+          "job_id": "c5ed0733-fdae-5135-9d40-a4d1b3db000e",
+          "message": "Part completed",
+          "occurred_at": "2026-10-14T12:00:15Z",
+          "sequence": 16,
+          "stage": "execution",
+          "to_status": "running"
+        },
+        {
+          "actor": "network-fixture",
+          "correlation_id": "aeadd770-16e9-5395-8dc0-fd7dba5427aa",
+          "details": {
+            "network": {
+              "kind": "part_completed",
+              "part_id": "cec071ad-9b1c-5c3c-acf3-5611e57ece37"
+            }
+          },
+          "from_status": "running",
+          "id": "222347e9-d849-53cd-ad97-88bb4e5ac658",
+          "job_id": "c5ed0733-fdae-5135-9d40-a4d1b3db000e",
+          "message": "Part completed",
+          "occurred_at": "2026-10-14T12:00:15Z",
+          "sequence": 17,
+          "stage": "execution",
+          "to_status": "running"
+        },
+        {
+          "actor": "network-fixture",
+          "correlation_id": "aeadd770-16e9-5395-8dc0-fd7dba5427aa",
+          "details": {
+            "network": {
+              "kind": "final_output",
+              "output": {
+                "counts": {
+                  "00": 512,
+                  "11": 512
+                },
+                "shots": 1024,
+                "synthetic": true
+              }
+            }
+          },
+          "from_status": "running",
+          "id": "595d8ecc-4a09-5e85-a174-1ad9cd8ae349",
+          "job_id": "c5ed0733-fdae-5135-9d40-a4d1b3db000e",
+          "message": "Final output",
+          "occurred_at": "2026-10-14T12:00:16Z",
+          "sequence": 18,
+          "stage": "execution",
+          "to_status": "running"
+        },
+        {
+          "actor": "network-fixture",
+          "correlation_id": "aeadd770-16e9-5395-8dc0-fd7dba5427aa",
+          "details": {},
+          "from_status": "running",
+          "id": "56df7052-d6c7-56e6-b61c-94366a2bc546",
+          "job_id": "c5ed0733-fdae-5135-9d40-a4d1b3db000e",
+          "message": "Network execution completed",
+          "occurred_at": "2026-10-14T12:00:16Z",
+          "sequence": 19,
+          "stage": "execution",
+          "to_status": "succeeded"
+        }
+      ],
+      "history_complete": true,
+      "job": {
+        "created_at": "2026-10-14T12:00:00Z",
+        "durations": {
+          "compilation_seconds": 2.0,
+          "execution_seconds": 11.0,
+          "queue_seconds": 2.0
+        },
+        "error_code": null,
+        "error_message": null,
+        "error_stage": null,
+        "execution_method": "entanglement_network",
+        "external_reference": "NET-SUCCESS",
+        "finished_at": "2026-10-14T12:00:16Z",
+        "id": "c5ed0733-fdae-5135-9d40-a4d1b3db000e",
+        "metadata": {
+          "compilation_finished_at": "2026-10-14T12:00:03Z",
+          "compilation_started_at": "2026-10-14T12:00:01Z",
+          "compiler_name": "Synthetic network compiler",
+          "compiler_version": "synthetic-network-1.0",
+          "estimated_circuit_depth": null,
+          "estimated_gate_count": null,
+          "estimated_logical_qubits": null,
+          "execution_finished_at": "2026-10-14T12:00:16Z",
+          "execution_started_at": "2026-10-14T12:00:05Z",
+          "optimisation_settings": {
+            "mapping": "fixed-A-B"
+          },
+          "program_name": "Synthetic distributed Bell example",
+          "program_revision": "synthetic-r1",
+          "queue_entered_at": "2026-10-14T12:00:03Z",
+          "queue_left_at": "2026-10-14T12:00:05Z",
+          "requested_shots": 1024,
+          "source_language": "Synthetic QASM-like"
+        },
+        "name": "Synthetic network success",
+        "original_job_id": null,
+        "provider": "Synthetic distributed system",
+        "requested_by": "demo.network.operator",
+        "result": {
+          "counts": {
+            "00": 512,
+            "11": 512
+          },
+          "shots": 1024,
+          "synthetic": true
+        },
+        "retry_of": null,
+        "scenario": "network_success",
+        "seed": 20261104,
+        "simulation_version": "network-v1",
+        "specification": {
+          "execution_method": "entanglement_network",
+          "network_plan": {
+            "channel": "synthetic_entanglement",
+            "deadline_seconds": 12,
+            "operation": "remote-cz-1",
+            "topology": "A-B",
+            "version": "two-machine-v1"
+          },
+          "program": {
+            "id": "distributed-bell-example",
+            "inputs": {
+              "initial_state": "00"
+            },
+            "revision": "synthetic-r1"
+          },
+          "seed_dataset": "quantum-networking-v1",
+          "synthetic": true
+        },
+        "started_at": "2026-10-14T12:00:01Z",
+        "status": "succeeded",
+        "target": "Synthetic QPU A \u2194 QPU B",
+        "updated_at": "2026-10-14T12:00:16Z",
+        "version": 19
+      },
+      "networking": {
+        "execution_method": "entanglement_network",
+        "issues": [],
+        "link_state": "consumed",
+        "links": [
+          {
+            "channel_type": "synthetic_entanglement",
+            "id": "09b53fae-9a0f-54c0-b589-060bad5cb04b",
+            "job_id": "c5ed0733-fdae-5135-9d40-a4d1b3db000e",
+            "part_a_id": "f6232e7b-6609-5ea9-a43e-ea8353e136fa",
+            "part_b_id": "cec071ad-9b1c-5c3c-acf3-5611e57ece37"
+          }
+        ],
+        "metrics": {
+          "attempts": 2,
+          "execution_seconds": 11.0,
+          "remote_seconds": 2.0,
+          "successes": 1,
+          "wait_outcome": "ready",
+          "waiting_seconds": 4.0
+        },
+        "parts": [
+          {
+            "failure_code": null,
+            "failure_message": null,
+            "finished_at": "2026-10-14T12:00:15Z",
+            "id": "f6232e7b-6609-5ea9-a43e-ea8353e136fa",
+            "job_id": "c5ed0733-fdae-5135-9d40-a4d1b3db000e",
+            "label": "Machine A",
+            "prepared_at": "2026-10-14T12:00:07Z",
+            "provider": "Synthetic provider A",
+            "qubit_ids": [
+              "A:q0"
+            ],
+            "role": "control",
+            "started_at": "2026-10-14T12:00:05Z",
+            "status": "completed",
+            "target": "Synthetic QPU A"
+          },
+          {
+            "failure_code": null,
+            "failure_message": null,
+            "finished_at": "2026-10-14T12:00:15Z",
+            "id": "cec071ad-9b1c-5c3c-acf3-5611e57ece37",
+            "job_id": "c5ed0733-fdae-5135-9d40-a4d1b3db000e",
+            "label": "Machine B",
+            "prepared_at": "2026-10-14T12:00:07Z",
+            "provider": "Synthetic provider B",
+            "qubit_ids": [
+              "B:q0"
+            ],
+            "role": "target",
+            "started_at": "2026-10-14T12:00:05Z",
+            "status": "completed",
+            "target": "Synthetic QPU B"
+          }
+        ],
+        "plan_version": "two-machine-v1",
+        "schema_version": "1",
+        "synthetic": true
+      }
+    },
+    {
+      "events": [
+        {
+          "actor": "demo.network.operator",
+          "correlation_id": "39a48d7a-b535-5a7b-aadf-69f38b74c28f",
+          "details": {
+            "synthetic": true
+          },
+          "from_status": null,
+          "id": "2d644b8d-d07e-576b-adce-852a2dee4426",
+          "job_id": "0e83a2a4-5f1f-5e21-8672-7e06b602dedd",
+          "message": "Synthetic job submitted",
+          "occurred_at": "2026-10-14T12:01:00Z",
+          "sequence": 1,
+          "stage": "submission",
+          "to_status": "queued"
+        },
+        {
+          "actor": "network-fixture",
+          "correlation_id": "39a48d7a-b535-5a7b-aadf-69f38b74c28f",
+          "details": {},
+          "from_status": "queued",
+          "id": "9db95dad-3a40-5849-82ef-36d45e4b0773",
+          "job_id": "0e83a2a4-5f1f-5e21-8672-7e06b602dedd",
+          "message": "Shared source compilation started",
+          "occurred_at": "2026-10-14T12:01:01Z",
+          "sequence": 2,
+          "stage": "compilation",
+          "to_status": "running"
+        },
+        {
+          "actor": "network-fixture",
+          "correlation_id": "39a48d7a-b535-5a7b-aadf-69f38b74c28f",
+          "details": {
+            "plan_version": "two-machine-v1"
+          },
+          "from_status": "running",
+          "id": "8fc64db7-b73e-5f58-a7d7-382950d61ae4",
+          "job_id": "0e83a2a4-5f1f-5e21-8672-7e06b602dedd",
+          "message": "Two-part execution plan compiled",
+          "occurred_at": "2026-10-14T12:01:03Z",
+          "sequence": 3,
+          "stage": "compilation",
+          "to_status": "running"
+        },
+        {
+          "actor": "network-fixture",
+          "correlation_id": "39a48d7a-b535-5a7b-aadf-69f38b74c28f",
+          "details": {},
+          "from_status": "running",
+          "id": "e910dd4e-70f3-5f61-98c6-e32ce8b6c7cf",
+          "job_id": "0e83a2a4-5f1f-5e21-8672-7e06b602dedd",
+          "message": "Execution queue entered",
+          "occurred_at": "2026-10-14T12:01:03Z",
+          "sequence": 4,
+          "stage": "queueing",
+          "to_status": "running"
+        },
+        {
+          "actor": "network-fixture",
+          "correlation_id": "39a48d7a-b535-5a7b-aadf-69f38b74c28f",
+          "details": {},
+          "from_status": "running",
+          "id": "71038ca0-ccf8-584a-bbbe-670101a737af",
+          "job_id": "0e83a2a4-5f1f-5e21-8672-7e06b602dedd",
+          "message": "Execution queue left",
+          "occurred_at": "2026-10-14T12:01:05Z",
+          "sequence": 5,
+          "stage": "queueing",
+          "to_status": "running"
+        },
+        {
+          "actor": "network-fixture",
+          "correlation_id": "39a48d7a-b535-5a7b-aadf-69f38b74c28f",
+          "details": {
+            "network": {
+              "kind": "execution_started"
+            }
+          },
+          "from_status": "running",
+          "id": "0eefefea-51d9-530d-b806-9f311fd8b5e9",
+          "job_id": "0e83a2a4-5f1f-5e21-8672-7e06b602dedd",
+          "message": "Execution started",
+          "occurred_at": "2026-10-14T12:01:05Z",
+          "sequence": 6,
+          "stage": "execution",
+          "to_status": "running"
+        },
+        {
+          "actor": "network-fixture",
+          "correlation_id": "39a48d7a-b535-5a7b-aadf-69f38b74c28f",
+          "details": {
+            "network": {
+              "kind": "part_started",
+              "part_id": "2e4a6ea4-7724-5662-afc2-d93d9718ce83"
+            }
+          },
+          "from_status": "running",
+          "id": "cf3bba44-25f3-529c-aadf-eb9e129092e8",
+          "job_id": "0e83a2a4-5f1f-5e21-8672-7e06b602dedd",
+          "message": "Part started",
+          "occurred_at": "2026-10-14T12:01:05Z",
+          "sequence": 7,
+          "stage": "execution",
+          "to_status": "running"
+        },
+        {
+          "actor": "network-fixture",
+          "correlation_id": "39a48d7a-b535-5a7b-aadf-69f38b74c28f",
+          "details": {
+            "network": {
+              "kind": "part_started",
+              "part_id": "b8aed037-30c2-5c35-ba3e-a9836ee64c2b"
+            }
+          },
+          "from_status": "running",
+          "id": "123d80d9-9c8a-5c61-9c3b-b065ba656cd0",
+          "job_id": "0e83a2a4-5f1f-5e21-8672-7e06b602dedd",
+          "message": "Part started",
+          "occurred_at": "2026-10-14T12:01:05Z",
+          "sequence": 8,
+          "stage": "execution",
+          "to_status": "running"
+        },
+        {
+          "actor": "network-fixture",
+          "correlation_id": "39a48d7a-b535-5a7b-aadf-69f38b74c28f",
+          "details": {
+            "network": {
+              "kind": "local_prepared",
+              "part_id": "2e4a6ea4-7724-5662-afc2-d93d9718ce83"
+            }
+          },
+          "from_status": "running",
+          "id": "19f95c3f-3312-51ae-9b46-8579b8243f39",
+          "job_id": "0e83a2a4-5f1f-5e21-8672-7e06b602dedd",
+          "message": "Local prepared",
+          "occurred_at": "2026-10-14T12:01:07Z",
+          "sequence": 9,
+          "stage": "execution",
+          "to_status": "running"
+        },
+        {
+          "actor": "network-fixture",
+          "correlation_id": "39a48d7a-b535-5a7b-aadf-69f38b74c28f",
+          "details": {
+            "network": {
+              "kind": "local_prepared",
+              "part_id": "b8aed037-30c2-5c35-ba3e-a9836ee64c2b"
+            }
+          },
+          "from_status": "running",
+          "id": "bc5cc369-a73f-5706-ad27-e9a1ff53160b",
+          "job_id": "0e83a2a4-5f1f-5e21-8672-7e06b602dedd",
+          "message": "Local prepared",
+          "occurred_at": "2026-10-14T12:01:07Z",
+          "sequence": 10,
+          "stage": "execution",
+          "to_status": "running"
+        },
+        {
+          "actor": "network-fixture",
+          "correlation_id": "39a48d7a-b535-5a7b-aadf-69f38b74c28f",
+          "details": {
+            "network": {
+              "deadline": "2026-10-14T12:01:20Z",
+              "kind": "entanglement_requested",
+              "link_id": "d468c568-d2e3-5b5b-8abb-b006833065b1",
+              "operation_id": "remote-cz-1"
+            }
+          },
+          "from_status": "running",
+          "id": "1c004ab5-1d66-5d7d-b103-d13ef15c3014",
+          "job_id": "0e83a2a4-5f1f-5e21-8672-7e06b602dedd",
+          "message": "Entanglement requested",
+          "occurred_at": "2026-10-14T12:01:08Z",
+          "sequence": 11,
+          "stage": "execution",
+          "to_status": "running"
+        },
+        {
+          "actor": "network-fixture",
+          "correlation_id": "39a48d7a-b535-5a7b-aadf-69f38b74c28f",
+          "details": {
+            "network": {
+              "attempt_id": "attempt-1",
+              "kind": "attempt_completed",
+              "link_id": "d468c568-d2e3-5b5b-8abb-b006833065b1",
+              "operation_id": "remote-cz-1",
+              "outcome": "failed"
+            }
+          },
+          "from_status": "running",
+          "id": "02afebac-118c-5ae1-bc4f-499d5bd82eeb",
+          "job_id": "0e83a2a4-5f1f-5e21-8672-7e06b602dedd",
+          "message": "Attempt completed",
+          "occurred_at": "2026-10-14T12:01:10Z",
+          "sequence": 12,
+          "stage": "execution",
+          "to_status": "running"
+        },
+        {
+          "actor": "network-fixture",
+          "correlation_id": "39a48d7a-b535-5a7b-aadf-69f38b74c28f",
+          "details": {
+            "network": {
+              "attempt_id": "attempt-2",
+              "kind": "attempt_completed",
+              "link_id": "d468c568-d2e3-5b5b-8abb-b006833065b1",
+              "operation_id": "remote-cz-1",
+              "outcome": "failed"
+            }
+          },
+          "from_status": "running",
+          "id": "2596db51-4d46-573c-b219-45d9bf69b2b2",
+          "job_id": "0e83a2a4-5f1f-5e21-8672-7e06b602dedd",
+          "message": "Attempt completed",
+          "occurred_at": "2026-10-14T12:01:16Z",
+          "sequence": 13,
+          "stage": "execution",
+          "to_status": "running"
+        },
+        {
+          "actor": "network-fixture",
+          "correlation_id": "39a48d7a-b535-5a7b-aadf-69f38b74c28f",
+          "details": {
+            "network": {
+              "kind": "entanglement_timeout",
+              "link_id": "d468c568-d2e3-5b5b-8abb-b006833065b1",
+              "operation_id": "remote-cz-1"
+            }
+          },
+          "from_status": "running",
+          "id": "58f4067d-e354-5d95-b770-24f385459d8f",
+          "job_id": "0e83a2a4-5f1f-5e21-8672-7e06b602dedd",
+          "message": "Entanglement timeout",
+          "occurred_at": "2026-10-14T12:01:20Z",
+          "sequence": 14,
+          "stage": "execution",
+          "to_status": "running"
+        },
+        {
+          "actor": "network-fixture",
+          "correlation_id": "39a48d7a-b535-5a7b-aadf-69f38b74c28f",
+          "details": {
+            "network": {
+              "kind": "part_aborted",
+              "part_id": "2e4a6ea4-7724-5662-afc2-d93d9718ce83"
+            }
+          },
+          "from_status": "running",
+          "id": "f75bec9b-6742-584c-8343-74e0fd370a69",
+          "job_id": "0e83a2a4-5f1f-5e21-8672-7e06b602dedd",
+          "message": "Part aborted",
+          "occurred_at": "2026-10-14T12:01:20Z",
+          "sequence": 15,
+          "stage": "execution",
+          "to_status": "running"
+        },
+        {
+          "actor": "network-fixture",
+          "correlation_id": "39a48d7a-b535-5a7b-aadf-69f38b74c28f",
+          "details": {
+            "network": {
+              "kind": "part_aborted",
+              "part_id": "b8aed037-30c2-5c35-ba3e-a9836ee64c2b"
+            }
+          },
+          "from_status": "running",
+          "id": "56ed83da-a6ba-5c9f-a62c-239da41fa236",
+          "job_id": "0e83a2a4-5f1f-5e21-8672-7e06b602dedd",
+          "message": "Part aborted",
+          "occurred_at": "2026-10-14T12:01:20Z",
+          "sequence": 16,
+          "stage": "execution",
+          "to_status": "running"
+        },
+        {
+          "actor": "network-fixture",
+          "correlation_id": "39a48d7a-b535-5a7b-aadf-69f38b74c28f",
+          "details": {
+            "cause": "coordination_failure",
+            "link_id": "d468c568-d2e3-5b5b-8abb-b006833065b1",
+            "operation_id": "remote-cz-1"
+          },
+          "from_status": "running",
+          "id": "b316b74c-3d9e-5ba2-9865-2958e0d2d1c9",
+          "job_id": "0e83a2a4-5f1f-5e21-8672-7e06b602dedd",
+          "message": "Entanglement deadline expired",
+          "occurred_at": "2026-10-14T12:01:20Z",
+          "sequence": 17,
+          "stage": "execution",
+          "to_status": "failed"
+        }
+      ],
+      "history_complete": true,
+      "job": {
+        "created_at": "2026-10-14T12:01:00Z",
+        "durations": {
+          "compilation_seconds": 2.0,
+          "execution_seconds": 15.0,
+          "queue_seconds": 2.0
+        },
+        "error_code": "ENTANGLEMENT_TIMEOUT",
+        "error_message": "Coordination failure: entanglement deadline expired; no device fault recorded",
+        "error_stage": "execution",
+        "execution_method": "entanglement_network",
+        "external_reference": "NET-TIMEOUT",
+        "finished_at": "2026-10-14T12:01:20Z",
+        "id": "0e83a2a4-5f1f-5e21-8672-7e06b602dedd",
+        "metadata": {
+          "compilation_finished_at": "2026-10-14T12:01:03Z",
+          "compilation_started_at": "2026-10-14T12:01:01Z",
+          "compiler_name": "Synthetic network compiler",
+          "compiler_version": "synthetic-network-1.0",
+          "estimated_circuit_depth": null,
+          "estimated_gate_count": null,
+          "estimated_logical_qubits": null,
+          "execution_finished_at": "2026-10-14T12:01:20Z",
+          "execution_started_at": "2026-10-14T12:01:05Z",
+          "optimisation_settings": {
+            "mapping": "fixed-A-B"
+          },
+          "program_name": "Synthetic distributed Bell example",
+          "program_revision": "synthetic-r1",
+          "queue_entered_at": "2026-10-14T12:01:03Z",
+          "queue_left_at": "2026-10-14T12:01:05Z",
+          "requested_shots": 1024,
+          "source_language": "Synthetic QASM-like"
+        },
+        "name": "Synthetic network timeout",
+        "original_job_id": null,
+        "provider": "Synthetic distributed system",
+        "requested_by": "demo.network.operator",
+        "result": null,
+        "retry_of": null,
+        "scenario": "network_timeout",
+        "seed": 20261104,
+        "simulation_version": "network-v1",
+        "specification": {
+          "execution_method": "entanglement_network",
+          "network_plan": {
+            "channel": "synthetic_entanglement",
+            "deadline_seconds": 12,
+            "operation": "remote-cz-1",
+            "topology": "A-B",
+            "version": "two-machine-v1"
+          },
+          "program": {
+            "id": "distributed-bell-example",
+            "inputs": {
+              "initial_state": "00"
+            },
+            "revision": "synthetic-r1"
+          },
+          "seed_dataset": "quantum-networking-v1",
+          "synthetic": true
+        },
+        "started_at": "2026-10-14T12:01:01Z",
+        "status": "failed",
+        "target": "Synthetic QPU A \u2194 QPU B",
+        "updated_at": "2026-10-14T12:01:20Z",
+        "version": 17
+      },
+      "networking": {
+        "execution_method": "entanglement_network",
+        "issues": [],
+        "link_state": "timeout",
+        "links": [
+          {
+            "channel_type": "synthetic_entanglement",
+            "id": "d468c568-d2e3-5b5b-8abb-b006833065b1",
+            "job_id": "0e83a2a4-5f1f-5e21-8672-7e06b602dedd",
+            "part_a_id": "2e4a6ea4-7724-5662-afc2-d93d9718ce83",
+            "part_b_id": "b8aed037-30c2-5c35-ba3e-a9836ee64c2b"
+          }
+        ],
+        "metrics": {
+          "attempts": 2,
+          "execution_seconds": 15.0,
+          "remote_seconds": null,
+          "successes": 0,
+          "wait_outcome": "timeout",
+          "waiting_seconds": 12.0
+        },
+        "parts": [
+          {
+            "failure_code": "COORDINATION_STOPPED",
+            "failure_message": "Stopped after entanglement deadline; no device fault recorded",
+            "finished_at": "2026-10-14T12:01:20Z",
+            "id": "2e4a6ea4-7724-5662-afc2-d93d9718ce83",
+            "job_id": "0e83a2a4-5f1f-5e21-8672-7e06b602dedd",
+            "label": "Machine A",
+            "prepared_at": "2026-10-14T12:01:07Z",
+            "provider": "Synthetic provider A",
+            "qubit_ids": [
+              "A:q0"
+            ],
+            "role": "control",
+            "started_at": "2026-10-14T12:01:05Z",
+            "status": "aborted",
+            "target": "Synthetic QPU A"
+          },
+          {
+            "failure_code": "COORDINATION_STOPPED",
+            "failure_message": "Stopped after entanglement deadline; no device fault recorded",
+            "finished_at": "2026-10-14T12:01:20Z",
+            "id": "b8aed037-30c2-5c35-ba3e-a9836ee64c2b",
+            "job_id": "0e83a2a4-5f1f-5e21-8672-7e06b602dedd",
+            "label": "Machine B",
+            "prepared_at": "2026-10-14T12:01:07Z",
+            "provider": "Synthetic provider B",
+            "qubit_ids": [
+              "B:q0"
+            ],
+            "role": "target",
+            "started_at": "2026-10-14T12:01:05Z",
+            "status": "aborted",
+            "target": "Synthetic QPU B"
+          }
+        ],
+        "plan_version": "two-machine-v1",
+        "schema_version": "1",
+        "synthetic": true
+      }
+    }
+  ],
+  "source": "Validated PostgreSQL historical synthetic fixtures; no live execution"
+}

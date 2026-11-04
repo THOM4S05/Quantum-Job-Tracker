@@ -6,7 +6,7 @@ from statistics import median
 from typing import Annotated
 
 from fastapi import APIRouter, HTTPException, Query, Request
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from sqlalchemy import select
 from sqlalchemy.exc import SQLAlchemyError
 
@@ -48,6 +48,7 @@ class Overview(BaseModel):
     execution_duration: TimingMetric
     failures_by_stage: list[Breakdown]
     jobs_by_target: list[Breakdown]
+    network_outcomes: list[Breakdown] = Field(default_factory=list)
     targets: list[str]
     compiler_versions: list[str]
     experiments: list[ExperimentOption]
@@ -108,7 +109,12 @@ def calculate_overview(rows):
 
     failures = Counter(row.get("error_stage") or "unknown" for row in rows if row["status"] == "failed")
     targets = Counter(row["target"] for row in rows)
-    return {"total_jobs": len(rows), "cancelled_jobs": sum(row["status"] == "cancelled" for row in rows),
+    network = [row for row in rows if (row.get("specification") or {}).get("execution_method") == "entanglement_network"]
+    return {"network_outcomes": [
+                {"key": "succeeded", "count": sum(row["status"] == "succeeded" for row in network)},
+                {"key": "entanglement_timeout", "count": sum(row.get("error_code") == "ENTANGLEMENT_TIMEOUT" for row in network)},
+                {"key": "other_or_pending", "count": sum(row["status"] != "succeeded" and row.get("error_code") != "ENTANGLEMENT_TIMEOUT" for row in network)}],
+            "total_jobs": len(rows), "cancelled_jobs": sum(row["status"] == "cancelled" for row in rows),
             "cancelling_jobs": sum(row["status"] == "cancel_requested" for row in rows),
             **{phase: rate(counts) for phase, counts in phases.items()},
             "queue_time": timing([interval(row.get("metadata") or {}, "queue_entered_at", "execution_started_at") for row in rows]),
@@ -127,7 +133,7 @@ def get_overview(request: Request, filters: Annotated[CohortFilters, Query()]):
     try:
         with request.app.state.engine.connect().execution_options(isolation_level="REPEATABLE READ") as connection:
             with connection.begin():
-                rows = connection.execute(select(jobs.c.status, jobs.c.error_stage, jobs.c.target, jobs.c.metadata)
+                rows = connection.execute(select(jobs.c.status, jobs.c.error_stage, jobs.c.target, jobs.c.metadata, jobs.c.specification, jobs.c.error_code)
                                           .where(*cohort_conditions(filters))).mappings().all()
                 return {**calculate_overview(rows), **cohort_options(connection)}
     except SQLAlchemyError:

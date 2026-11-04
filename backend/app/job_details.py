@@ -11,6 +11,7 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from app.job_list import JobSummary, Status
 from app.models import job_events, jobs
+from app.networking import NetworkingEvidence, load_network
 
 
 class JobRecord(JobSummary):
@@ -47,6 +48,7 @@ class JobEvidence(BaseModel):
     job: JobRecord
     events: list[RecordedEvent]
     history_complete: bool
+    networking: NetworkingEvidence | None = None
 
 
 router = APIRouter()
@@ -63,9 +65,10 @@ def get_job(job_id: UUID, request: Request) -> dict:
                     raise HTTPException(status_code=404, detail="Job not found")
                 events = connection.execute(select(job_events).where(job_events.c.job_id == job_id)
                                             .order_by(job_events.c.sequence.asc())).mappings().all()
+                networking = load_network(connection, job, events)
     except SQLAlchemyError:
         raise HTTPException(status_code=503, detail="Job evidence is temporarily unavailable. Please try again.") from None
-    return {"job": job, "events": events, "history_complete": history_complete(job, events)}
+    return {"job": {**job, "execution_method": job["specification"].get("execution_method", "single_machine")}, "events": events, "history_complete": history_complete(job, events), "networking": networking}
 
 
 def history_complete(job, events):

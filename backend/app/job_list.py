@@ -42,6 +42,7 @@ class JobSummary(BaseModel):
     created_at: datetime
     requested_by: str
     retry_of: UUID | None
+    execution_method: Literal["single_machine", "entanglement_network"] = "single_machine"
     metadata: WorkloadMetadata = Field(default_factory=WorkloadMetadata)
 
     @computed_field
@@ -100,6 +101,7 @@ def list_jobs(request: Request, filters: Annotated[JobFilters, Query()]) -> dict
                     jobs.c.external_reference, jobs.c.status, jobs.c.created_at,
                     jobs.c.requested_by, jobs.c.retry_of,
                     jobs.c.metadata,
+                    func.coalesce(jobs.c.specification["execution_method"].astext, "single_machine").label("execution_method"),
                 ).where(*conditions).order_by(jobs.c.created_at.desc(), jobs.c.id.desc())
                     .offset((filters.page - 1) * filters.page_size).limit(filters.page_size)).mappings().all()
                 options = cohort_options(connection)

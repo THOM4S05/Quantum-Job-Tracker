@@ -1,7 +1,7 @@
 """PostgreSQL tables shared by migrations, services, and future API/worker code."""
 
 from sqlalchemy import (
-    BigInteger, CheckConstraint, Column, DateTime, ForeignKey, Index, Integer,
+    BigInteger, Boolean, CheckConstraint, ForeignKeyConstraint, Column, DateTime, ForeignKey, Index, Integer,
     String, Table, Text, UniqueConstraint, func, text,
 )
 from sqlalchemy.dialects.postgresql import JSONB, UUID
@@ -115,3 +115,49 @@ Index("ix_jobs_retry_of", jobs.c.retry_of)
 Index("ix_jobs_original", jobs.c.original_job_id)
 Index("ix_jobs_external_reference", func.lower(jobs.c.external_reference))
 Index("ix_job_events_correlation", job_events.c.correlation_id)
+
+# One extension of the existing attempt, never another top-level job.
+networked_runs = Table(
+    'networked_runs', metadata,
+    Column('job_id', UUID(as_uuid=True), ForeignKey('jobs.id', ondelete='RESTRICT'), primary_key=True),
+    Column('execution_method', String(40), nullable=False),
+    Column('schema_version', String(20), nullable=False),
+    Column('plan_version', String(40), nullable=False),
+    Column('synthetic', Boolean, nullable=False),
+    CheckConstraint("execution_method = 'entanglement_network' AND schema_version = '1' AND plan_version = 'two-machine-v1' AND synthetic", name='ck_networked_plan'),
+)
+execution_parts = Table(
+    'execution_parts', metadata,
+    Column('id', UUID(as_uuid=True), primary_key=True),
+    Column('job_id', UUID(as_uuid=True), ForeignKey('networked_runs.job_id', ondelete='RESTRICT'), nullable=False),
+    Column('label', String(80), nullable=False),
+    Column('provider', String(80), nullable=False),
+    Column('target', String(120), nullable=False),
+    Column('role', String(80), nullable=False),
+    Column('qubit_ids', JSONB, nullable=False),
+    Column('status', String(24), nullable=False),
+    Column('started_at', DateTime(timezone=True)),
+    Column('prepared_at', DateTime(timezone=True)),
+    Column('finished_at', DateTime(timezone=True)),
+    Column('failure_code', String(80)),
+    Column('failure_message', Text),
+    UniqueConstraint('job_id', 'id', name='uq_parts_parent_id'),
+    UniqueConstraint('job_id', 'label', name='uq_parts_label'),
+    CheckConstraint("status IN ('pending','preparing','blocked','completed','aborted')", name='ck_parts_status'),
+    CheckConstraint("jsonb_typeof(qubit_ids) = 'array'", name='ck_parts_qubits'),
+    CheckConstraint("(status = 'pending') = (started_at IS NULL) AND (status IN ('completed','aborted')) = (finished_at IS NOT NULL) AND (prepared_at IS NULL OR prepared_at >= started_at) AND (finished_at IS NULL OR finished_at >= started_at)", name='ck_parts_times'),
+    CheckConstraint("(failure_code IS NULL) = (failure_message IS NULL)", name='ck_parts_failure'),
+)
+quantum_links = Table(
+    'quantum_links', metadata,
+    Column('id', UUID(as_uuid=True), primary_key=True),
+    Column('job_id', UUID(as_uuid=True), ForeignKey('networked_runs.job_id', ondelete='RESTRICT'), nullable=False),
+    Column('part_a_id', UUID(as_uuid=True), nullable=False),
+    Column('part_b_id', UUID(as_uuid=True), nullable=False),
+    Column('channel_type', String(40), nullable=False),
+    ForeignKeyConstraint(['job_id', 'part_a_id'], ['execution_parts.job_id', 'execution_parts.id']),
+    ForeignKeyConstraint(['job_id', 'part_b_id'], ['execution_parts.job_id', 'execution_parts.id']),
+    UniqueConstraint('job_id', name='uq_link_parent'),
+    CheckConstraint('part_a_id <> part_b_id', name='ck_link_distinct'),
+    CheckConstraint("channel_type = 'synthetic_entanglement'", name='ck_link_channel'),
+)

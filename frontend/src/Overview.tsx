@@ -107,6 +107,7 @@ export function Overview() {
             <li><strong>Units and missing data:</strong> all timing units are seconds. No eligible observations means “Not enough data”.</li>
           </ul>
         </details>
+        {data.network_outcomes && data.network_outcomes.some((row) => row.count > 0) && <section className="detail-panel" aria-label="Networked job outcomes"><h2>Networked job outcomes</h2><p>Each parent counts once in the totals and execution rate above. Entanglement-attempt rates appear only on job details.</p><ul>{data.network_outcomes.map((row) => <li key={row.key}>{row.key.replaceAll('_', ' ')}: {row.count} jobs</li>)}</ul></section>}
         <div className="breakdown-grid">{chart('Failures by stage', data.failures_by_stage, 'failure_stage')}{chart('Jobs by target', data.jobs_by_target, 'target')}</div>
       </>}
       {visible.checked && <p className="detail-refresh">Updated {new Date(visible.checked).toLocaleTimeString()} · Polls every 5s while visible</p>}

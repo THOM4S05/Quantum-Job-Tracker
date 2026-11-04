@@ -29,7 +29,8 @@ def assert_guards_enabled(db):
     assert db.execute(text("SELECT tgname, tgenabled FROM pg_trigger WHERE tgrelid IN "
                            "('jobs'::regclass, 'job_events'::regclass) AND NOT tgisinternal "
                            "ORDER BY tgname")).all() == [
-        ("guard_event_write", "O"), ("guard_job_reference", "O"), ("guard_job_write", "O")]
+        ("check_network_terminal", "O"), ("guard_event_write", "O"),
+        ("guard_job_reference", "O"), ("guard_job_write", "O"), ("guard_network_event", "O")]
 
 
 def test_expected_comparison_outcomes_and_controlled_inputs(db):

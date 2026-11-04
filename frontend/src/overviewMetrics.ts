@@ -4,6 +4,7 @@ import type { CohortOptions } from './CohortFields';
 export type Attempts = { succeeded: number; failed: number; completed: number; pending: number; cancelled: number; not_started: number; unknown: number; rate_percent: number | null };
 export type Timing = { median_seconds: number | null; samples: number; excluded: number };
 export type OverviewData = CohortOptions & {
+  network_outcomes?: { key: string; count: number }[];
   synthetic: boolean; total_jobs: number; cancelled_jobs: number; cancelling_jobs: number;
   compilation: Attempts; execution: Attempts; queue_time: Timing; execution_duration: Timing;
   failures_by_stage: { key: string; count: number }[]; jobs_by_target: { key: string; count: number }[];
@@ -41,7 +42,12 @@ export function calculateOverview(rows: Snapshot[]): OverviewData {
     const n = known.length;
     return { median_seconds: n ? (known[Math.floor((n - 1) / 2)] + known[Math.floor(n / 2)]) / 2 : null, samples: n, excluded: rows.length - n };
   };
-  return { synthetic: true, total_jobs: rows.length, cancelled_jobs: rows.filter((job) => job.status === 'cancelled').length,
+  const network = rows.filter((job) => job.execution_method === 'entanglement_network' || job.specification?.execution_method === 'entanglement_network');
+  return { network_outcomes: [
+    { key: 'succeeded', count: network.filter((job) => job.status === 'succeeded').length },
+    { key: 'entanglement_timeout', count: network.filter((job) => job.error_code === 'ENTANGLEMENT_TIMEOUT').length },
+    { key: 'other_or_pending', count: network.filter((job) => job.status !== 'succeeded' && job.error_code !== 'ENTANGLEMENT_TIMEOUT').length },
+  ], synthetic: true, total_jobs: rows.length, cancelled_jobs: rows.filter((job) => job.status === 'cancelled').length,
     cancelling_jobs: rows.filter((job) => job.status === 'cancel_requested').length, compilation: rate('compilation'), execution: rate('execution'),
     queue_time: median(rows.map((job) => duration(job.metadata?.queue_entered_at, job.metadata?.execution_started_at))),
     execution_duration: median(rows.map((job) => ['succeeded', 'failed'].includes(attempt(job, 'execution')) ? duration(job.metadata?.execution_started_at, job.metadata?.execution_finished_at) : null)),

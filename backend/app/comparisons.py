@@ -51,6 +51,11 @@ def configuration(job):
                   additional_workload_settings={key: value for key, value in workload.items() if key not in {
                       "id", "key", "name", "program_revision", "inputs"}})
     missing = [key for key, value in config.items() if value is None or (isinstance(value, str) and not value.strip())]
+    # additional_settings already includes execution_method and the full network plan;
+    # require explicit topology/configuration rather than matching unknown plans.
+    if spec.get("execution_method") == "entanglement_network":
+        plan = spec.get("network_plan") or {}
+        missing.extend(f"network_plan.{key}" for key in ("version", "topology", "operation", "channel", "deadline_seconds") if not plan.get(key))
     if workload.get("program_revision") is not None and workload["program_revision"] != config["program_revision"]:
         missing.append("inconsistent_program_revision")
     if spec.get("shots") is not None and spec["shots"] != config["requested_shots"]:

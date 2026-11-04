@@ -130,6 +130,15 @@ def _change(connection: Connection, job_id: UUID, *, to_status: str | None,
         _event(connection, job, previous=old["status"], stage=stage,
                message=message, details={} if details is None else details,
                correlation_id=correlation_id, actor=actor)
+        if job['specification'].get('execution_method') == 'entanglement_network' or (details and 'network' in details):
+            from app.networking import load_network
+            events = connection.execute(select(job_events).where(job_events.c.job_id == job_id)
+                                        .order_by(job_events.c.sequence)).mappings().all()
+            network = load_network(connection, job, events)
+            if network is None:
+                raise InvalidTransition('Networking extension is missing')
+            if network.issues:
+                raise InvalidTransition('; '.join(network.issues))
         return job
 
 

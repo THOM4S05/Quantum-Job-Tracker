@@ -1,3 +1,4 @@
+import networkSnapshot from './data/networkSnapshot.json';
 import snapshot from './data/exampleSnapshot.json';
 import manifest from './data/exampleManifest.json';
 import type { Job, JobPage } from './App';
@@ -94,7 +95,7 @@ export function resetDemo() { customJobs = []; save(); }
 
 export async function demoRequest(path: string): Promise<Response> {
   const url = new URL(path, 'https://demo.invalid');
-  const all = [...customJobs, ...fixtures, ...(snapshot.jobs as JobEvidence[])];
+  const all = [...customJobs, ...fixtures, ...(snapshot.jobs as JobEvidence[]), ...(networkSnapshot.jobs as JobEvidence[])];
   if (url.pathname === '/api/comparisons') {
     const params = url.searchParams;
     const experiment = params.get('experiment');
@@ -161,6 +162,6 @@ export async function demoRequest(path: string): Promise<Response> {
   ).sort((a, b) => b.created_at.localeCompare(a.created_at) || b.id.localeCompare(a.id));
   if (overview) return Response.json({ ...calculateOverview(items), ...options });
   const body: JobPage = { items: items.slice((page - 1) * pageSize, page * pageSize), total: items.length,
-    page, page_size: pageSize, total_pages: Math.ceil(items.length / pageSize), providers, ...options };
+    page, page_size: pageSize, total_pages: Math.ceil(items.length / pageSize), providers: [...new Set(all.map((item) => item.job.provider))].sort(), ...options };
   return Response.json(body);
 }

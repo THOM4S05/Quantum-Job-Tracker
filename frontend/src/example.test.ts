@@ -27,7 +27,7 @@ it('opens the exported seed with complete matching evidence and both comparison 
   params.set('candidate', example.baseline);
   expect((await (await demoRequest(`/api/comparisons?${params}`)).json()).matched_groups).toBe(4);
   resetDemo();
-  expect((await (await demoRequest('/api/jobs')).json()).total).toBe(256);
+  expect((await (await demoRequest('/api/jobs')).json()).total).toBe(258);
 });
 
 it('keeps empty, invalid and missing-data responses honest', async () => {

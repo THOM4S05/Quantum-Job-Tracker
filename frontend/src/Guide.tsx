@@ -1,3 +1,4 @@
+import { NetworkExampleLinks } from './NetworkExecution';
 import { useEffect, useState } from 'react';
 import { request } from './api';
 import { example, exampleHref, exampleQuery } from './example';
@@ -77,7 +78,9 @@ export function Guide() {
           <p>This demonstration uses synthetic data. It is an independent portfolio project, with no connection to Horizon Quantum systems, real compiler services or quantum hardware.</p>
           <p>{isDemo ? 'This browser demo reads bundled synthetic records and a read-only export of the seeded experiment. Browsing, comparison and evidence links work without a live API.' : 'This local application reads jobs through FastAPI and PostgreSQL. The featured example requires the existing compiler-comparison-v1 seed; browser snapshots are not substituted for missing database records.'}</p>
         </section>
+          <section className="detail-panel" aria-labelledby="network-guide"><h2 id="network-guide">Explore quantum networking</h2><p>Inspect one shared source job executed as two machine-specific parts connected by one synthetic entanglement link. Compare success after a failed attempt with a deadline timeout: local preparation completes in both examples, and timeout is a coordination failure without a recorded device fault.</p><p>These are historical synthetic records, with no hardware connection, physical network simulation, real entanglement generation or claim of quantum advantage. The browser includes two exported examples; local API mode requires the optional quantum-networking-v1 seed.</p><NetworkExampleLinks /><p>Read each part’s recorded timings, the entanglement wait and completed-attempt denominator, then follow the combined timeline in sequence order. The remote operation consumes a generated pair once. Compiler comparisons require compatible execution methods, network plans and configurations.</p></section>
         <section className="detail-panel" id="guide-start" aria-labelledby="guide-start-title"><h2 id="guide-start-title">Quick start: follow one example</h2>
+
           <p>The featured direction is {example.baseline} → {example.candidate}. The steps below use the existing synthetic experiment and its recorded runs.</p>
           <div className="guide-example-status" aria-live="polite">
             {state.status === 'loading' && <p role="status">Checking example links… The rest of this guide is ready to read.</p>}
