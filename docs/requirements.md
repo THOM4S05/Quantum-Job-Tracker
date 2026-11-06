@@ -4,7 +4,7 @@
 
 Quantum Job Tracker is an application for investigating and managing synthetic quantum jobs. Its MVP provides job search, details and history, deterministic simulation, safe cancellation and retry, viewer/operator permissions, and basic operational health.
 
-Every provider and quantum job is synthetic. The UI, seed data, and README must clearly label this; they must not imply access to Horizon Quantum systems. No real quantum SDKs, credentials, devices, or provider integrations are required.
+Every provider and quantum job is synthetic. The UI, seed data, and README must clearly label this; they must not imply access to production systems. No real quantum SDKs, credentials, devices, or provider integrations are required.
 
 ### Roles
 

@@ -112,7 +112,7 @@ export function Overview() {
         </details>
       </>}
       {visible.checked && <p className="detail-refresh">Updated {new Date(visible.checked).toLocaleTimeString()} · Polls every 5s while visible</p>}
-      <footer><a href={`${homeHref}?view=implementation`}>How it works</a> · All jobs, compiler data, providers and timings are synthetic. No connection to Horizon Quantum or real quantum hardware.</footer>
+      <footer><a href={`${homeHref}?view=implementation`}>How it works</a> · All jobs, compiler data, providers and timings are synthetic. No connection to real quantum hardware.</footer>
     </main></div>
   </div>;
 }

@@ -184,7 +184,7 @@ function JobsList() {
             {data && <nav className="pagination" aria-label="Job pages"><span>{first}–{last} of {data.total} jobs</span><div><button disabled={data.page <= 1} onClick={() => navigate({ ...current, page: String(data.page - 1) })}>Previous</button><span>Page {data.page} of {Math.max(1, data.total_pages)}</span><button disabled={data.page >= data.total_pages} onClick={() => navigate({ ...current, page: String(data.page + 1) })}>Next</button></div></nav>}
           </section>
           <details className="disclosure-panel"><summary>Explore network examples</summary><p>Follow one execution across two machines.</p><NetworkExampleLinks /></details>
-          <footer><a href={`${homeHref}?view=implementation`}>How it works</a> · All jobs and providers are simulated. No connection to Horizon Quantum systems or real quantum hardware.</footer>
+          <footer><a href={`${homeHref}?view=implementation`}>How it works</a> · All jobs and providers are simulated. No connection to real quantum hardware.</footer>
         </main>
       </div>
     </div>

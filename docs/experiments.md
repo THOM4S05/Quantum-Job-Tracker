@@ -1,6 +1,6 @@
 # Synthetic compiler comparison dataset
 
-This is a fixed historical experiment for investigating comparisons, not a compiler benchmark or hardware measurement. All programs, compiler versions, providers, outputs, resource estimates, timings and failures are **synthetic**. It does not connect to Horizon Quantum or any real quantum system.
+This is a fixed historical experiment for investigating comparisons, not a compiler benchmark or hardware measurement. All programs, compiler versions, providers, outputs, resource estimates, timings and failures are **synthetic**. It does not connect to any real quantum system.
 
 ## Model and persistence
 

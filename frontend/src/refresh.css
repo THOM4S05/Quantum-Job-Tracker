@@ -15,15 +15,15 @@
   --negative: #f2a18f;
   --warning: #efd08a;
   /* Compatibility roles for the shared component styles. */
-  --hq-navy: var(--text);
-  --hq-navy-subtle: var(--text-secondary);
-  --hq-navy-muted: var(--text-muted);
-  --hq-link: var(--cyan);
-  --hq-surface: var(--panel);
-  --hq-grey: var(--border);
-  --hq-border: var(--border);
-  --hq-rust: var(--negative);
-  --hq-yellow: var(--cyan);
+  --theme-navy: var(--text);
+  --theme-navy-subtle: var(--text-secondary);
+  --theme-navy-muted: var(--text-muted);
+  --theme-link: var(--cyan);
+  --theme-surface: var(--panel);
+  --theme-grey: var(--border);
+  --theme-border: var(--border);
+  --theme-rust: var(--negative);
+  --theme-yellow: var(--cyan);
   --accent-purple: var(--cyan);
   --accent-purple-hover: var(--cyan-hover);
   --purple-surface: var(--panel-raised);

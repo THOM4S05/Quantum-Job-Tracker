@@ -1,6 +1,6 @@
 # Compiler and resource metadata
 
-All examples, providers, compilers, versions, workloads, estimates, and timings in the fixtures are synthetic. Nothing describes Horizon Quantum metadata or an actual quantum hardware execution.
+All examples, providers, compilers, versions, workloads, estimates, and timings in the fixtures are synthetic. Nothing describes production metadata or an actual quantum hardware execution.
 
 ## Storage and API contract
 

@@ -103,7 +103,7 @@ export function Comparison() {
         </section>)}
       </>}
       {visible.checked && <p className="detail-refresh">Updated {new Date(visible.checked).toLocaleTimeString()} · Polls every 5s while visible</p>}
-      <footer>All jobs, compiler data, providers and results are synthetic. No connection to Horizon Quantum systems or real hardware.</footer>
+      <footer>All jobs, compiler data, providers and results are synthetic. No connection to real hardware.</footer>
     </main></div>
   </div>;
 }

@@ -1,30 +1,30 @@
 # Quantum Job Tracker
 
-Quantum Job Tracker displays recorded quantum-program runs, their compiler and target settings, status, timings and event history. Jobs lists individual runs, Overview summarises selected runs, and Experiment comparison groups runs with matching settings to compare compiler versions.
-
-All jobs, providers, compiler metadata and results are **synthetic**. The featured example compares compiler versions; an experiment is a group of related runs and need not be a compiler-version comparison. No Horizon Quantum systems, real compiler service or quantum hardware is connected.
-
 [Open the browser demo](https://thom4s05.github.io/Quantum-Job-Tracker/) · [Demo & Guide](https://thom4s05.github.io/Quantum-Job-Tracker/?view=guide) · [Local setup](#run-the-full-application-locally)
+
+Quantum Job Tracker displays recorded quantum-program runs, their compiler and target settings, status, timings and event history. Overview is the landing page, with failure summaries and outcome metrics. Jobs lists individual runs. Comparisons groups runs with matching settings to compare compiler versions.
+
+All jobs, providers, compiler metadata and results are **synthetic**. The featured example compares compiler versions; an experiment is a group of related runs and need not be a compiler-version comparison. No real compiler service or quantum hardware is connected.
 
 ## Screenshots
 
-Screenshots captured from the public browser demo. Introduction, jobs and operational overview refreshed on 24 October 2026; other views captured on 22 October 2026. All jobs and outcomes shown are synthetic; this independent portfolio project does not execute on real quantum hardware. The browser demo uses bundled records, while the local FastAPI/PostgreSQL application reads database records.
+Screenshots captured from the local browser demo on 6 November 2026. All jobs and outcomes shown are synthetic. The browser demo uses bundled records, while the local FastAPI/PostgreSQL application reads database records.
 
-### Introduction and navigation
+### Overview and navigation
 
-Start with **Open example comparison**, **Browse jobs**, or **Open Overview**. Background information and guide links sit inside **About this demo**.
+Overview opens first. Select a failure summary to inspect matching jobs, or use **Browse jobs** to open the full list. The sidebar provides Overview, Jobs, Comparisons, Demo & Guide and How it works.
 
-![Simplified introduction with clearly labelled example comparison, browse jobs and overview buttons, plus expandable demo information](docs/images/quantum-job-tracker-introduction.jpg)
+![Overview landing page with failure summaries, outcome metrics and navigation](docs/images/quantum-job-tracker-introduction.jpg)
 
 ### Browse and filter jobs
 
-Search 258 bundled sample jobs by ID or reference, status and provider. Expand **More filters** for submission dates, target, compiler version and experiment, then select a job to view its results and timeline.
+Search bundled sample jobs by ID or reference, status and provider. Use **All jobs**, **Running**, **Queued** or **Failed** for quick status filtering. Expand **More filters** for submission dates, target, compiler version and experiment. Click anywhere on a job row to open its details.
 
-![Jobs page showing search, status and provider controls, collapsed More filters, the 256-job count and links to recorded runs](docs/images/quantum-job-tracker-jobs-overview.jpg)
+![Jobs page showing quick status filters, search controls and clickable rows for 258 sample jobs](docs/images/quantum-job-tracker-jobs-overview.jpg)
 
 ### Compare an experiment
 
-The seeded resource-gain workload shows lower estimated circuit depth and gate count for the candidate version. Run counts and outcome denominators stay visible alongside the observations; these synthetic examples are not real compiler benchmarks.
+The seeded resource-gain workload shows lower estimated circuit depth and gate count for the candidate version. Expand **All metrics and outcome counts** for the full comparison table and sample counts. These synthetic examples are not real compiler benchmarks.
 
 ![Resource-gain comparison showing lower estimated depth and gate count with baseline and candidate sample and outcome counts](docs/images/quantum-job-tracker-experiment-comparison.jpg)
 
@@ -39,15 +39,15 @@ Follow a supporting candidate run from compile-regression to its recorded compil
 
 #### Job metadata
 
-Inspect the program revision, synthetic compiler version, target settings and resource estimates before reading phase timings and failure evidence.
+Job details show the outcome first, including the failure stage when recorded. Green, red and yellow dots identify succeeded, failed and queued outcomes. Expand **Program, compiler and submission details** or **Resource estimates and full timings** for supporting information.
 
 ![Current supporting-job details showing program and compiler, target configuration, estimated resources and phase timings](docs/images/quantum-job-tracker-job-investigation.jpg)
 
 #### Operational overview
 
-Check success-rate denominators, timing sample counts, failures by stage and jobs by target for the selected submission cohort.
+Expand **Filter this overview** to select a submission cohort. **Explore breakdowns by stage and target** reveals charts with links to matching jobs. Metric definitions and exclusions are available separately.
 
-![Updated operational overview with the compact introduction, cohort filters, success rates, timing sample counts and breakdowns](docs/images/quantum-job-tracker-operational-overview.jpg)
+![Operational overview with expanded cohort filters and breakdown charts](docs/images/quantum-job-tracker-operational-overview.jpg)
 
 #### Demo & Guide
 
@@ -59,7 +59,7 @@ Follow the bulleted example journey, with direct links to the comparison and a v
 
 ## Demo & Guide
 
-Select **Demo & Guide** in the sidebar, or **Read the demo guide** inside **About this demo** on Jobs or Overview. The page explains what each working section is for, its main controls, a bulleted example journey, a small glossary and how to interpret the results. It is written for first-time visitors, including readers without quantum-computing knowledge, and identifies the app as an independent portfolio project using synthetic data.
+Select **Demo & Guide** in the sidebar. The page explains what each working section is for, its main controls, an example journey, a small glossary and how to interpret the results. It is written for first-time visitors, including readers without quantum-computing knowledge, and identifies the app as an independent portfolio project using synthetic data.
 
 Listed explanations use visible bullet points. Longer groups sit side by side on wider screens and stack on narrow screens to keep them readable.
 
@@ -71,11 +71,11 @@ The guide is included in the GitHub Pages browser build.
 
 ## Page navigation and example controls
 
-Jobs and Overview include a compact **Explore a quantum run** introduction. Select **Open example comparison** to load the example with its baseline and candidate versions selected, or **Browse jobs** to inspect individual runs. Jobs also offers **Open Overview** for aggregate results.
+The homepage opens Overview. Failure summaries link to filtered job lists. **Browse jobs** opens the full list. Open **Comparisons** from the sidebar, then select **Open example comparison** to load the featured baseline and candidate versions.
 
-Expand **About this demo** for the job definition, current data source, implementation notes and guide links. **Demo & Guide** explains comparison direction, sample counts (`n`), and how to open a failed job and return with **Back to comparison**. **How it works** is also available in the sidebar.
+**Demo & Guide** explains comparison direction, sample counts (`n`), and how to open a failed job and return with **Back to comparison**. **How it works** provides implementation notes. Both are available in the sidebar.
 
-The Jobs page keeps search, status and provider controls visible. **More filters** reveals dates, target, compiler version, experiment and rows per page; it opens automatically when an advanced filter is applied through a shared link. On narrow screens, navigation wraps into rows and the action buttons stack vertically.
+The Jobs page keeps quick status views, search, status and provider controls visible. **More filters** reveals dates, target, compiler version, experiment and rows per page; it opens automatically when an advanced filter is applied through a shared link. Clicking a job row opens its outcome and timeline. Configuration, resource estimates and full timings expand on demand. On narrow screens, use **Menu** to open navigation.
 
 ## Browser demo
 
@@ -117,7 +117,7 @@ The local backend uses synchronous database calls. The frontend uses async reque
 
 ## Compiler and resource metadata
 
-Job details now group information into **Program and compiler**, **Target and configuration**, **Estimated resources**, **Timings**, and **Lifecycle and failure evidence**. All compiler names/versions are clearly synthetic. Unknown metadata displays **Not available**; estimates remain separate from recorded simulator outputs, and phase durations are calculated from recorded timestamps only.
+Job details lead with the recorded outcome. **Program, compiler and submission details** contains program metadata and target configuration. **Resource estimates and full timings** contains estimates and phase timestamps. Failure evidence and the lifecycle timeline remain visible below. All compiler names/versions are synthetic. Unknown metadata displays **Not available**; estimates remain separate from recorded simulator outputs, and phase durations are calculated from recorded timestamps only.
 
 [Metadata definitions, units, validation, and migration behavior](docs/metadata.md)
 
@@ -235,7 +235,7 @@ The frontend now lists the seeded jobs. Existing demo fixtures receive reference
 
 ## Browse and search jobs
 
-Open [Jobs](http://localhost:5173). Apply any combination of status, provider, UTC submission dates, and an exact ID/reference. Search for `syn-0005` to find a seeded compilation failure. Clear filters to return to the full list. Applying filters or a new page size starts at page 1; Previous/Next retain applied filters. Copy the URL to share or reopen the same view; browser Back/Forward restores the filters.
+Open [Jobs](http://localhost:5173/?view=jobs). Apply any combination of status, provider, UTC submission dates, and an exact ID/reference. Search for `syn-0005` to find a seeded compilation failure. Clear filters to return to the full list. Applying filters or a new page size starts at page 1; Previous/Next retain applied filters. Copy the URL to share or reopen the same view; browser Back/Forward restores the filters.
 
 The page polls every five seconds after each response, pauses recurring requests in hidden tabs, cancels obsolete requests, and retains the last successful results with an explicit warning if refresh fails. Loading, empty, out-of-range page, validation error, and service error states are distinct. All submission times and date bounds use UTC. Select a job name to open its details; the details URL retains the applied list filters.
 

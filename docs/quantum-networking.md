@@ -68,4 +68,4 @@ Verified on 4 November 2026: 187 backend tests passed against PostgreSQL 17 with
 
 ## Deferred work
 
-User-configurable network submissions, active workers, hardware connections, physical simulation, multiple simultaneous pairs, arbitrary topology, fidelity/distance metrics and QPU billing/usage accounting are not implemented. No claim of quantum advantage or connection to Horizon Quantum’s internal systems is made.
+User-configurable network submissions, active workers, hardware connections, physical simulation, multiple simultaneous pairs, arbitrary topology, fidelity/distance metrics and QPU billing/usage accounting are not implemented. No claim of quantum advantage or connection to production systems is made.

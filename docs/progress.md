@@ -144,7 +144,7 @@ Pre-push verification: **127 backend tests passed** against disposable PostgreSQ
 
 The Demo & Guide page is complete and linked from main navigation and the introduction. It describes existing pages and terms, resolves available seeded evidence, and supports direct hosting-base-path links and comparison return context. This stage passed 66 frontend tests, five API-backed browser checks and three static-hosting/mobile/keyboard checks, plus TypeScript and both frontend builds. Backend functionality was unchanged. No publication or deployment was performed.
 
-The project is named Quantum Job Tracker. All seeded and future quantum jobs and providers are synthetic; nothing connects to Horizon Quantum systems.
+The project is named Quantum Job Tracker. All seeded and future quantum jobs and providers are synthetic; nothing connects to production systems.
 
 ## Experiment comparison — 20 October 2026
 

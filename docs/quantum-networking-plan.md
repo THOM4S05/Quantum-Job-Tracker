@@ -1,12 +1,12 @@
 # Quantum networking tracking: implementation handoff
 
-Prepared 4 November 2026. This is a proposed implementation plan, not an implemented feature or a description of Horizon Quantum's internal systems.
+Prepared 4 November 2026. This is a proposed implementation plan, not an implemented feature or a description of production systems.
 
 ## Purpose and user story
 
 Extend Quantum Job Tracker so a user can inspect one synthetic calculation executed across two quantum computers connected by an entanglement link. The user should be able to answer: did this run fail on a machine, while establishing entanglement, or during the remote operation?
 
-Anish encouraged adding quantum networking to the mock tracker. He did not specify its design and explicitly could not discuss HQ's internal networking. His earlier priorities were experiment comparison and operational monitoring. General design advice from him can refine this plan; implementation need not depend on access to internal information.
+Anish encouraged adding quantum networking to the mock tracker. He did not specify its design or discuss internal networking. His earlier priorities were experiment comparison and operational monitoring. General design advice from him can refine this plan; implementation need not depend on access to internal information.
 
 ## Confirmed scope decisions
 
@@ -118,7 +118,7 @@ If he wants to advise further:
 
 > For monitoring or comparing these runs, which matters most: entanglement waiting time, link failures, or time spent on each machine?
 
-These ask about the mock project's usefulness and do not request HQ architecture, confidential metrics or implementation details.
+These ask about the mock project's usefulness and do not request internal architecture, confidential metrics or implementation details.
 
 ## Prompt for a new chat
 

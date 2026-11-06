@@ -206,7 +206,7 @@ export function JobDetails({ jobId, backHref, backLabel = "← Back to filtered 
             </section>
             </div>
           </>}
-          <footer><a href={`${homeHref}?view=implementation`}>How it works</a> · All jobs and providers are simulated. No connection to Horizon Quantum systems or real quantum hardware.</footer>
+          <footer><a href={`${homeHref}?view=implementation`}>How it works</a> · All jobs and providers are simulated. No connection to real quantum hardware.</footer>
         </main>
       </div>
     </div>
